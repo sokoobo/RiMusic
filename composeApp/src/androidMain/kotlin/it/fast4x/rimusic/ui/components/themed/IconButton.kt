@@ -1,9 +1,11 @@
 package it.fast4x.rimusic.ui.components.themed
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.Indication
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -39,6 +41,7 @@ fun HeaderIconButton(
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun IconButton(
     onClick: () -> Unit,
@@ -46,18 +49,20 @@ fun IconButton(
     color: Color,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    indication: Indication? = null
+    indication: Indication? = null,
+    onLongClick: (() -> Unit)? = null,
 ) {
     Image(
         painter = painterResource(icon),
         contentDescription = null,
         colorFilter = ColorFilter.tint(color),
         modifier = Modifier
-            .clickable(
+            .combinedClickable(
                 indication = indication ?: ripple(bounded = false),
                 interactionSource = remember { MutableInteractionSource() },
                 enabled = enabled,
-                onClick = onClick
+                onClick = onClick,
+                onLongClick = onLongClick
             )
             .then(modifier)
     )

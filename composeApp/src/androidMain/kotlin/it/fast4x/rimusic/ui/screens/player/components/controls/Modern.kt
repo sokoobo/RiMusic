@@ -246,6 +246,19 @@ fun InfoAlbumAndArtistModern(
                             }
                             if (effectRotationEnabled) isRotated = !isRotated
                         },
+                        onLongClick = {
+                            val currentMediaItem = binder.player.currentMediaItem
+                            Database.asyncTransaction {
+                                if (dislike(mediaId) == 0) {
+                                    currentMediaItem
+                                        ?.takeIf { it.mediaId == mediaId }
+                                        ?.let {
+                                            insert(currentMediaItem, Song::setDislike)
+                                        }
+                                }
+                            }
+                            if (effectRotationEnabled) isRotated = !isRotated
+                        },
                         modifier = Modifier
                             .padding(start = 5.dp)
                             .size(24.dp)

@@ -1,5 +1,6 @@
 package it.fast4x.rimusic.ui.screens.player.components.controls
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.tween
@@ -99,6 +100,7 @@ import it.fast4x.rimusic.utils.HorizontalfadingEdge2
 import it.fast4x.rimusic.utils.conditional
 
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @UnstableApi
 @ExperimentalFoundationApi
 @Composable
@@ -239,6 +241,19 @@ fun InfoAlbumAndArtistEssential(
                                      if (currentMediaItem != null) {
                                          MyDownloadHelper.autoDownloadWhenLiked(context(),currentMediaItem)
                                      }
+                                 }
+                             }
+                             if (effectRotationEnabled) isRotated = !isRotated
+                         },
+                         onLongClick = {
+                             val currentMediaItem = binder.player.currentMediaItem
+                             Database.asyncTransaction {
+                                 if (dislike(mediaId) == 0) {
+                                     currentMediaItem
+                                         ?.takeIf { it.mediaId == mediaId }
+                                         ?.let {
+                                             insert(currentMediaItem, Song::setDislike)
+                                         }
                                  }
                              }
                              if (effectRotationEnabled) isRotated = !isRotated
@@ -398,6 +413,19 @@ fun ControlsEssential(
                             ?.takeIf { it.mediaId == mediaId }
                             ?.let {
                                 insert(currentMediaItem, Song::toggleLike)
+                            }
+                    }
+                }
+                if (effectRotationEnabled) isRotated = !isRotated
+            },
+            onLongClick = {
+                val currentMediaItem = binder.player.currentMediaItem
+                Database.asyncTransaction {
+                    if (dislike(mediaId) == 0) {
+                        currentMediaItem
+                            ?.takeIf { it.mediaId == mediaId }
+                            ?.let {
+                                insert(currentMediaItem, Song::setDislike)
                             }
                     }
                 }
