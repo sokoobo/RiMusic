@@ -252,7 +252,7 @@ fun InfoAlbumAndArtistEssential(
                                      currentMediaItem
                                          ?.takeIf { it.mediaId == mediaId }
                                          ?.let {
-                                             insert(currentMediaItem, Song::setDislike)
+                                             insert(currentMediaItem, Song::setDisliked)
                                          }
                                  }
                              }
@@ -425,7 +425,7 @@ fun ControlsEssential(
                         currentMediaItem
                             ?.takeIf { it.mediaId == mediaId }
                             ?.let {
-                                insert(currentMediaItem, Song::setDislike)
+                                insert(currentMediaItem, Song::setDisliked)
                             }
                     }
                 }

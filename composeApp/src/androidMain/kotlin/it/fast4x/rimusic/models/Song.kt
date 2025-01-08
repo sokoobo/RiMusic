@@ -40,7 +40,7 @@ data class Song(
         )
     }
 
-    fun setDislike(): Song {
+    fun setDisliked(): Song {
         return copy(
             likedAt = -1L
         )
