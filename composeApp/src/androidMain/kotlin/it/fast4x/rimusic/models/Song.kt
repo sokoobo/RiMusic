@@ -40,6 +40,12 @@ data class Song(
         )
     }
 
+    fun setDislike(): Song {
+        return copy(
+            likedAt = -1L
+        )
+    }
+
     fun cleanTitle() = cleanPrefix( this.title )
 
     fun relativePlayTime(): Double {
