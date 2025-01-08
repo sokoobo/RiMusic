@@ -45,12 +45,12 @@ fun HeaderIconButton(
 @Composable
 fun IconButton(
     onClick: () -> Unit,
+    onLongClick: (() -> Unit)? = null,
     @DrawableRes icon: Int,
     color: Color,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    indication: Indication? = null,
-    onLongClick: (() -> Unit)? = null,
+    indication: Indication? = null
 ) {
     Image(
         painter = painterResource(icon),
