@@ -253,7 +253,7 @@ fun InfoAlbumAndArtistModern(
                                     currentMediaItem
                                         ?.takeIf { it.mediaId == mediaId }
                                         ?.let {
-                                            insert(currentMediaItem, Song::setDisliked)
+                                            insert(currentMediaItem, Song::toggleDislike)
                                         }
                                 }
                             }

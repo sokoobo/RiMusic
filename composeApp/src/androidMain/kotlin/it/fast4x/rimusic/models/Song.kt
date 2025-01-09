@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import it.fast4x.rimusic.cleanPrefix
 import it.fast4x.rimusic.utils.durationTextToMillis
+import it.fast4x.rimusic.utils.setDisLikeState
 import it.fast4x.rimusic.utils.setLikeState
 import kotlinx.serialization.Serializable
 
@@ -40,9 +41,9 @@ data class Song(
         )
     }
 
-    fun setDisliked(): Song {
+    fun toggleDislike(): Song {
         return copy(
-            likedAt = -1L
+            likedAt = setDisLikeState(likedAt)
         )
     }
 
