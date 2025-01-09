@@ -93,6 +93,7 @@ import it.fast4x.rimusic.utils.playerControlsTypeKey
 import it.fast4x.rimusic.utils.queueLoopTypeKey
 import it.fast4x.rimusic.utils.rememberPreference
 import it.fast4x.rimusic.utils.semiBold
+import it.fast4x.rimusic.utils.setDisLikeState
 import it.fast4x.rimusic.utils.setLikeState
 import it.fast4x.rimusic.utils.setQueueLoopState
 import it.fast4x.rimusic.utils.showthumbnailKey
@@ -248,7 +249,7 @@ fun InfoAlbumAndArtistEssential(
                             onLongClick = {
                                 val currentMediaItem = binder.player.currentMediaItem
                                 Database.asyncTransaction {
-                                    if (dislike(mediaId) == 0) {
+                                    if (like(mediaId, setDisLikeState(likedAt)) == 0) {
                                         currentMediaItem
                                             ?.takeIf { it.mediaId == mediaId }
                                             ?.let {
@@ -422,7 +423,7 @@ fun ControlsEssential(
             onLongClick = {
                 val currentMediaItem = binder.player.currentMediaItem
                 Database.asyncTransaction {
-                    if (dislike(mediaId) == 0) {
+                    if (like(mediaId, setDisLikeState(likedAt)) == 0) {
                         currentMediaItem
                             ?.takeIf { it.mediaId == mediaId }
                             ?.let {

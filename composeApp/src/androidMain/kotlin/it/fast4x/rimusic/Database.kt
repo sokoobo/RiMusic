@@ -1347,8 +1347,6 @@ interface Database {
     @Query("UPDATE Song SET likedAt = :likedAt WHERE id = :songId")
     fun like(songId: String, likedAt: Long?): Int
 
-    fun dislike(songId: String): Int = like(songId, -1L)
-
     @Query("UPDATE Song SET durationText = :durationText WHERE id = :songId")
     fun updateDurationText(songId: String, durationText: String): Int
 
