@@ -246,34 +246,35 @@ fun InfoAlbumAndArtistEssential(
                                 if (effectRotationEnabled) isRotated = !isRotated
                             },
                             onLongClick = {
-                             val currentMediaItem = binder.player.currentMediaItem
-                             Database.asyncTransaction {
-                                 if (dislike(mediaId) == 0) {
-                                     currentMediaItem
-                                         ?.takeIf { it.mediaId == mediaId }
-                                         ?.let {
-                                             insert(currentMediaItem, Song::setDisliked)
-                                         }
-                                 }
-                             }
-                             if (effectRotationEnabled) isRotated = !isRotated
-                         },
-                         modifier = Modifier
-                             .padding(start = 5.dp)
-                             .size(24.dp)
-                     )
-                     if (playerBackgroundColors == PlayerBackgroundColors.BlurredCoverColor) {
-                         Icon(
-                             painter = painterResource(id = getUnlikedIcon()),
-                             tint = colorPalette().text,
-                             contentDescription = null,
-                             modifier = Modifier
-                                 .padding(start = 5.dp)
-                                 .size(24.dp)
-                         )
-                     }
-                 }
-             }}
+                                val currentMediaItem = binder.player.currentMediaItem
+                                Database.asyncTransaction {
+                                    if (dislike(mediaId) == 0) {
+                                        currentMediaItem
+                                            ?.takeIf { it.mediaId == mediaId }
+                                            ?.let {
+                                                insert(currentMediaItem, Song::setDisliked)
+                                            }
+                                    }
+                                }
+                                if (effectRotationEnabled) isRotated = !isRotated
+                            },
+                            modifier = Modifier
+                                .padding(start = 5.dp)
+                                .size(24.dp)
+                        )
+                        if (playerBackgroundColors == PlayerBackgroundColors.BlurredCoverColor) {
+                            Icon(
+                                painter = painterResource(id = getUnlikedIcon()),
+                                tint = colorPalette().text,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .padding(start = 5.dp)
+                                    .size(24.dp)
+                            )
+                        }
+                    }
+                }
+            }
         }
 
     }
