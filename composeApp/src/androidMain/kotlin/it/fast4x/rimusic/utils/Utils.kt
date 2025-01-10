@@ -1,6 +1,6 @@
 package it.fast4x.rimusic.utils
 
-//import it.fast4x.rimusic.BuildConfig
+
 import android.annotation.SuppressLint
 import android.content.ContentUris
 import android.content.Context
@@ -454,11 +454,15 @@ suspend fun Result<Innertube.PlaylistOrAlbumPage>.completed(
 ): Result<Innertube.PlaylistOrAlbumPage> = runCatching {
     val page = getOrThrow()
     val songsPage = runCatching {
-        page.songsPage!!
+        page.songsPage
+    }.onFailure {
+        println("Innertube songsPage PlaylistOrAlbumPage>.completed ${it.stackTraceToString()}")
     }
     val itemsPage = songsPage.completed(maxDepth).getOrThrow()
     page.copy(songsPage = itemsPage)
-}.also { it.exceptionOrNull()?.printStackTrace() }
+}.onFailure {
+    println("Innertube PlaylistOrAlbumPage>.completed ${it.stackTraceToString()}")
+}
 
 @Composable
 fun CheckAvailableNewVersion(
@@ -626,3 +630,4 @@ fun Modifier.conditional(condition : Boolean, modifier : Modifier.() -> Modifier
         this
     }
 }
+

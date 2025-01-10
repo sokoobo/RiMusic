@@ -859,7 +859,11 @@
     <string name="colorpalette">색상 팔레트</string>
     <string name="customcolor">맞춤 색상</string>
     <string name="lyricsanimate">가사 크기 애니메이션</string>
+    <string name="yt_playlists">YT/YTM</string>
     <string name="lyricsSizeSecondary">Long Press to change the size</string>
+    <string name="home">Home</string>
     <string name="appearancepresets">Appearance Presets</string>
     <string name="appearancepresetssecondary">Previews will be in low quality</string>
+    <string name="yt_history">YTM History</string>
+    <string name="albumCoverRotation">Background Rotation Animation</string>
 </resources>
