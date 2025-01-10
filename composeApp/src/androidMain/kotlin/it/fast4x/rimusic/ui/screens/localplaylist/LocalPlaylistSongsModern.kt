@@ -187,6 +187,7 @@ import it.fast4x.rimusic.utils.isDownloadedSong
 import it.fast4x.rimusic.utils.isNowPlaying
 import it.fast4x.rimusic.utils.saveImageToInternalStorage
 import it.fast4x.rimusic.models.SongEntity
+import it.fast4x.rimusic.utils.mediaItemSetLiked
 import it.fast4x.rimusic.utils.mediaItemToggleLike
 import kotlinx.coroutines.flow.map
 
@@ -1268,10 +1269,9 @@ fun LocalPlaylistSongsModern(
                                         },
                                         onAddToPreferites = {
                                             playlistSongs.forEachIndexed { _, song ->
-                                                if(song.song.likedAt == null) {
-                                                    mediaItemToggleLike(song.asMediaItem)
-                                                }
+                                                mediaItemSetLiked(song.asMediaItem)
                                             }
+                                            SmartMessage(context.resources.getString(R.string.done), context = context)
                                         },
                                         onRenumberPositions = {
                                             if (playlistNotMonthlyType)
