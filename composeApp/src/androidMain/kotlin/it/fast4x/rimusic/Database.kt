@@ -1329,7 +1329,7 @@ interface Database {
     @Query("UPDATE Playlist SET name = REPLACE(name,'${PINNED_PREFIX}','') WHERE id = :playlistId")
     fun unPinPlaylist(playlistId: Long): Int
 
-    @Query("SELECT count(id) FROM Song WHERE id = :songId and likedAt IS NOT NULL")
+    @Query("SELECT count(id) FROM Song WHERE id = :songId and likedAt IS NOT NULL and likedAt > 0")
     fun songliked(songId: String): Int
 
     @Query("SELECT * FROM Song WHERE id = :id")
