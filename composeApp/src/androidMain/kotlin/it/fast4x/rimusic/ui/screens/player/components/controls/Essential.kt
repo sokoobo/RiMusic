@@ -128,6 +128,7 @@ fun InfoAlbumAndArtistEssential(
     var textoutline by rememberPreference(textoutlineKey, false)
     val buttonState by rememberPreference(buttonStateKey, ButtonState.Idle)
     val playerBackgroundColors by rememberPreference(playerBackgroundColorsKey,PlayerBackgroundColors.BlurredCoverColor)
+    var likeButtonWidth by remember{ mutableStateOf(0.dp) }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -161,7 +162,7 @@ fun InfoAlbumAndArtistEssential(
 
             if (!disableScrollingText) modifierTitle = modifierTitle.basicMarquee()
 
-            if (isExplicit || playerControlsType == PlayerControlsType.Modern ) {
+            /*if (isExplicit || playerControlsType == PlayerControlsType.Modern ) {
                 Box(
                     modifier = Modifier.weight(0.1f)
                 ) {
@@ -177,76 +178,100 @@ fun InfoAlbumAndArtistEssential(
                         )
                     }
                 }
-            }
+            }*/
 
             BoxWithConstraints(
                 modifier = Modifier
                     .weight(1f)
-                    .conditional(!disableScrollingText){HorizontalfadingEdge2()},
+                    .conditional(!disableScrollingText){HorizontalfadingEdge2(0.025f)},
                 contentAlignment = Alignment.Center
             ) {
-                BasicText(
-                    text = cleanPrefix(title ?: ""),
-                    style = TextStyle(
-                        textAlign = TextAlign.Center,
-                        color = if (albumId == null)
-                                 /*if (showthumbnail) colorPalette().textDisabled else if (colorPaletteMode == ColorPaletteMode.Light) colorPalette().textDisabled.copy(0.5f).compositeOver(Color.Black) else colorPalette().textDisabled.copy(0.35f).compositeOver(Color.White)
+                Row(verticalAlignment = Alignment.CenterVertically,
+                    modifier = modifierTitle
+                    .conditional(!disableScrollingText) {padding(horizontal = maxWidth * 0.025f)}
+                    .conditional(playerControlsType == PlayerControlsType.Modern){padding(start = likeButtonWidth)}
+                ) {
+                    if (isExplicit) {
+                        IconButton(
+                            icon = R.drawable.explicit,
+                            color = colorPalette().text,
+                            enabled = true,
+                            onClick = {},
+                            modifier = Modifier
+                                .size(18.dp)
+                        )
+                        Spacer(modifier = Modifier
+                               .width(5.dp)
+                        )
+                    }
+                    Box {
+                        BasicText(
+                            text = cleanPrefix(title ?: ""),
+                            style = TextStyle(
+                                textAlign = TextAlign.Center,
+                                color = if (albumId == null)
+                                /*if (showthumbnail) colorPalette().textDisabled else if (colorPaletteMode == ColorPaletteMode.Light) colorPalette().textDisabled.copy(0.5f).compositeOver(Color.Black) else colorPalette().textDisabled.copy(0.35f).compositeOver(Color.White)
                                 else colorPalette().text,*/
-                            if (colorPaletteMode == ColorPaletteMode.Light || (colorPaletteMode == ColorPaletteMode.System && (!isSystemInDarkTheme()))) colorPalette().textDisabled.copy(0.35f).compositeOver(Color.Black) else colorPalette().textDisabled.copy(0.35f).compositeOver(Color.White)
-                            else colorPalette().text,
-                        fontStyle = typography().l.bold.fontStyle,
-                        fontWeight = typography().l.bold.fontWeight,
-                        fontSize = typography().l.bold.fontSize,
-                        fontFamily = typography().l.bold.fontFamily
-                    ),
-                    maxLines = 1,
-                    modifier = modifierTitle
-                        .conditional(!disableScrollingText){padding(horizontal = maxWidth*0.05f)}
-                )
-                BasicText(
-                    text = cleanPrefix(title ?: ""),
-                    style = TextStyle(
-                        drawStyle = Stroke(width = 1.5f, join = StrokeJoin.Round),
-                        textAlign = TextAlign.Center,
-                        color = if (!textoutline) Color.Transparent else if (colorPaletteMode == ColorPaletteMode.Light || (colorPaletteMode == ColorPaletteMode.System && (!isSystemInDarkTheme()))) Color.White.copy(0.5f)
-                        else Color.Black,
-                        fontStyle = typography().l.bold.fontStyle,
-                        fontWeight = typography().l.bold.fontWeight,
-                        fontSize = typography().l.bold.fontSize,
-                        fontFamily = typography().l.bold.fontFamily
-                    ),
-                    maxLines = 1,
-                    modifier = modifierTitle
-                        .conditional(!disableScrollingText){padding(horizontal = maxWidth*0.05f)}
-                )
+                                    if (colorPaletteMode == ColorPaletteMode.Light || (colorPaletteMode == ColorPaletteMode.System && (!isSystemInDarkTheme()))) colorPalette().textDisabled.copy(
+                                        0.35f
+                                    )
+                                        .compositeOver(Color.Black) else colorPalette().textDisabled.copy(
+                                        0.35f
+                                    ).compositeOver(Color.White)
+                                else colorPalette().text,
+                                fontStyle = typography().l.bold.fontStyle,
+                                fontWeight = typography().l.bold.fontWeight,
+                                fontSize = typography().l.bold.fontSize,
+                                fontFamily = typography().l.bold.fontFamily
+                            ),
+                            maxLines = 1,
+                        )
+                        BasicText(
+                            text = cleanPrefix(title ?: ""),
+                            style = TextStyle(
+                                drawStyle = Stroke(width = 1.5f, join = StrokeJoin.Round),
+                                textAlign = TextAlign.Center,
+                                color = if (!textoutline) Color.Transparent else if (colorPaletteMode == ColorPaletteMode.Light || (colorPaletteMode == ColorPaletteMode.System && (!isSystemInDarkTheme()))) Color.White.copy(
+                                    0.5f
+                                )
+                                else Color.Black,
+                                fontStyle = typography().l.bold.fontStyle,
+                                fontWeight = typography().l.bold.fontWeight,
+                                fontSize = typography().l.bold.fontSize,
+                                fontFamily = typography().l.bold.fontFamily
+                            ),
+                            maxLines = 1,
+                        )
+                    }
+                }
             }
 
             //}
-            if (isExplicit || playerControlsType == PlayerControlsType.Modern){
-                Box(
+            if (playerControlsType == PlayerControlsType.Modern){
+                BoxWithConstraints(
                     modifier = Modifier.weight(0.1f)
                 ) {
-                    if (playerControlsType == PlayerControlsType.Modern) {
-                        IconButton(
-                            color = colorPalette().favoritesIcon,
-                            icon = getLikeState(mediaId),
-                            onClick = {
-                                val currentMediaItem = binder.player.currentMediaItem
-                                Database.asyncTransaction {
-                                    if (like(mediaId, setLikeState(likedAt)) == 0) {
-                                        currentMediaItem
-                                            ?.takeIf { it.mediaId == mediaId }
-                                            ?.let {
-                                                insert(currentMediaItem, Song::toggleLike)
-                                            }
-                                        if (currentMediaItem != null) {
-                                            MyDownloadHelper.autoDownloadWhenLiked(context(),currentMediaItem)
+                    likeButtonWidth = maxWidth
+                    IconButton(
+                        color = colorPalette().favoritesIcon,
+                        icon = getLikeState(mediaId),
+                        onClick = {
+                            val currentMediaItem = binder.player.currentMediaItem
+                            Database.asyncTransaction {
+                                if (like(mediaId, setLikeState(likedAt)) == 0) {
+                                    currentMediaItem
+                                        ?.takeIf { it.mediaId == mediaId }
+                                        ?.let {
+                                            insert(currentMediaItem, Song::toggleLike)
                                         }
+                                    if (currentMediaItem != null) {
+                                        MyDownloadHelper.autoDownloadWhenLiked(context(),currentMediaItem)
                                     }
                                 }
-                                if (effectRotationEnabled) isRotated = !isRotated
-                            },
-                            onLongClick = {
+                            }
+                            if (effectRotationEnabled) isRotated = !isRotated
+                        },
+                        onLongClick = {
                                 val currentMediaItem = binder.player.currentMediaItem
                                 Database.asyncTransaction {
                                     if (like(mediaId, setDisLikeState(likedAt)) == 0) {
@@ -272,7 +297,7 @@ fun InfoAlbumAndArtistEssential(
                                     .padding(start = 5.dp)
                                     .size(24.dp)
                             )
-                        }
+
                     }
                 }
             }
@@ -328,7 +353,7 @@ fun InfoAlbumAndArtistEssential(
 
         BoxWithConstraints(
             modifier = Modifier
-                .conditional(!disableScrollingText){HorizontalfadingEdge2()},
+                .conditional(!disableScrollingText){HorizontalfadingEdge2(0.025f)},
             contentAlignment = Alignment.Center
         ) {
             BasicText(
@@ -347,7 +372,7 @@ fun InfoAlbumAndArtistEssential(
                 ),
                 maxLines = 1,
                 modifier = modifierArtist
-                    .conditional(!disableScrollingText){padding(horizontal = maxWidth*0.05f)}
+                    .conditional(!disableScrollingText){padding(horizontal = maxWidth*0.025f)}
 
             )
             BasicText(
@@ -364,7 +389,7 @@ fun InfoAlbumAndArtistEssential(
                 ),
                 maxLines = 1,
                 modifier = modifierArtist
-                    .conditional(!disableScrollingText){padding(horizontal = maxWidth*0.05f)}
+                    .conditional(!disableScrollingText){padding(horizontal = maxWidth*0.025f)}
 
             )
         }
