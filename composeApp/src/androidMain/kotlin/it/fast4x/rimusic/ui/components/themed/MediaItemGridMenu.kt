@@ -91,7 +91,12 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import it.fast4x.rimusic.colorPalette
+import it.fast4x.rimusic.context
+import it.fast4x.rimusic.models.Song
+import it.fast4x.rimusic.service.MyDownloadHelper
 import it.fast4x.rimusic.typography
+import it.fast4x.rimusic.utils.getLikeState
+import it.fast4x.rimusic.utils.setDisLikeState
 
 @OptIn(UnstableApi::class)
 @Composable
@@ -292,14 +297,13 @@ fun MediaItemGridMenu (
 
     val isLocal by remember { derivedStateOf { mediaItem.isLocal } }
 
-    var updateData by remember {
-        mutableStateOf(false)
-    }
     var likedAt by remember {
         mutableStateOf<Long?>(null)
     }
-    LaunchedEffect(Unit, mediaItem.mediaId, updateData) {
-        Database.likedAt(mediaItem.mediaId).collect { likedAt = it }
+    LaunchedEffect(Unit, mediaItem.mediaId) {
+        Database.likedAt(mediaItem.mediaId).collect {
+            likedAt = it
+        }
     }
 
     var downloadState by remember {
@@ -422,11 +426,22 @@ fun MediaItemGridMenu (
 
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 IconButton(
-                    icon = if (likedAt == null) R.drawable.heart_outline else R.drawable.heart,
+                    icon = getLikeState(mediaItem.mediaId),
                     color = colorPalette().favoritesIcon,
                     onClick = {
                         mediaItemToggleLike(mediaItem)
-                        updateData = !updateData
+                        Database.asyncQuery {
+                            if(songliked(mediaItem.mediaId) != 0){
+                                MyDownloadHelper.autoDownloadWhenLiked(context(), mediaItem)
+                            }
+                        }
+                    },
+                    onLongClick = {
+                        Database.asyncTransaction {
+                            if (like(mediaItem.mediaId, setDisLikeState(likedAt)) == 0) {
+                                insert(mediaItem, Song::toggleDislike)
+                            }
+                        }
                     },
                     modifier = Modifier
                         .padding(all = 4.dp)
