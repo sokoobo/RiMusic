@@ -76,6 +76,7 @@ import it.fast4x.rimusic.utils.effectRotationKey
 import it.fast4x.rimusic.utils.getLikeState
 import it.fast4x.rimusic.utils.getUnlikedIcon
 import it.fast4x.rimusic.utils.jumpPreviousKey
+import it.fast4x.rimusic.utils.mediaItemToggleLike
 import it.fast4x.rimusic.utils.playNext
 import it.fast4x.rimusic.utils.playPrevious
 import it.fast4x.rimusic.utils.playerBackgroundColorsKey
@@ -233,15 +234,13 @@ fun InfoAlbumAndArtistModern(
                         icon = getLikeState(mediaId),
                         onClick = {
                             val currentMediaItem = binder.player.currentMediaItem
-                            Database.asyncTransaction {
-                                if ( like( mediaId, setLikeState(likedAt) ) == 0 ) {
-                                    currentMediaItem
-                                        ?.takeIf { it.mediaId == mediaId }
-                                        ?.let {
-                                            insert(currentMediaItem, Song::toggleLike)
+                            currentMediaItem?.takeIf { it.mediaId == mediaId }.let { mediaItem ->
+                                if (mediaItem != null) {
+                                    mediaItemToggleLike(mediaItem)
+                                    Database.asyncQuery {
+                                        if(songliked(mediaId) != 0){
+                                            MyDownloadHelper.autoDownloadWhenLiked(context(), mediaItem)
                                         }
-                                    if (currentMediaItem != null) {
-                                        MyDownloadHelper.autoDownloadWhenLiked(context(),currentMediaItem)
                                     }
                                 }
                             }
