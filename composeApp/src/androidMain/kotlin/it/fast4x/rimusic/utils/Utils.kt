@@ -96,6 +96,18 @@ fun mediaItemToggleLike( mediaItem: MediaItem ) {
     }
 }
 
+fun mediaItemSetLiked( mediaItem: MediaItem ) {
+    Database.asyncTransaction {
+        if (songExist(mediaItem.mediaId) == 0)
+            insert(mediaItem)
+        if (getLikedAt(mediaItem.mediaId) in listOf(null, -1L))
+            like(
+                mediaItem.mediaId,
+                System.currentTimeMillis()
+            )
+    }
+}
+
 fun albumItemToggleBookmarked( albumItem: Innertube.AlbumItem ) {
     Database.asyncTransaction {
         //if (Database.albumExist(albumItem.key) == 0)
