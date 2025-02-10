@@ -29,6 +29,7 @@ import it.fast4x.rimusic.ui.components.themed.SmartMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import it.fast4x.rimusic.appContext
+import it.fast4x.rimusic.cleanPrefix
 import it.fast4x.rimusic.ui.components.themed.DeleteDialog
 import it.fast4x.rimusic.ui.components.themed.IDialog
 import it.fast4x.rimusic.ui.components.tab.Sort
@@ -117,19 +118,6 @@ class PositionLock private constructor(
         else
             isFirstIcon = !isFirstIcon
     }
-}
-
-@Composable
-fun playlistSync(): MenuIcon = object : MenuIcon, DynamicColor, Descriptive {
-
-    override var isFirstColor: Boolean by rememberPreference( autosyncKey, false )
-    override val iconId: Int = R.drawable.sync
-    override val messageId: Int = R.string.autosync
-    override val menuIconTitle: String
-        @Composable
-        get() = stringResource( messageId )
-
-    override fun onShortClick() { isFirstColor = !isFirstColor }
 }
 
 class PlaylistSongsSort private constructor(
@@ -320,7 +308,7 @@ class RenameDialog private constructor(
                 context = appContext(),
                 coroutineScope = coroutineScope,
                 pipedSession = pipedSession.toApiSession(),
-                id = UUID.fromString( playlist.browseId ),
+                id = UUID.fromString( cleanPrefix(playlist.browseId ?: "") ),
                 name = "$PIPED_PREFIX$newValue"
             )
 

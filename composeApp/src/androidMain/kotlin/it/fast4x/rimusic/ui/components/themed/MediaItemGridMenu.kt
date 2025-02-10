@@ -60,6 +60,7 @@ import it.fast4x.rimusic.MONTHLY_PREFIX
 import it.fast4x.rimusic.PINNED_PREFIX
 import it.fast4x.rimusic.PIPED_PREFIX
 import it.fast4x.rimusic.R
+import it.fast4x.rimusic.cleanPrefix
 import it.fast4x.rimusic.enums.NavRoutes
 import it.fast4x.rimusic.enums.PlaylistSortBy
 import it.fast4x.rimusic.enums.SortOrder
@@ -161,6 +162,7 @@ fun BaseMediaItemGridMenu(
     onClosePlayer: (() -> Unit)? = null,
     onGoToPlaylist: ((Long) -> Unit)? = null,
     onAddToPreferites: (() -> Unit)? = null,
+    onMatchingSong: (() -> Unit)? = null,
     disableScrollingText: Boolean
 ) {
     //val context = LocalContext.current
@@ -176,6 +178,7 @@ fun BaseMediaItemGridMenu(
         onEnqueue = onEnqueue,
         onDownload = onDownload,
         onAddToPreferites = onAddToPreferites,
+        onMatchingSong =  onMatchingSong,
         onAddToPlaylist = { playlist, position ->
             Database.asyncTransaction {
                 insert(mediaItem)
@@ -184,12 +187,12 @@ fun BaseMediaItemGridMenu(
                         songId = mediaItem.mediaId,
                         playlistId = insert(playlist).takeIf { it != -1L } ?: playlist.id,
                         position = position
-                    )
+                    ).default()
                 )
             }
-            if(isYouTubeSyncEnabled())
+            if(isYouTubeSyncEnabled() && playlist.isYoutubePlaylist && playlist.isEditable)
                 CoroutineScope(Dispatchers.IO).launch {
-                    playlist.browseId?.let { YtMusic.addToPlaylist(it, mediaItem.mediaId) }
+                    playlist.browseId?.let { YtMusic.addToPlaylist(cleanPrefix(it), mediaItem.mediaId) }
                 }
         },
         onHideFromDatabase = onHideFromDatabase,
@@ -254,13 +257,13 @@ fun MiniMediaItemGridMenu(
                         songId = mediaItem.mediaId,
                         playlistId = insert(playlist).takeIf { it != -1L } ?: playlist.id,
                         position = position
-                    )
+                    ).default()
                 )
             }
 
-            if(isYouTubeSyncEnabled())
+            if(isYouTubeSyncEnabled() && playlist.isYoutubePlaylist && playlist.isEditable)
                 CoroutineScope(Dispatchers.IO).launch {
-                    playlist.browseId?.let { YtMusic.addToPlaylist(it, mediaItem.mediaId) }
+                    playlist.browseId?.let { YtMusic.addToPlaylist(cleanPrefix(it), mediaItem.mediaId) }
                 }
 
             onDismiss()
@@ -296,6 +299,7 @@ fun MediaItemGridMenu (
     onRemoveFromQueue: (() -> Unit)? = null,
     onRemoveFromPlaylist: (() -> Unit)? = null,
     onAddToPreferites: (() -> Unit)?,
+    onMatchingSong: (() -> Unit)? = null,
     onAddToPlaylist: ((Playlist, Int) -> Unit)? = null,
     onGoToAlbum: ((String) -> Unit)? = null,
     onGoToArtist: ((String) -> Unit)? = null,
@@ -965,6 +969,15 @@ fun MediaItemGridMenu (
                         colorIcon = colorPalette.text,
                         colorText = colorPalette.text,
                         onClick = onAddToPreferites
+                    )
+
+                if (onMatchingSong != null)
+                    GridMenuItem(
+                        icon = R.drawable.random,
+                        title = R.string.match_song_grid,
+                        colorIcon = colorPalette.text,
+                        colorText = colorPalette.text,
+                        onClick = onMatchingSong
                     )
 
                 onAddToPlaylist?.let { onAddToPlaylist ->

@@ -11,8 +11,39 @@ data class BrowseResponse(
     val header: Header?,
     val microformat: Microformat?,
     val responseContext: ResponseContext?,
-    val background: ThumbnailRenderer?
+    val background: ThumbnailRenderer?,
+    val onResponseReceivedActions: List<OnResponseReceivedAction>?
 ) {
+    @Serializable
+    data class OnResponseReceivedAction (
+        val clickTrackingParams: String?,
+        val appendContinuationItemsAction: AppendContinuationItemsAction?
+    )
+    @Serializable
+    data class AppendContinuationItemsAction (
+        val continuationItems: List<ContinuationItem>?,
+    )
+    @Serializable
+    data class ContinuationItem (
+        val musicResponsiveListItemRenderer: MusicResponsiveListItemRenderer? = null,
+        val continuationItemRenderer: ContinuationItemRenderer? = null
+    )
+    @Serializable
+    data class ContinuationItemRenderer (
+        val trigger: String? = null,
+        val continuationEndpoint: ContinuationEndpoint? = null
+    )
+    @Serializable
+    data class ContinuationEndpoint (
+        val clickTrackingParams: String? = null,
+        val continuationCommand: ContinuationCommand? = null
+    )
+    @Serializable
+    data class ContinuationCommand (
+        val token: String? = null,
+        val request: String? = null
+    )
+
     @Serializable
     data class Contents(
         val singleColumnBrowseResultsRenderer: Tabs?,
@@ -27,15 +58,16 @@ data class BrowseResponse(
         val musicDetailHeaderRenderer: MusicDetailHeaderRenderer?,
         val musicVisualHeaderRenderer: MusicVisualHeaderRenderer?,
         val musicHeaderRenderer: MusicHeaderRenderer?,
+        val musicEditablePlaylistDetailHeaderRenderer: MusicEditablePlaylistDetailHeaderRenderer?,
     ) {
-        @Serializable
-        data class MusicDetailHeaderRenderer(
-            val title: Runs?,
-            val description: Runs?,
-            val subtitle: Runs?,
-            val secondSubtitle: Runs?,
-            val thumbnail: ThumbnailRenderer?,
-        )
+//        @Serializable
+//        data class MusicDetailHeaderRenderer(
+//            val title: Runs?,
+//            val description: Runs?,
+//            val subtitle: Runs?,
+//            val secondSubtitle: Runs?,
+//            val thumbnail: ThumbnailRenderer?,
+//        )
 
         @Serializable
         data class MusicVisualHeaderRenderer(
@@ -124,21 +156,21 @@ data class BrowseResponse(
         )
     }
 
-    @Serializable
-    data class ResponseContext(
-        val visitorData: String?,
-        val serviceTrackingParams: List<ServiceTrackingParam>?,
-    ) {
-        @Serializable
-        data class ServiceTrackingParam(
-            val params: List<Param>?,
-            val service: String?,
-        ) {
-            @Serializable
-            data class Param(
-                val key: String?,
-                val value: String?,
-            )
-        }
-    }
+//    @Serializable
+//    data class ResponseContext(
+//        val visitorData: String?,
+//        val serviceTrackingParams: List<ServiceTrackingParam>?,
+//    ) {
+//        @Serializable
+//        data class ServiceTrackingParam(
+//            val params: List<Param>?,
+//            val service: String?,
+//        ) {
+//            @Serializable
+//            data class Param(
+//                val key: String?,
+//                val value: String?,
+//            )
+//        }
+//    }
 }

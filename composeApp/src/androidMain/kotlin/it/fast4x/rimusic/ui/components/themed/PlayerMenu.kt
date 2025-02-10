@@ -7,25 +7,42 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.navigation.NavController
+import it.fast4x.innertube.YtMusic
 import it.fast4x.innertube.models.NavigationEndpoint
 import it.fast4x.rimusic.Database
+import it.fast4x.rimusic.PIPED_PREFIX
 import it.fast4x.rimusic.R
+import it.fast4x.rimusic.cleanPrefix
 import it.fast4x.rimusic.context
 import it.fast4x.rimusic.enums.MenuStyle
+import it.fast4x.rimusic.models.SongPlaylistMap
 import it.fast4x.rimusic.service.MyDownloadHelper
 import it.fast4x.rimusic.service.modern.PlayerServiceModern
+import it.fast4x.rimusic.ui.screens.settings.isYouTubeSyncEnabled
+import it.fast4x.rimusic.utils.addToPipedPlaylist
 import it.fast4x.rimusic.utils.asMediaItem
 import it.fast4x.rimusic.utils.forcePlay
+import it.fast4x.rimusic.utils.getPipedSession
+import it.fast4x.rimusic.utils.isPipedEnabledKey
 import it.fast4x.rimusic.utils.menuStyleKey
 import it.fast4x.rimusic.utils.rememberEqualizerLauncher
 import it.fast4x.rimusic.utils.rememberPreference
+import it.fast4x.rimusic.utils.removeFromPipedPlaylist
+import it.fast4x.rimusic.utils.removeYTSongFromPlaylist
 import it.fast4x.rimusic.utils.seamlessPlay
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import timber.log.Timber
+import java.util.UUID
 
 @ExperimentalTextApi
 @ExperimentalAnimationApi
@@ -37,6 +54,7 @@ fun PlayerMenu(
     mediaItem: MediaItem,
     onDismiss: () -> Unit,
     onClosePlayer: () -> Unit,
+    onMatchingSong: (() -> Unit)? = null,
     disableScrollingText: Boolean
     ) {
 
@@ -124,6 +142,7 @@ fun PlayerMenu(
                 }
             },
             onClosePlayer = onClosePlayer,
+            onMatchingSong = onMatchingSong,
             disableScrollingText = disableScrollingText
         )
     }
@@ -189,4 +208,87 @@ fun MiniPlayerMenu(
         )
     }
 
+}
+
+@ExperimentalTextApi
+@ExperimentalAnimationApi
+@UnstableApi
+@Composable
+fun AddToPlaylistPlayerMenu(
+    navController: NavController,
+    binder: PlayerServiceModern.Binder,
+    mediaItem: MediaItem,
+    onDismiss: () -> Unit,
+    onClosePlayer: () -> Unit,
+) {
+    val isPipedEnabled by rememberPreference(isPipedEnabledKey, false)
+    val pipedSession = getPipedSession()
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    AddToPlaylistItemMenu(
+        navController = navController,
+        mediaItem = mediaItem,
+        onGoToPlaylist = {
+            onClosePlayer()
+        },
+        onAddToPlaylist = { playlist, position ->
+            Database.asyncTransaction {
+                insert(mediaItem)
+                insert(
+                    SongPlaylistMap(
+                        songId = mediaItem.mediaId,
+                        playlistId = insert(playlist).takeIf { it != -1L } ?: playlist.id,
+                        position = position
+                    ).default()
+                )
+            }
+
+            if(isYouTubeSyncEnabled() && playlist.isYoutubePlaylist && playlist.isEditable)
+                CoroutineScope(Dispatchers.IO).launch {
+                    playlist.browseId?.let { YtMusic.addToPlaylist(cleanPrefix(it), mediaItem.mediaId) }
+                }
+            if (playlist.name.startsWith(PIPED_PREFIX) && isPipedEnabled && pipedSession.token.isNotEmpty()) {
+                Timber.d("BaseMediaItemMenu onAddToPlaylist mediaItem ${mediaItem.mediaId}")
+                addToPipedPlaylist(
+                    context = context,
+                    coroutineScope = coroutineScope,
+                    pipedSession = pipedSession.toApiSession(),
+                    id = UUID.fromString(playlist.browseId),
+                    videos = listOf(mediaItem.mediaId)
+                )
+            }
+        },
+        onRemoveFromPlaylist = { playlist ->
+            Database.asyncTransaction {
+                if (playlist.name.startsWith(PIPED_PREFIX) && isPipedEnabled && pipedSession.token.isNotEmpty()) {
+                    Timber.d("MediaItemMenu InPlaylistMediaItemMenu onRemoveFromPlaylist browseId ${playlist.browseId}")
+                    removeFromPipedPlaylist(
+                        context = context,
+                        coroutineScope = coroutineScope,
+                        pipedSession = pipedSession.toApiSession(),
+                        id = UUID.fromString(cleanPrefix(playlist.browseId ?: "")),positionInPlaylist(mediaItem.mediaId,playlist.id)
+                    )
+                }
+            }
+            if(isYouTubeSyncEnabled() && playlist.isYoutubePlaylist && playlist.isEditable) {
+                Database.asyncTransaction {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        if (removeYTSongFromPlaylist(
+                                mediaItem.mediaId,
+                                playlist.browseId ?: "",
+                                playlist.id
+                            )
+                        )
+                            deleteSongFromPlaylist(mediaItem.mediaId, playlist.id)
+
+                    }
+                }
+            } else {
+                Database.asyncTransaction {
+                    deleteSongFromPlaylist(mediaItem.mediaId, playlist.id)
+                }
+            }
+        },
+        onDismiss = onDismiss,
+    )
 }

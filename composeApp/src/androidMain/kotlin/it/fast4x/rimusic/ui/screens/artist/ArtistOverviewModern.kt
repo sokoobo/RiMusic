@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
@@ -11,6 +12,7 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
@@ -18,25 +20,35 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Surface
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.style.TextAlign
@@ -48,20 +60,28 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.offline.Download
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import dev.chrisbanes.haze.hazeChild
 import it.fast4x.compose.persist.persist
 import it.fast4x.innertube.Innertube
+import it.fast4x.innertube.YtMusic
 import it.fast4x.innertube.requests.ArtistPage
 import it.fast4x.innertube.requests.ArtistSection
 import it.fast4x.rimusic.Database
 import it.fast4x.rimusic.LocalPlayerAwareWindowInsets
 import it.fast4x.rimusic.LocalPlayerServiceBinder
 import it.fast4x.rimusic.R
+import it.fast4x.rimusic.cleanPrefix
 import it.fast4x.rimusic.colorPalette
 import it.fast4x.rimusic.enums.NavRoutes
 import it.fast4x.rimusic.enums.NavigationBarPosition
+import it.fast4x.rimusic.enums.PopupType
+import it.fast4x.rimusic.enums.QueueType
+import it.fast4x.rimusic.enums.ThumbnailRoundness
 import it.fast4x.rimusic.enums.UiType
 import it.fast4x.rimusic.models.Artist
+import it.fast4x.rimusic.thumbnailShape
 import it.fast4x.rimusic.typography
+import it.fast4x.rimusic.ui.components.CustomModalBottomSheet
 import it.fast4x.rimusic.ui.components.ShimmerHost
 import it.fast4x.rimusic.ui.components.themed.AutoResizeText
 import it.fast4x.rimusic.ui.components.themed.FontSizeRange
@@ -71,6 +91,7 @@ import it.fast4x.rimusic.ui.components.themed.SecondaryTextButton
 import it.fast4x.rimusic.ui.components.themed.SmartMessage
 import it.fast4x.rimusic.ui.components.themed.TextPlaceholder
 import it.fast4x.rimusic.ui.components.themed.Title
+import it.fast4x.rimusic.ui.components.themed.Title2Actions
 import it.fast4x.rimusic.ui.items.AlbumItem
 import it.fast4x.rimusic.ui.items.AlbumItemPlaceholder
 import it.fast4x.rimusic.ui.items.ArtistItem
@@ -78,6 +99,8 @@ import it.fast4x.rimusic.ui.items.PlaylistItem
 import it.fast4x.rimusic.ui.items.SongItem
 import it.fast4x.rimusic.ui.items.SongItemPlaceholder
 import it.fast4x.rimusic.ui.items.VideoItem
+import it.fast4x.rimusic.ui.screens.player.Queue
+import it.fast4x.rimusic.ui.screens.settings.isYouTubeSyncEnabled
 import it.fast4x.rimusic.ui.styling.Dimensions
 import it.fast4x.rimusic.ui.styling.px
 import it.fast4x.rimusic.utils.align
@@ -87,6 +110,7 @@ import it.fast4x.rimusic.utils.conditional
 import it.fast4x.rimusic.utils.fadingEdge
 import it.fast4x.rimusic.utils.forcePlay
 import it.fast4x.rimusic.utils.isLandscape
+import it.fast4x.rimusic.utils.isNetworkConnected
 import it.fast4x.rimusic.utils.medium
 import it.fast4x.rimusic.utils.parentalControlEnabledKey
 import it.fast4x.rimusic.utils.rememberPreference
@@ -94,6 +118,11 @@ import it.fast4x.rimusic.utils.resize
 import it.fast4x.rimusic.utils.secondary
 import it.fast4x.rimusic.utils.semiBold
 import it.fast4x.rimusic.utils.showFloatingIconKey
+import it.fast4x.rimusic.utils.thumbnailRoundnessKey
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 @OptIn(ExperimentalMaterial3Api::class)
 @ExperimentalTextApi
@@ -123,6 +152,8 @@ fun ArtistOverviewModern(
 
     val endPaddingValues = windowInsets.only(WindowInsetsSides.End).asPaddingValues()
 
+    val thumbnailRoundness by rememberPreference(thumbnailRoundnessKey, ThumbnailRoundness.Heavy)
+
     val sectionTextModifier = Modifier
         .padding(horizontal = 16.dp)
         .padding(top = 24.dp, bottom = 8.dp)
@@ -148,6 +179,11 @@ fun ArtistOverviewModern(
     val listMediaItems = remember { mutableListOf<MediaItem>() }
 
     var artist by persist<Artist?>("artist/$browseId/artist")
+
+    var itemsBrowseId by remember { mutableStateOf("") }
+    var itemsParams by remember { mutableStateOf("") }
+    var itemsSectionName by remember { mutableStateOf("") }
+    var showArtistItems by rememberSaveable { mutableStateOf(false) }
 
     val hapticFeedback = LocalHapticFeedback.current
     val parentalControlEnabled by rememberPreference(parentalControlEnabledKey, false)
@@ -178,31 +214,45 @@ fun ArtistOverviewModern(
             ) {
 
                 item {
-                    val modifierArt = if (isLandscape) Modifier.fillMaxWidth() else Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(4f / 3)
+                    val modifierArt = Modifier.fillMaxWidth()
 
                     Box(
                         modifier = modifierArt
                     ) {
                         //if (artistPage != null) {
                         if (!isLandscape)
-                            AsyncImage(
-                                model = artistPage.artist.thumbnail?.url?.resize(
-                                    1200,
-                                    900
-                                ),
-                                contentDescription = "loading...",
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .align(Alignment.Center)
-                                    .fadingEdge(
-                                        top = WindowInsets.systemBars
-                                            .asPaddingValues()
-                                            .calculateTopPadding() + Dimensions.fadeSpacingTop,
-                                        bottom = Dimensions.fadeSpacingBottom
+                            Box {
+                                AsyncImage(
+                                    model = artistPage.artist.thumbnail?.url?.resize(
+                                        1200,
+                                        1200
+                                    ),
+                                    contentDescription = "loading...",
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .align(Alignment.Center)
+                                        .fadingEdge(
+                                            top = WindowInsets.systemBars
+                                                .asPaddingValues()
+                                                .calculateTopPadding() + Dimensions.fadeSpacingTop,
+                                            bottom = Dimensions.fadeSpacingBottom
+                                        )
+                                )
+                                if (artist?.isYoutubeArtist == true) {
+                                    Image(
+                                        painter = painterResource(R.drawable.ytmusic),
+                                        colorFilter = ColorFilter.tint(
+                                            Color.Red.copy(0.75f).compositeOver(Color.White)
+                                        ),
+                                        modifier = Modifier
+                                            .size(40.dp)
+                                            .padding(all = 5.dp)
+                                            .offset(10.dp,10.dp),
+                                        contentDescription = "Background Image",
+                                        contentScale = ContentScale.Fit
                                     )
-                            )
+                                }
+                            }
 
                         AutoResizeText(
                             text = artistPage.artist.info?.name ?: "",
@@ -285,14 +335,39 @@ fun ArtistOverviewModern(
                                 R.string.following
                             ),
                             onClick = {
-                                val bookmarkedAt =
-                                    if (artist?.bookmarkedAt == null) System.currentTimeMillis() else null
-                                //CoroutineScope(Dispatchers.IO).launch {
-                                Database.asyncTransaction {
-                                    artist?.copy(bookmarkedAt = bookmarkedAt)
-                                        ?.let(::update)
+                                if (isYouTubeSyncEnabled() && !isNetworkConnected(context)){
+                                    SmartMessage(context.resources.getString(R.string.no_connection), context = context, type = PopupType.Error)
+                                } else {
+                                    val bookmarkedAt =
+                                        if (artist?.bookmarkedAt == null) System.currentTimeMillis() else null
+
+                                    Database.asyncTransaction {
+                                        artist?.copy(bookmarkedAt = bookmarkedAt)
+                                            ?.let(::update)
+                                    }
+                                    if (isYouTubeSyncEnabled())
+                                        CoroutineScope(Dispatchers.IO).launch {
+                                            if (bookmarkedAt == null)
+                                                artistPage.artist.channelId.let {
+                                                    if (it != null) {
+                                                        YtMusic.unsubscribeChannel(it)
+                                                        if (artist != null && browseId != null) {
+                                                            Database.update(artist!!.copy(isYoutubeArtist = false))
+                                                        }
+                                                    }
+                                                }
+                                            else
+                                                artistPage.artist.channelId.let {
+                                                    if (it != null) {
+                                                        YtMusic.subscribeChannel(it)
+                                                        if (artist != null && browseId != null) {
+                                                            Database.update(artist!!.copy(isYoutubeArtist = true))
+                                                        }
+                                                    }
+                                                }
+                                        }
                                 }
-                                //}
+
                             },
                             alternative = artist?.bookmarkedAt == null,
                             modifier = Modifier.padding(end = 30.dp)
@@ -425,105 +500,6 @@ fun ArtistOverviewModern(
                     }
                 }
 
-                artistPage.sections.forEach() {
-
-                    item {
-                        Title(
-                            title = it.title,
-                            onClick = {
-                                if (it.moreEndpoint?.browseId != null)
-                                    onItemsPageClick(it)
-                            },
-                        )
-                    }
-                    if (it.items.firstOrNull() is Innertube.SongItem) {
-                        items(it.items) { item ->
-                            when (item) {
-                                is Innertube.SongItem -> {
-                                    println("Innertube artistmodern SongItem: ${item.info?.name}")
-                                    SongItem(
-                                        song = item,
-                                        thumbnailSizePx = songThumbnailSizePx,
-                                        thumbnailSizeDp = songThumbnailSizeDp,
-                                        onDownloadClick = {},
-                                        downloadState = Download.STATE_STOPPED,
-                                        disableScrollingText = disableScrollingText,
-                                        isNowPlaying = false,
-                                        modifier = Modifier.clickable(onClick = {
-                                            binder?.player?.forcePlay(item.asMediaItem)
-                                        })
-                                    )
-                                }
-
-                                else -> {}
-                            }
-                        }
-                    } else {
-                        item {
-                            LazyRow(contentPadding = endPaddingValues) {
-                                items(it.items) { item ->
-                                    when (item) {
-                                        is Innertube.SongItem -> {}
-
-                                        is Innertube.AlbumItem -> {
-                                            println("Innertube artistmodern AlbumItem: ${item.info?.name}")
-                                            AlbumItem(
-                                                album = item,
-                                                alternative = true,
-                                                thumbnailSizePx = albumThumbnailSizePx,
-                                                thumbnailSizeDp = albumThumbnailSizeDp,
-                                                disableScrollingText = disableScrollingText,
-                                                modifier = Modifier.clickable(onClick = {
-                                                    navController.navigate("${NavRoutes.album.name}/${item.key}")
-                                                })
-
-                                            )
-                                        }
-
-                                        is Innertube.ArtistItem -> {
-                                            println("Innertube v ArtistItem: ${item.info?.name}")
-                                            ArtistItem(
-                                                artist = item,
-                                                thumbnailSizePx = artistThumbnailSizePx,
-                                                thumbnailSizeDp = artistThumbnailSizeDp,
-                                                disableScrollingText = disableScrollingText,
-                                                modifier = Modifier.clickable(onClick = {
-                                                    navController.navigate("${NavRoutes.artist.name}/${item.key}")
-                                                })
-                                            )
-                                        }
-
-                                        is Innertube.PlaylistItem -> {
-                                            println("Innertube v PlaylistItem: ${item.info?.name}")
-                                            PlaylistItem(
-                                                playlist = item,
-                                                alternative = true,
-                                                thumbnailSizePx = playlistThumbnailSizePx,
-                                                thumbnailSizeDp = playlistThumbnailSizeDp,
-                                                disableScrollingText = disableScrollingText,
-                                                modifier = Modifier.clickable(onClick = {
-                                                    navController.navigate("${NavRoutes.playlist.name}/${item.key}")
-                                                })
-                                            )
-                                        }
-
-                                        is Innertube.VideoItem -> {
-                                            println("Innertube v VideoItem: ${item.info?.name}")
-                                            VideoItem(
-                                                video = item,
-                                                thumbnailHeightDp = playlistThumbnailSizeDp,
-                                                thumbnailWidthDp = playlistThumbnailSizeDp,
-                                                disableScrollingText = disableScrollingText
-                                            )
-                                        }
-                                    }
-
-                                }
-                            }
-                        }
-                    }
-                }
-
                 item {
                     artistPage.description?.let { description ->
                         val attributionsIndex = description.lastIndexOf("\n\nFrom Wikipedia")
@@ -582,6 +558,144 @@ fun ArtistOverviewModern(
                     }
                 }
 
+                artistPage.sections.forEach() {
+                    //println("ArtistOverviewModern title: ${it.title} browseId: ${it.moreEndpoint?.browseId} params: ${it.moreEndpoint?.params}")
+                    item {
+                        if (it.items.firstOrNull() is Innertube.SongItem) {
+                            Title(
+                                title = it.title,
+                                enableClick = it.moreEndpoint?.browseId != null,
+                                onClick = {
+                                    //println("ArtistOverviewModern onClick: browseId: ${it.moreEndpoint?.browseId} params: ${it.moreEndpoint?.params}")
+                                    if (it.moreEndpoint?.browseId != null) {
+                                        itemsBrowseId = it.moreEndpoint!!.browseId!!
+                                        itemsParams = it.moreEndpoint!!.params.toString()
+                                        itemsSectionName = it.title
+                                        showArtistItems = true
+                                    }
+
+                                },
+                            )
+                        } else {
+                            Title2Actions(
+                                title = it.title,
+                                enableClick = it.moreEndpoint?.browseId != null,
+                                onClick1 = {
+                                    //println("ArtistOverviewModern onClick: browseId: ${it.moreEndpoint?.browseId} params: ${it.moreEndpoint?.params}")
+                                    if (it.moreEndpoint?.browseId != null) {
+                                        itemsBrowseId = it.moreEndpoint!!.browseId!!
+                                        itemsParams = it.moreEndpoint!!.params.toString()
+                                        itemsSectionName = it.title
+                                        showArtistItems = true
+                                    }
+
+                                },
+                                icon2 = R.drawable.dice,
+                                onClick2 = {
+                                    if (it.items.isEmpty()) return@Title2Actions
+                                    val idItem = it.items.get(
+                                        if (it.items.size > 1)
+                                            Random(System.currentTimeMillis()).nextInt(0, it.items.size-1)
+                                        else 0
+                                    ).key
+                                    navController.navigate(route = "${NavRoutes.album.name}/${idItem}")
+                                }
+                            )
+                        }
+                    }
+                    if (it.items.firstOrNull() is Innertube.SongItem) {
+                        items(it.items) { item ->
+                            when (item) {
+                                is Innertube.SongItem -> {
+                                    println("Innertube artistmodern SongItem: ${item.info?.name}")
+                                    SongItem(
+                                        song = item,
+                                        thumbnailSizePx = songThumbnailSizePx,
+                                        thumbnailSizeDp = songThumbnailSizeDp,
+                                        onDownloadClick = {},
+                                        downloadState = Download.STATE_STOPPED,
+                                        disableScrollingText = disableScrollingText,
+                                        isNowPlaying = false,
+                                        modifier = Modifier.clickable(onClick = {
+                                            binder?.player?.forcePlay(item.asMediaItem)
+                                        })
+                                    )
+                                }
+
+                                else -> {}
+                            }
+                        }
+                    } else {
+                        item {
+                            LazyRow(contentPadding = endPaddingValues) {
+                                items(it.items) { item ->
+                                    when (item) {
+                                        is Innertube.SongItem -> {}
+
+                                        is Innertube.AlbumItem -> {
+                                            println("Innertube artistmodern AlbumItem: ${item.info?.name}")
+                                            AlbumItem(
+                                                album = item,
+                                                alternative = true,
+                                                thumbnailSizePx = albumThumbnailSizePx,
+                                                thumbnailSizeDp = albumThumbnailSizeDp,
+                                                disableScrollingText = disableScrollingText,
+                                                modifier = Modifier.clickable(onClick = {
+                                                    navController.navigate("${NavRoutes.album.name}/${item.key}")
+                                                })
+
+                                            )
+                                        }
+
+                                        is Innertube.ArtistItem -> {
+                                            println("Innertube v ArtistItem: ${item.info?.name}")
+                                            ArtistItem(
+                                                artist = item,
+                                                thumbnailSizePx = artistThumbnailSizePx,
+                                                thumbnailSizeDp = artistThumbnailSizeDp,
+                                                disableScrollingText = disableScrollingText,
+                                                isYoutubeArtist = artist?.isYoutubeArtist == true,
+                                                modifier = Modifier.clickable(onClick = {
+                                                    navController.navigate("${NavRoutes.artist.name}/${item.key}")
+                                                })
+                                            )
+                                        }
+
+                                        is Innertube.PlaylistItem -> {
+                                            println("Innertube v PlaylistItem: ${item.info?.name}")
+                                            PlaylistItem(
+                                                playlist = item,
+                                                alternative = true,
+                                                thumbnailSizePx = playlistThumbnailSizePx,
+                                                thumbnailSizeDp = playlistThumbnailSizeDp,
+                                                disableScrollingText = disableScrollingText,
+                                                modifier = Modifier.clickable(onClick = {
+                                                    navController.navigate("${NavRoutes.playlist.name}/${item.key}")
+                                                })
+                                            )
+                                        }
+
+                                        is Innertube.VideoItem -> {
+                                            println("Innertube v VideoItem: ${item.info?.name}")
+                                            VideoItem(
+                                                video = item,
+                                                thumbnailHeightDp = playlistThumbnailSizeDp,
+                                                thumbnailWidthDp = playlistThumbnailSizeDp,
+                                                disableScrollingText = disableScrollingText
+                                            )
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+                }
+
+                item(key = "bottom") {
+                    Spacer(modifier = Modifier.height(Dimensions.bottomSpacer))
+                }
+
             } else {
             ShimmerHost {
                 TextPlaceholder(modifier = sectionTextModifier)
@@ -628,6 +742,35 @@ fun ArtistOverviewModern(
                 )
 
             }
+
+        println("ArtistOverviewModern showArtistItems: $showArtistItems itemsBrowseId: $itemsBrowseId itemsParams: $itemsParams")
+        CustomModalBottomSheet(
+            showSheet = showArtistItems,
+            onDismissRequest = { showArtistItems = false },
+            containerColor = colorPalette().background2,
+            contentColor = colorPalette().background2,
+            modifier = Modifier
+                .fillMaxWidth(),
+            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+            dragHandle = {
+                Surface(
+                    modifier = Modifier.padding(vertical = 0.dp),
+                    color = colorPalette().background0,
+                    shape = thumbnailShape()
+                ) {}
+            },
+            shape = thumbnailRoundness.shape()
+        ) {
+            ArtistOverviewItems(
+                navController,
+                artistName = cleanPrefix(artist?.name ?: ""),
+                sectionName = itemsSectionName,
+                browseId = itemsBrowseId,
+                params = itemsParams,
+                disableScrollingText = false,
+                onDismiss = { showArtistItems = false }
+            )
+        }
 
 
     }
