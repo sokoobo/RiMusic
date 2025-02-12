@@ -785,9 +785,7 @@ fun PlaylistSongList(
                                             } else if (!isYouTubeSyncEnabled()){
                                                 Database.asyncTransaction {
                                                     playlistPage!!.songs.filter { getLikedAt(it.asMediaItem.mediaId) in listOf(-1L,null) }.forEachIndexed { _, song ->
-                                                        Database.asyncTransaction {
-                                                            mediaItemSetLiked(song.asMediaItem)
-                                                        }
+                                                        mediaItemSetLiked(song.asMediaItem)
                                                     }
                                                     SmartMessage(
                                                         context.resources.getString(R.string.done),
