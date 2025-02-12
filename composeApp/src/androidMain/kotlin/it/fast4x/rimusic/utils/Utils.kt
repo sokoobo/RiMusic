@@ -134,6 +134,10 @@ fun mediaItemToggleLike( mediaItem: MediaItem) {
             mediaItem.mediaId,
             null
         )
+        MyDownloadHelper.autoDownloadWhenLiked(
+            context(),
+            mediaItem
+        )
     }
 }
 
@@ -147,7 +151,6 @@ fun mediaItemSetLiked( mediaItem: MediaItem ) {
                 mediaItem.mediaId,
                 System.currentTimeMillis()
             )
-        //}
         MyDownloadHelper.autoDownloadWhenLiked(
             context(),
             mediaItem
