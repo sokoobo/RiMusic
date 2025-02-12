@@ -182,7 +182,7 @@ fun MiniPlayer(
                 SmartMessage(appContext().resources.getString(R.string.no_connection), context = appContext(), type = PopupType.Error)
             } else if (!isYouTubeSyncEnabled()){
                 mediaItemToggleLike(mediaItem)
-                if (likedAt == null)
+                if (likedAt == null || likedAt == -1L)
                     SmartMessage(context.resources.getString(R.string.added_to_favorites), context = context)
                 else
                     SmartMessage(context.resources.getString(R.string.removed_from_favorites), context = context)
@@ -256,9 +256,11 @@ fun MiniPlayer(
                     imageVector = when (dismissState.targetValue) {
                         SwipeToDismissBoxValue.StartToEnd -> {
                             if (miniPlayerType == MiniPlayerType.Modern) ImageVector.vectorResource(R.drawable.play_skip_back) else
-                             if (likedAt == null)
-                             ImageVector.vectorResource(R.drawable.heart_outline)
-                             else ImageVector.vectorResource(R.drawable.heart)
+                                if (likedAt == null)
+                                    ImageVector.vectorResource(R.drawable.heart_outline)
+                                else if(likedAt == -1L)
+                                    ImageVector.vectorResource(R.drawable.heart_dislike)
+                                else ImageVector.vectorResource(R.drawable.heart)
                         }
                         SwipeToDismissBoxValue.EndToStart ->  ImageVector.vectorResource(R.drawable.play_skip_forward)
                         SwipeToDismissBoxValue.Settled ->  ImageVector.vectorResource(R.drawable.play)
