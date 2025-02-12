@@ -467,21 +467,21 @@ fun MediaItemGridMenu (
                         }
                     },
                     onLongClick = {
-                        Database.asyncTransaction {
-                            if (!isNetworkConnected(appContext()) && isYouTubeSyncEnabled()) {
-                                SmartMessage(appContext().resources.getString(R.string.no_connection), context = appContext(), type = PopupType.Error)
-                            } else if (!isYouTubeSyncEnabled()){
+                        if (!isNetworkConnected(appContext()) && isYouTubeSyncEnabled()) {
+                            SmartMessage(appContext().resources.getString(R.string.no_connection), context = appContext(), type = PopupType.Error)
+                        } else if (!isYouTubeSyncEnabled()){
+                            Database.asyncTransaction {
                                 if (like(mediaItem.mediaId, setDisLikeState(likedAt)) == 0){
                                     insert(mediaItem, Song::toggleDislike)
                                 }
                                 MyDownloadHelper.autoDownloadWhenLiked(context, mediaItem)
                                 updateData = !updateData
-                            } else {
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    // currently can not implement dislike for sync so only unliking song
-                                    unlikeYtVideoOrSong(mediaItem)
-                                    updateData = !updateData
-                                }
+                            }
+                        } else {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                // currently can not implement dislike for sync so only unliking song
+                                unlikeYtVideoOrSong(mediaItem)
+                                updateData = !updateData
                             }
                         }
                     },
