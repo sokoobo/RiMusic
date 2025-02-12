@@ -273,16 +273,11 @@ fun InfoAlbumAndArtistEssential(
                             } else if (!isYouTubeSyncEnabled()){
                                 Database.asyncTransaction {
                                     CoroutineScope(Dispatchers.IO).launch {
-                                        if (like(mediaId, setLikeState(likedAt)) == 0) {
-                                            currentMediaItem
-                                                ?.takeIf { it.mediaId == mediaId }
-                                                ?.let {
-                                                    insert(currentMediaItem, Song::toggleLike)
-                                                    MyDownloadHelper.autoDownloadWhenLiked(
-                                                        context(),
-                                                        currentMediaItem
-                                                    )
-                                                }
+                                        currentMediaItem.takeIf { it?.mediaId == mediaId }.let { mediaItem ->
+                                            if(mediaItem != null){
+                                                mediaItemToggleLike(mediaItem)
+                                                MyDownloadHelper.autoDownloadWhenLiked(context(), mediaItem)
+                                            }
                                         }
                                     }
                                 }
