@@ -6,6 +6,7 @@ import io.ktor.client.request.setBody
 import io.ktor.util.generateNonce
 import it.fast4x.innertube.Innertube
 import it.fast4x.innertube.models.Context
+import it.fast4x.innertube.models.MediaType
 import it.fast4x.innertube.models.PlayerResponse
 import it.fast4x.innertube.models.bodies.PlayerBody
 
@@ -35,13 +36,28 @@ suspend fun Innertube.player(body: PlayerBody, withLogin: Boolean = false, signa
 }
 
 suspend fun Innertube.playerAdvanced(body: PlayerBody, withLogin: Boolean = false,): Result<Pair<String?, PlayerResponse?>> = runCatching {
-    val response = player(body.videoId, body.playlistId,
-        withLogin = false //withLogin
-    ).getOrNull()
 
-    println("Innertube newPlayer response adaptiveFormats ${response?.second?.streamingData?.adaptiveFormats}")
-    //println("Innertube newPlayer response Formats ${response?.second?.streamingData?.formats}")
-    println("Innertube newPlayer response expire ${response?.second?.streamingData?.expiresInSeconds}")
+    val maxRetries = 2
+    var retryCount = 0
+    var loop = true
+    var response: Triple<String?, PlayerResponse?, MediaType?>? = null
+
+    while (loop == true) {
+        response = player(body.videoId, body.playlistId,
+            withLogin = false //withLogin
+        ).getOrNull()
+
+        println("Innertube newPlayer response adaptiveFormats ${response?.second?.streamingData?.adaptiveFormats}")
+        //println("Innertube newPlayer response Formats ${response?.second?.streamingData?.formats}")
+        println("Innertube newPlayer response expire ${response?.second?.streamingData?.expiresInSeconds}")
+
+        if (response?.second?.playabilityStatus?.status == "OK" || retryCount >= maxRetries)
+            loop = false
+
+        println("playerAdvanced retryCount: $retryCount")
+        retryCount++
+    }
+
 
     return@runCatching Pair(response?.first, response?.second)
 }

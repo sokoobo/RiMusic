@@ -1,4 +1,4 @@
-package com.dd3boh.outertune.utils.potoken
+package it.fast4x.rimusic.extensions.webpotoken
 
 import android.content.Context
 import android.os.Handler
@@ -302,14 +302,14 @@ class PoTokenWebView private constructor(
             val requestBuilder = okhttp3.Request.Builder()
                 .post(body.toRequestBody())
                 .headers(mapOf(
-                    "User-Agent" to PoTokenWebView.USER_AGENT,
+                    "User-Agent" to USER_AGENT,
                     "Accept" to "application/json",
                     "Content-Type" to "application/json+protobuf",
-                    "x-goog-api-key" to PoTokenWebView.GOOGLE_API_KEY,
+                    "x-goog-api-key" to GOOGLE_API_KEY,
                     "x-user-agent" to "grpc-web-javascript/0.1",
                 ).toHeaders())
                 .url(url)
-            val response = this.httpClient.newCall(requestBuilder.build()).execute()
+            val response = httpClient.newCall(requestBuilder.build()).execute()
             return@runCatching response.body!!.string()
         }
 

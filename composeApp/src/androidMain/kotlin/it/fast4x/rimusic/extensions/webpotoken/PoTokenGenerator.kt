@@ -1,4 +1,4 @@
-package com.dd3boh.outertune.utils.potoken
+package it.fast4x.rimusic.extensions.webpotoken
 
 import android.os.Handler
 import android.os.Looper
@@ -71,8 +71,7 @@ class PoTokenGenerator {
                         webPoTokenGenerator?.let { Handler(Looper.getMainLooper()).post { it.close() } }
 
                         // create a new webPoTokenGenerator
-                        webPoTokenGenerator = PoTokenWebView
-                            .newPoTokenGenerator(context())
+                        webPoTokenGenerator = PoTokenWebView.newPoTokenGenerator(context())
 
                         // The streaming poToken needs to be generated exactly once before generating
                         // any other (player) tokens.
