@@ -83,7 +83,9 @@ fun PlayerMenu(
     if (isHiding) {
         ConfirmationDialog(
             text = stringResource(R.string.update_song),
-            onDismiss = { isHiding = false },
+            onDismiss = {
+                isHiding = false
+            },
             onConfirm = {
                 onDismiss()
                 binder.cache.removeResource(mediaItem.mediaId)
@@ -91,6 +93,7 @@ fun PlayerMenu(
                 Database.asyncTransaction {
                     resetTotalPlayTimeMs(mediaItem.mediaId)
                 }
+                binder.player.seekTo(0L)
             }
         )
     }
