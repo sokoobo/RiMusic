@@ -983,22 +983,12 @@ class PlayerServiceModern : MediaLibraryService(),
                                     "Extreme loudness detected",
                                     context = this@PlayerServiceModern
                                 )
-                                /*
-                                SmartMessage(
-                                    getString(
-                                        R.string.loudness_normalization_extreme,
-                                        getString(R.string.format_db, (it / 100f).toString())
-                                    )
-                                )
-                                 */
                             }
 
                             0
                         } else it
                     }
                     try {
-                        //default
-                        //loudnessEnhancer?.setTargetGain(-((loudnessDb ?: 0f) * 100).toInt() + 500)
                         loudnessEnhancer?.setTargetGain(baseGain.toMb() - loudnessMb)
                         loudnessEnhancer?.enabled = true
                     } catch (e: Exception) {
