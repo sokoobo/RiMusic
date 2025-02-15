@@ -794,7 +794,7 @@ class PlayerServiceModern : MediaLibraryService(),
         println("mediaItem onPlayerError errorCode ${error.errorCode} errorCodeName ${error.errorCodeName}")
         if (error.errorCode in PlayerErrorsToReload) {
             //println("mediaItem onPlayerError recovered occurred errorCodeName ${error.errorCodeName}")
-            player.pause()
+            binder.callPause({ player.pause() } )
             player.prepare()
             player.play()
             return
@@ -1817,7 +1817,7 @@ class PlayerServiceModern : MediaLibraryService(),
          * This method should ONLY be called when the application (sc. activity) is in the foreground!
          */
         fun restartForegroundOrStop() {
-            player.pause()
+            binder.callPause({ player.pause() } )
             stopSelf()
         }
 
