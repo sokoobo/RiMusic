@@ -2135,7 +2135,7 @@ fun LocalPlaylistSongs(
             }
 
             itemsIndexed(
-                items = playlistSongs ?: emptyList(),
+                items = playlistSongs.distinctBy { it.song.id },
                 key = { _, song -> song.song.id },
                 contentType = { _, song -> song },
             ) { index, song ->
