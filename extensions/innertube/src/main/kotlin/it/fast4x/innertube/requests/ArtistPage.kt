@@ -1,6 +1,7 @@
 package it.fast4x.innertube.requests
 
 import it.fast4x.innertube.Innertube
+import it.fast4x.innertube.Innertube.getBestQuality
 import it.fast4x.innertube.models.MusicCarouselShelfRenderer
 import it.fast4x.innertube.models.MusicResponsiveListItemRenderer
 import it.fast4x.innertube.models.MusicShelfRenderer
@@ -83,7 +84,7 @@ data class ArtistPage(
                         )
                     },
                 durationText = null,
-                thumbnail = renderer.thumbnail?.musicThumbnailRenderer?.thumbnail?.thumbnails?.lastOrNull()
+                thumbnail = renderer.thumbnail?.musicThumbnailRenderer?.thumbnail?.thumbnails?.getBestQuality()
                     ?: return null,
                 explicit = renderer.badges?.find {
                     it.musicInlineBadgeRenderer?.icon?.iconType == "MUSIC_EXPLICIT_BADGE"
@@ -109,7 +110,7 @@ data class ArtistPage(
                         },
                         album = null,
                         durationText = null,
-                        thumbnail = renderer.thumbnailRenderer?.musicThumbnailRenderer?.thumbnail?.thumbnails?.lastOrNull(),
+                        thumbnail = renderer.thumbnailRenderer?.musicThumbnailRenderer?.thumbnail?.thumbnails?.getBestQuality(),
                         explicit = renderer.subtitleBadges?.find {
                             it.musicInlineBadgeRenderer?.icon?.iconType == "MUSIC_EXPLICIT_BADGE"
                         } != null
@@ -124,7 +125,7 @@ data class ArtistPage(
                         ),
                         authors = null,
                         year = renderer.subtitle?.runs?.lastOrNull()?.text,
-                        thumbnail = renderer.thumbnailRenderer?.musicThumbnailRenderer?.thumbnail?.thumbnails?.lastOrNull(),
+                        thumbnail = renderer.thumbnailRenderer?.musicThumbnailRenderer?.thumbnail?.thumbnails?.getBestQuality(),
 //                        explicit = renderer.subtitleBadges?.find {
 //                            it.musicInlineBadgeRenderer?.icon?.iconType == "MUSIC_EXPLICIT_BADGE"
 //                        } != null
@@ -139,7 +140,7 @@ data class ArtistPage(
                             renderer.navigationEndpoint?.browseEndpoint
                         ),
                         songCount = null,
-                        thumbnail = renderer.thumbnailRenderer?.musicThumbnailRenderer?.thumbnail?.thumbnails?.lastOrNull(),
+                        thumbnail = renderer.thumbnailRenderer?.musicThumbnailRenderer?.thumbnail?.thumbnails?.getBestQuality(),
                         channel = null,
                         isEditable = false
                     )
@@ -151,7 +152,7 @@ data class ArtistPage(
                             renderer.title?.runs?.firstOrNull()?.text,
                             renderer.navigationEndpoint?.browseEndpoint
                         ),
-                        thumbnail = renderer.thumbnailRenderer?.musicThumbnailRenderer?.thumbnail?.thumbnails?.lastOrNull(),
+                        thumbnail = renderer.thumbnailRenderer?.musicThumbnailRenderer?.thumbnail?.thumbnails?.getBestQuality(),
                         subscribersCountText = null,
                     )
                 }

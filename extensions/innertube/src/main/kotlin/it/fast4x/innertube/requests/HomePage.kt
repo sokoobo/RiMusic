@@ -1,6 +1,7 @@
 package it.fast4x.innertube.requests
 
 import it.fast4x.innertube.Innertube
+import it.fast4x.innertube.Innertube.getBestQuality
 import it.fast4x.innertube.models.BrowseEndpoint
 import it.fast4x.innertube.models.MusicCarouselShelfRenderer
 import it.fast4x.innertube.models.MusicTwoRowItemRenderer
@@ -62,7 +63,7 @@ data class HomePage(
                             },
                             album = null,
                             durationText = null,
-                            thumbnail = renderer.thumbnailRenderer?.musicThumbnailRenderer?.thumbnail?.thumbnails?.lastOrNull(),
+                            thumbnail = renderer.thumbnailRenderer?.musicThumbnailRenderer?.thumbnail?.thumbnails?.getBestQuality(),
                             explicit = renderer.subtitleBadges?.find {
                                 it.musicInlineBadgeRenderer?.icon?.iconType == "MUSIC_EXPLICIT_BADGE"
                             } != null
@@ -87,7 +88,7 @@ data class HomePage(
                                 )
                             },
                             year = renderer.subtitle?.runs?.lastOrNull()?.text,
-                            thumbnail = renderer.thumbnailRenderer?.musicThumbnailRenderer?.thumbnail?.thumbnails?.lastOrNull(),
+                            thumbnail = renderer.thumbnailRenderer?.musicThumbnailRenderer?.thumbnail?.thumbnails?.getBestQuality(),
 //                            explicit = renderer.subtitleBadges?.find {
 //                                it.musicInlineBadgeRenderer?.icon?.iconType == "MUSIC_EXPLICIT_BADGE"
 //                            } != null
@@ -102,7 +103,7 @@ data class HomePage(
                                 renderer.navigationEndpoint?.browseEndpoint
                             ),
                             songCount = null,
-                            thumbnail = renderer.thumbnailRenderer?.musicThumbnailRenderer?.thumbnail?.thumbnails?.lastOrNull(),
+                            thumbnail = renderer.thumbnailRenderer?.musicThumbnailRenderer?.thumbnail?.thumbnails?.getBestQuality(),
                             channel = null,
                             isEditable = false
                         )
@@ -115,7 +116,7 @@ data class HomePage(
                                 renderer.title?.runs?.firstOrNull()?.text,
                                 renderer.navigationEndpoint?.browseEndpoint
                             ),
-                            thumbnail = renderer.thumbnailRenderer?.musicThumbnailRenderer?.thumbnail?.thumbnails?.lastOrNull(),
+                            thumbnail = renderer.thumbnailRenderer?.musicThumbnailRenderer?.thumbnail?.thumbnails?.getBestQuality(),
                             subscribersCountText = null
                         )
                     }
@@ -134,7 +135,7 @@ data class HomePage(
                                 )
                             },
                             durationText = null,
-                            thumbnail = renderer.thumbnailRenderer?.musicThumbnailRenderer?.thumbnail?.thumbnails?.lastOrNull(),
+                            thumbnail = renderer.thumbnailRenderer?.musicThumbnailRenderer?.thumbnail?.thumbnails?.getBestQuality(),
                             viewsText = null
                         )
 

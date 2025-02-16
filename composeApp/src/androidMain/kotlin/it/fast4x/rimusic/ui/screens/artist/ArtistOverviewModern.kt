@@ -199,7 +199,6 @@ fun ArtistOverviewModern(
     var itemsParams by remember { mutableStateOf("") }
     var itemsSectionName by remember { mutableStateOf("") }
     var showArtistItems by rememberSaveable { mutableStateOf(false) }
-    var songsParams by remember { mutableStateOf("") }
 
     val hapticFeedback = LocalHapticFeedback.current
     val parentalControlEnabled by rememberPreference(parentalControlEnabledKey, false)
@@ -579,7 +578,6 @@ fun ArtistOverviewModern(
                     //println("ArtistOverviewModern title: ${it.title} browseId: ${it.moreEndpoint?.browseId} params: ${it.moreEndpoint?.params}")
                     item {
                         if (it.items.firstOrNull() is Innertube.SongItem) {
-                            songsParams = it.moreEndpoint!!.params.toString()
                             Title(
                                 title = it.title,
                                 enableClick = it.moreEndpoint?.browseId != null,

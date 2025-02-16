@@ -1,6 +1,7 @@
 package it.fast4x.innertube.requests
 
 import it.fast4x.innertube.Innertube
+import it.fast4x.innertube.Innertube.getBestQuality
 import it.fast4x.innertube.models.MusicResponsiveListItemRenderer
 import it.fast4x.innertube.models.MusicTwoRowItemRenderer
 import it.fast4x.innertube.models.NavigationEndpoint
@@ -40,7 +41,7 @@ data class ArtistItemsPage(
                     ?.musicResponsiveListItemFlexColumnRenderer?.text
                     ?.runs?.firstOrNull()
                     ?.text,
-                thumbnail = renderer.thumbnail?.musicThumbnailRenderer?.thumbnail?.thumbnails?.lastOrNull()
+                thumbnail = renderer.thumbnail?.musicThumbnailRenderer?.thumbnail?.thumbnails?.getBestQuality()
                     ?: return null,
                 explicit = renderer.badges?.find {
                     it.musicInlineBadgeRenderer?.icon?.iconType == "MUSIC_EXPLICIT_BADGE"
@@ -58,7 +59,7 @@ data class ArtistItemsPage(
                     ),
                     authors = null,
                     year = renderer.subtitle?.runs?.lastOrNull()?.text,
-                    thumbnail = renderer.thumbnailRenderer?.musicThumbnailRenderer?.thumbnail?.thumbnails?.lastOrNull(),
+                    thumbnail = renderer.thumbnailRenderer?.musicThumbnailRenderer?.thumbnail?.thumbnails?.getBestQuality(),
 //                    explicit = renderer.subtitleBadges?.find {
 //                        it.musicInlineBadgeRenderer?.icon?.iconType == "MUSIC_EXPLICIT_BADGE"
 //                    } != null
@@ -76,7 +77,7 @@ data class ArtistItemsPage(
                         )
                     },
                     durationText = null,
-                    thumbnail = renderer.thumbnailRenderer?.musicThumbnailRenderer?.thumbnail?.thumbnails?.lastOrNull(),
+                    thumbnail = renderer.thumbnailRenderer?.musicThumbnailRenderer?.thumbnail?.thumbnails?.getBestQuality(),
                     viewsText =null,
                 )
                 renderer.isPlaylist -> Innertube.PlaylistItem(
@@ -85,7 +86,7 @@ data class ArtistItemsPage(
                         renderer.navigationEndpoint?.browseEndpoint
                     ),
                     songCount = renderer.subtitle?.runs?.getOrNull(4)?.text?.toInt(),
-                    thumbnail = renderer.thumbnailRenderer?.musicThumbnailRenderer?.thumbnail?.thumbnails?.lastOrNull(),
+                    thumbnail = renderer.thumbnailRenderer?.musicThumbnailRenderer?.thumbnail?.thumbnails?.getBestQuality(),
                     channel = null,
                     isEditable = false
                 )
