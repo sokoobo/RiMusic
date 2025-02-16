@@ -1226,48 +1226,53 @@ fun HomeQuickPicks(
                             }
                         }
                     }
-                } ?: if (!isYouTubeLoggedIn()) BasicText(
-                    text = "Log in to your YTM account for more content",
-                    style = typography().xs.center,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier
-                        .padding(vertical = 32.dp)
-                        .fillMaxWidth()
-                        .clickable {
-                            navController.navigate(NavRoutes.settings.name)
-                        }
-                ) else {
-                    ShimmerHost {
-                        repeat(3) {
-                            SongItemPlaceholder(
-                                thumbnailSizeDp = songThumbnailSizeDp,
-                            )
-                        }
-
-                        TextPlaceholder(modifier = sectionTextModifier)
-
-                        Row {
-                            repeat(2) {
-                                AlbumItemPlaceholder(
-                                    thumbnailSizeDp = albumThumbnailSizeDp,
-                                    alternative = true
-                                )
-                            }
-                        }
-
-                        TextPlaceholder(modifier = sectionTextModifier)
-
-                        Row {
-                            repeat(2) {
-                                PlaylistItemPlaceholder(
-                                    thumbnailSizeDp = albumThumbnailSizeDp,
-                                    alternative = true
-                                )
-                            }
-                        }
-                    }
                 }
+//                ?:
+//                if (!isYouTubeLoggedIn())
+//                    BasicText(
+//                        text = "Log in to your YTM account for more content",
+//                        style = typography().xs.center,
+//                        maxLines = 2,
+//                        overflow = TextOverflow.Ellipsis,
+//                        modifier = Modifier
+//                            .padding(vertical = 32.dp)
+//                            .fillMaxWidth()
+//                            .clickable {
+//                                navController.navigate(NavRoutes.settings.name)
+//                            }
+//                    )
+//                else
+//                {
+//                    ShimmerHost {
+//                        repeat(3) {
+//                            SongItemPlaceholder(
+//                                thumbnailSizeDp = songThumbnailSizeDp,
+//                            )
+//                        }
+//
+//                        TextPlaceholder(modifier = sectionTextModifier)
+//
+//                        Row {
+//                            repeat(2) {
+//                                AlbumItemPlaceholder(
+//                                    thumbnailSizeDp = albumThumbnailSizeDp,
+//                                    alternative = true
+//                                )
+//                            }
+//                        }
+//
+//                        TextPlaceholder(modifier = sectionTextModifier)
+//
+//                        Row {
+//                            repeat(2) {
+//                                PlaylistItemPlaceholder(
+//                                    thumbnailSizeDp = albumThumbnailSizeDp,
+//                                    alternative = true
+//                                )
+//                            }
+//                        }
+//                    }
+//                }
 
 
 
