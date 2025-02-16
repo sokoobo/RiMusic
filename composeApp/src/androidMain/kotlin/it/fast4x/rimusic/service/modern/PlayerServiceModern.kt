@@ -790,12 +790,23 @@ class PlayerServiceModern : MediaLibraryService(),
 
     override fun onPlayerError(error: PlaybackException) {
         super.onPlayerError(error)
-        Timber.e("PlayerService onPlayerError ${error.stackTraceToString()}")
-        println("mediaItem onPlayerError errorCode ${error.errorCode} errorCodeName ${error.errorCodeName}")
+        Timber.e("PlayerServiceModern onPlayerError ${error.stackTraceToString()}")
+        println("PlayerServiceModern onPlayerError errorCode ${error.errorCode} errorCodeName ${error.errorCodeName}")
         if (error.errorCode in PlayerErrorsToReload) {
             //println("mediaItem onPlayerError recovered occurred errorCodeName ${error.errorCodeName}")
-            binder.callPause({ player.pause() } )
             player.prepare()
+            player.play()
+            return
+        }
+
+        if (error.errorCode in PlayerErrorsWithCachePurge) {
+            println("PlayerServiceModern onPlayerError error with cache purge errorCodeName ${error.errorCodeName}")
+            currentMediaItem.value?.mediaId?.let { 
+                cache.removeResource(it) //try to remove from cache if exists
+                downloadCache.removeResource(it) //try to remove from download cache if exists
+            }
+            player.prepare()
+            player.seekTo(0L) // seek to start force re cache
             player.play()
             return
         }
@@ -1905,7 +1916,7 @@ class PlayerServiceModern : MediaLibraryService(),
         const val SleepTimerNotificationChannelId = "sleep_timer_channel_id"
 
         val PlayerErrorsToReload = arrayOf(416, 4003)
-        val PlayerErrorsToSkip = arrayOf(2000)
+        val PlayerErrorsWithCachePurge = arrayOf(2000,2003,2004,2005,2008)
 
         const val ROOT = "root"
         const val SONG = "song"
