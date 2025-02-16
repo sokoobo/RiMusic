@@ -363,6 +363,13 @@ const val bassboostLevelKey = "bassboostLevel"
 const val audioReverbPresetKey = "audioReverbPreset"
 const val handleAudioFocusEnabledKey = "handleAudioFocusEnabled"
 
+const val pipedUsernameKey = "pipedUsername"
+const val pipedPasswordKey = "pipedPassword"
+const val pipedInstanceNameKey = "pipedInstanceName"
+const val pipedApiBaseUrlKey = "pipedApiBaseUrl"
+const val pipedApiTokenKey = "pipedApiToken"
+const val discordPersonalAccessTokenKey = "DiscordPersonalAccessToken"
+
 /*
 @PublishedApi
 internal val defaultJson = Json {

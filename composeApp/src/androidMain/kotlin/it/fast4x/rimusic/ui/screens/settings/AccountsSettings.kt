@@ -1,23 +1,14 @@
 package it.fast4x.rimusic.ui.screens.settings
 
 import android.annotation.SuppressLint
-import android.content.ActivityNotFoundException
-import android.content.ComponentName
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
-import android.provider.Settings
 import android.webkit.CookieManager
 import android.webkit.WebStorage
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -30,7 +21,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SnapshotMutationPolicy
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,7 +38,6 @@ import androidx.compose.ui.unit.dp
 import androidx.media3.common.util.UnstableApi
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import io.ktor.http.Url
 import it.fast4x.compose.persist.persistList
 import it.fast4x.innertube.utils.parseCookieString
@@ -58,74 +47,47 @@ import it.fast4x.piped.models.Session
 import it.fast4x.rimusic.R
 import it.fast4x.rimusic.appContext
 import it.fast4x.rimusic.colorPalette
-import it.fast4x.rimusic.enums.NavRoutes
 import it.fast4x.rimusic.enums.NavigationBarPosition
 import it.fast4x.rimusic.enums.PopupType
 import it.fast4x.rimusic.enums.ThumbnailRoundness
-import it.fast4x.rimusic.enums.ValidationType
 import it.fast4x.rimusic.extensions.discord.DiscordLoginAndGetToken
 import it.fast4x.rimusic.extensions.youtubelogin.YouTubeLogin
-import it.fast4x.rimusic.service.PlayerMediaBrowserService
-import it.fast4x.rimusic.service.modern.PlayerServiceModern
 import it.fast4x.rimusic.thumbnailShape
 import it.fast4x.rimusic.ui.components.CustomModalBottomSheet
 import it.fast4x.rimusic.ui.components.LocalMenuState
 import it.fast4x.rimusic.ui.components.themed.DefaultDialog
 import it.fast4x.rimusic.ui.components.themed.HeaderWithIcon
-import it.fast4x.rimusic.ui.components.themed.IconButton
-import it.fast4x.rimusic.ui.components.themed.Loader
 import it.fast4x.rimusic.ui.components.themed.Menu
 import it.fast4x.rimusic.ui.components.themed.MenuEntry
 import it.fast4x.rimusic.ui.components.themed.SmartMessage
 import it.fast4x.rimusic.ui.styling.Dimensions
 import it.fast4x.rimusic.utils.RestartPlayerService
-import it.fast4x.rimusic.utils.textCopyToClipboard
-import it.fast4x.rimusic.utils.ytAccountChannelHandleKey
-import it.fast4x.rimusic.utils.ytCookieKey
-import it.fast4x.rimusic.utils.ytVisitorDataKey
-import it.fast4x.rimusic.utils.defaultFolderKey
 import it.fast4x.rimusic.utils.discordPersonalAccessTokenKey
 import it.fast4x.rimusic.utils.enableYouTubeLoginKey
 import it.fast4x.rimusic.utils.enableYouTubeSyncKey
-import it.fast4x.rimusic.utils.encryptedPreferences
-import it.fast4x.rimusic.utils.extraspaceKey
-import it.fast4x.rimusic.utils.isAtLeastAndroid10
-import it.fast4x.rimusic.utils.isAtLeastAndroid12
-import it.fast4x.rimusic.utils.isAtLeastAndroid6
 import it.fast4x.rimusic.utils.isAtLeastAndroid7
 import it.fast4x.rimusic.utils.isAtLeastAndroid81
 import it.fast4x.rimusic.utils.isDiscordPresenceEnabledKey
-import it.fast4x.rimusic.utils.isIgnoringBatteryOptimizations
-import it.fast4x.rimusic.utils.isInvincibilityEnabledKey
-import it.fast4x.rimusic.utils.isKeepScreenOnEnabledKey
 import it.fast4x.rimusic.utils.isPipedCustomEnabledKey
 import it.fast4x.rimusic.utils.isPipedEnabledKey
-import it.fast4x.rimusic.utils.isProxyEnabledKey
-import it.fast4x.rimusic.utils.logDebugEnabledKey
-import it.fast4x.rimusic.utils.parentalControlEnabledKey
 import it.fast4x.rimusic.utils.pipedApiBaseUrlKey
 import it.fast4x.rimusic.utils.pipedApiTokenKey
 import it.fast4x.rimusic.utils.pipedInstanceNameKey
 import it.fast4x.rimusic.utils.pipedPasswordKey
 import it.fast4x.rimusic.utils.pipedUsernameKey
 import it.fast4x.rimusic.utils.preferences
-import it.fast4x.rimusic.utils.proxyHostnameKey
-import it.fast4x.rimusic.utils.proxyModeKey
-import it.fast4x.rimusic.utils.proxyPortKey
-import it.fast4x.rimusic.utils.rememberEncryptedPreference
 import it.fast4x.rimusic.utils.rememberPreference
 import it.fast4x.rimusic.utils.restartActivityKey
-import it.fast4x.rimusic.utils.showFoldersOnDeviceKey
 import it.fast4x.rimusic.utils.thumbnailRoundnessKey
-import it.fast4x.rimusic.utils.useYtLoginOnlyForBrowseKey
+import it.fast4x.rimusic.utils.ytAccountChannelHandleKey
 import it.fast4x.rimusic.utils.ytAccountEmailKey
 import it.fast4x.rimusic.utils.ytAccountNameKey
 import it.fast4x.rimusic.utils.ytAccountThumbnailKey
+import it.fast4x.rimusic.utils.ytCookieKey
 import it.fast4x.rimusic.utils.ytDataSyncIdKey
+import it.fast4x.rimusic.utils.ytVisitorDataKey
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.io.File
-import java.net.Proxy
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -353,11 +315,11 @@ fun AccountsSettings() {
     if (isAtLeastAndroid7) {
         var isPipedEnabled by rememberPreference(isPipedEnabledKey, false)
         var isPipedCustomEnabled by rememberPreference(isPipedCustomEnabledKey, false)
-        var pipedUsername by rememberEncryptedPreference(pipedUsernameKey, "")
-        var pipedPassword by rememberEncryptedPreference(pipedPasswordKey, "")
-        var pipedInstanceName by rememberEncryptedPreference(pipedInstanceNameKey, "")
-        var pipedApiBaseUrl by rememberEncryptedPreference(pipedApiBaseUrlKey, "")
-        var pipedApiToken by rememberEncryptedPreference(pipedApiTokenKey, "")
+        var pipedUsername by rememberPreference(pipedUsernameKey, "")
+        var pipedPassword by rememberPreference(pipedPasswordKey, "")
+        var pipedInstanceName by rememberPreference(pipedInstanceNameKey, "")
+        var pipedApiBaseUrl by rememberPreference(pipedApiBaseUrlKey, "")
+        var pipedApiToken by rememberPreference(pipedApiTokenKey, "")
 
         var loadInstances by remember { mutableStateOf(false) }
         var isLoading by remember { mutableStateOf(false) }
@@ -581,10 +543,10 @@ fun AccountsSettings() {
     /****** DISCORD ******/
 
     // rememberEncryptedPreference only works correct with API 24 and up
-    if (isAtLeastAndroid7) {
+    //if (isAtLeastAndroid7) {
         var isDiscordPresenceEnabled by rememberPreference(isDiscordPresenceEnabledKey, false)
         var loginDiscord by remember { mutableStateOf(false) }
-        var discordPersonalAccessToken by rememberEncryptedPreference(
+        var discordPersonalAccessToken by rememberPreference(
             key = discordPersonalAccessTokenKey,
             defaultValue = ""
         )
@@ -645,7 +607,7 @@ fun AccountsSettings() {
                 }
             }
         }
-    }
+    //}
 
     /****** DISCORD ******/
 
