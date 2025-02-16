@@ -369,6 +369,7 @@ const val pipedInstanceNameKey = "pipedInstanceName"
 const val pipedApiBaseUrlKey = "pipedApiBaseUrl"
 const val pipedApiTokenKey = "pipedApiToken"
 const val discordPersonalAccessTokenKey = "DiscordPersonalAccessToken"
+const val viewTypeKey = "viewType"
 
 /*
 @PublishedApi

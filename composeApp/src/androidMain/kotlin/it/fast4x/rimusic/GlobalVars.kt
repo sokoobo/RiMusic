@@ -4,10 +4,12 @@ import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.platform.LocalContext
+import it.fast4x.rimusic.enums.ViewType
 import it.fast4x.rimusic.ui.styling.LocalAppearance
 import it.fast4x.rimusic.utils.autosyncKey
 import it.fast4x.rimusic.utils.bassboostEnabledKey
 import it.fast4x.rimusic.utils.bassboostLevelKey
+import it.fast4x.rimusic.utils.getEnum
 import it.fast4x.rimusic.utils.handleAudioFocusEnabledKey
 import it.fast4x.rimusic.utils.isConnectionMetered
 import it.fast4x.rimusic.utils.isConnectionMeteredEnabledKey
@@ -18,6 +20,7 @@ import it.fast4x.rimusic.utils.showButtonPlayerVideoKey
 import it.fast4x.rimusic.utils.showSearchTabKey
 import it.fast4x.rimusic.utils.showStatsInNavbarKey
 import it.fast4x.rimusic.utils.useYtLoginOnlyForBrowseKey
+import it.fast4x.rimusic.utils.viewTypeKey
 import it.fast4x.rimusic.utils.ytAccountNameKey
 import it.fast4x.rimusic.utils.ytAccountThumbnailKey
 
@@ -42,6 +45,8 @@ fun binder() = LocalPlayerServiceBinder.current?.service
 
 fun appContext(): Context = Dependencies.application.applicationContext
 fun context(): Context = Dependencies.application
+
+fun getViewType() = appContext().preferences.getEnum(viewTypeKey, ViewType.Grid)
 
 fun ytAccountName() = appContext().preferences.getString(ytAccountNameKey, "")
 fun ytAccountThumbnail() = appContext().preferences.getString(ytAccountThumbnailKey, "")
