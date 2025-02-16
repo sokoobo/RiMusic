@@ -925,4 +925,5 @@
     <string name="adding_yt_to_pl_failed">Sonraki 50 şarkı için hata oluştu. Şarkılar çalma listesine tek tek ekleniyor</string>
     <string name="songs_add_yt_success">Şarkı YouTube Çalma Listesine eklendi</string>
     <string name="songs_add_yt_failed">Şarkıyı YouTube Çalma Listesine ekleme başarısız oldu</string>
+    <string name="viewType">Change view type</string>
 </resources>
