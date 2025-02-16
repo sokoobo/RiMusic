@@ -929,4 +929,5 @@ Volume BAS : titre précédent</string>
     <string name="songs_add_yt_success">Ajout du titre à la playlist YouTube</string>
     <string name="songs_add_yt_failed">Impossible d\'ajouter le titre à la playlist YouTube</string>
     <string name="viewType">Change view type</string>
+    <string name="copy_translated_lyrics">Copy translated lyrics</string>
 </resources>
