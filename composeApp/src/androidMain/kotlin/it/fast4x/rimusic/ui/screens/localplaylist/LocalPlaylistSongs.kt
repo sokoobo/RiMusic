@@ -2401,6 +2401,9 @@ fun LocalPlaylistSongs(
                                                             context.resources.getString(R.string.cannot_delete_from_online_playlists),type = PopupType.Warning, context = context)
                                                         }
                                                 },
+                                                onInfo = {
+                                                    navController.navigate("${NavRoutes.videoOrSongInfo.name}/${song.song.id}")
+                                                },
                                                 navController = navController,
                                                 playlist = playlistPreview,
                                                 playlistId = playlistId,

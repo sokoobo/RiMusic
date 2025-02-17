@@ -11,6 +11,7 @@ import it.fast4x.innertube.models.Context
 import it.fast4x.innertube.models.CreatePlaylistResponse
 import it.fast4x.innertube.models.MusicCarouselShelfRenderer
 import it.fast4x.innertube.models.NavigationEndpoint
+import it.fast4x.innertube.models.VideoOrSongInfo
 import it.fast4x.innertube.models.getContinuation
 import it.fast4x.innertube.models.oddElements
 import it.fast4x.innertube.requests.AlbumPage
@@ -516,5 +517,13 @@ object YtMusic {
         println("mediaItem getAlbumSongs songs: $songs")
         songs!!
     }
+
+    suspend fun getVideOrSongInfo(videoId: String): Result<VideoOrSongInfo> = runCatching {
+        val response = Innertube.getVideoOrSongInfo(videoId)
+        return response
+    }.onFailure {
+        println("YtMusic getVideOrSongInfo error: ${it.stackTraceToString()}")
+    }
+
 
 }

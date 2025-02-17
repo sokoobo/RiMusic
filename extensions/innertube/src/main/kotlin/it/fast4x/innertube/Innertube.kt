@@ -7,8 +7,6 @@ import com.zionhuang.innertube.pages.LibraryPage
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.okhttp.OkHttp
-import io.ktor.client.plugins.BrowserUserAgent
-import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.compression.ContentEncoding
 import io.ktor.client.plugins.compression.brotli
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -26,7 +24,6 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
-import io.ktor.http.parseQueryString
 import io.ktor.http.userAgent
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.serialization.kotlinx.protobuf.protobuf
@@ -37,17 +34,14 @@ import it.fast4x.innertube.models.MusicNavigationButtonRenderer
 import it.fast4x.innertube.models.NavigationEndpoint
 import it.fast4x.innertube.models.Runs
 import it.fast4x.innertube.models.Thumbnail
-import it.fast4x.innertube.clients.YouTubeClient
 import it.fast4x.innertube.clients.YouTubeClient.Companion.IOS
-import it.fast4x.innertube.clients.YouTubeClient.Companion.WEB_REMIX
 import it.fast4x.innertube.clients.YouTubeLocale
 import it.fast4x.innertube.models.BrowseResponse
 import it.fast4x.innertube.models.Context
 import it.fast4x.innertube.models.Context.Client
-import it.fast4x.innertube.models.Context.Companion.DefaultAndroid
 import it.fast4x.innertube.models.Context.Companion.DefaultIOS
 import it.fast4x.innertube.models.Context.Companion.DefaultWeb
-import it.fast4x.innertube.models.Context.Companion.DefaultWebCreator
+import it.fast4x.innertube.models.Context.Companion.DefaultWeb2WithLocale
 import it.fast4x.innertube.models.GridRenderer
 import it.fast4x.innertube.models.MediaType
 import it.fast4x.innertube.models.PipedResponse
@@ -61,7 +55,11 @@ import it.fast4x.innertube.models.bodies.EditPlaylistBody
 import it.fast4x.innertube.models.bodies.PlayerBody
 import it.fast4x.innertube.models.bodies.PlaylistDeleteBody
 import it.fast4x.innertube.models.MusicShelfRenderer
+import it.fast4x.innertube.models.NextResponse
+import it.fast4x.innertube.models.ReturnYouTubeDislikeResponse
+import it.fast4x.innertube.models.VideoOrSongInfo
 import it.fast4x.innertube.models.bodies.LikeBody
+import it.fast4x.innertube.models.bodies.NextBody
 import it.fast4x.innertube.models.bodies.SubscribeBody
 import it.fast4x.innertube.utils.NewPipeUtils
 import it.fast4x.innertube.utils.NewPipeUtils.decodeSignatureCipher
@@ -793,6 +791,34 @@ object Innertube {
         browse(Context.DefaultWeb.client, browseId, params, continuation, setLogin).body<BrowseResponse>()
     }
 
+    suspend fun next(
+        context: Context = DefaultWeb2WithLocale,
+        videoId: String?,
+        playlistId: String?,
+        playlistSetVideoId: String?,
+        index: Int?,
+        params: String?,
+        continuation: String? = null,
+    ) = client.post(next) {
+        setLogin(context.client, false)
+        setBody(
+            NextBody(
+                context = context,
+                videoId = videoId,
+                playlistId = playlistId,
+                playlistSetVideoId = playlistSetVideoId,
+                index = index,
+                params = params,
+                continuation = continuation,
+            )
+        )
+        parameter("continuation", continuation)
+        parameter("ctoken", continuation)
+        if (continuation != null) {
+            parameter("type", "next")
+        }
+    }
+
     suspend fun player(
         videoId: String,
         playlistId: String?,
@@ -1327,5 +1353,78 @@ object Innertube {
             }
         }
     }
+
+    suspend fun returnYouTubeDislike(videoId: String) =
+        client.get("https://returnyoutubedislikeapi.com/Votes?videoId=$videoId") {
+            contentType(ContentType.Application.Json)
+        }
+
+    suspend fun getVideoOrSongInfo(videoId: String): Result<VideoOrSongInfo> =
+        runCatching {
+            val response = next(context = DefaultWeb2WithLocale, videoId, null, null, null, null, null).body<NextResponse>()
+            val videoSecondary =
+                response.contents?.twoColumnWatchNextResults
+                    ?.results
+                    ?.results
+                    ?.content
+                    ?.find {
+                        it?.videoSecondaryInfoRenderer != null
+                    }?.videoSecondaryInfoRenderer
+            val videoPrimary =
+                response.contents?.twoColumnWatchNextResults
+                    ?.results
+                    ?.results
+                    ?.content
+                    ?.find {
+                        it?.videoPrimaryInfoRenderer != null
+                    }?.videoPrimaryInfoRenderer
+            val returnYouTubeDislikeResponse =
+                returnYouTubeDislike(videoId).body<ReturnYouTubeDislikeResponse>()
+            return@runCatching VideoOrSongInfo(
+                videoId = videoId,
+                title = videoPrimary
+                    ?.title
+                    ?.runs
+                    ?.firstOrNull()
+                    ?.text,
+                author = videoSecondary
+                    ?.owner
+                    ?.videoOwnerRenderer
+                    ?.title
+                    ?.runs
+                    ?.firstOrNull()
+                    ?.text,
+                authorId =
+                videoSecondary
+                    ?.owner
+                    ?.videoOwnerRenderer
+                    ?.navigationEndpoint
+                    ?.browseEndpoint
+                    ?.browseId,
+                authorThumbnail =
+                videoSecondary
+                    ?.owner
+                    ?.videoOwnerRenderer
+                    ?.thumbnail
+                    ?.thumbnails
+                    ?.find {
+                        it.height == 48
+                    }?.url
+                    ?.replace("s48", "s960"),
+                description = videoSecondary?.attributedDescription?.content,
+                subscribers =
+                videoSecondary
+                    ?.owner
+                    ?.videoOwnerRenderer
+                    ?.subscriberCountText
+                    ?.simpleText?.split(" ")?.firstOrNull(),
+                uploadDate = videoPrimary?.dateText?.simpleText,
+                viewCount = returnYouTubeDislikeResponse.viewCount,
+                like = returnYouTubeDislikeResponse.likes,
+                dislike = returnYouTubeDislikeResponse.dislikes,
+            )
+
+        }
+
 
 }

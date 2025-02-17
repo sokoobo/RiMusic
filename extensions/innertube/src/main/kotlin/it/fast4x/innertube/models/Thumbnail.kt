@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class Thumbnail(
     val url: String,
     val height: Int?,
-    val width: Int?
+    val width: Int?,
 ) {
     val isResizable: Boolean
         get() = !url.startsWith("https://i.ytimg.com")

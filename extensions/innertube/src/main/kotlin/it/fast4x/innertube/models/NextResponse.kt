@@ -7,7 +7,9 @@ import kotlinx.serialization.json.JsonNames
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
 data class NextResponse(
-    val contents: Contents?
+    val contents: Contents?,
+    val continuationContents: ContinuationContents?,
+    val currentVideoEndpoint: NavigationEndpoint?,
 ) {
     @Serializable
     data class MusicQueueRenderer(
@@ -50,7 +52,8 @@ data class NextResponse(
 
     @Serializable
     data class Contents(
-        val singleColumnMusicWatchNextResultsRenderer: SingleColumnMusicWatchNextResultsRenderer?
+        val singleColumnMusicWatchNextResultsRenderer: SingleColumnMusicWatchNextResultsRenderer?,
+        val twoColumnWatchNextResults: YouTubeDataPage.Contents.TwoColumnWatchNextResults?,
     ) {
         @Serializable
         data class SingleColumnMusicWatchNextResultsRenderer(
@@ -84,4 +87,13 @@ data class NextResponse(
             }
         }
     }
+
+    @Serializable
+    data class ContinuationContents(
+        val playlistPanelContinuation: MusicQueueRenderer.Content.PlaylistPanelRenderer?,
+        val sectionListContinuation: BrowseResponse.ContinuationContents.SectionListContinuation?,
+        val musicPlaylistShelfContinuation: BrowseResponse.ContinuationContents.MusicPlaylistShelfContinuation?,
+    )
+
+
 }

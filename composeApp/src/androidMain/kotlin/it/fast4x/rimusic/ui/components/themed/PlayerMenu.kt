@@ -61,6 +61,7 @@ fun PlayerMenu(
     onDismiss: () -> Unit,
     onClosePlayer: () -> Unit,
     onMatchingSong: (() -> Unit)? = null,
+    onInfo: (() -> Unit)? = null,
     disableScrollingText: Boolean
     ) {
 
@@ -127,6 +128,7 @@ fun PlayerMenu(
              */
             onHideFromDatabase = { isHiding = true },
             onClosePlayer = onClosePlayer,
+            onInfo = onInfo,
             disableScrollingText = disableScrollingText
         )
     } else {
@@ -162,6 +164,7 @@ fun PlayerMenu(
             },
             onClosePlayer = onClosePlayer,
             onMatchingSong = onMatchingSong,
+            onInfo = onInfo,
             disableScrollingText = disableScrollingText
         )
     }
@@ -179,6 +182,7 @@ fun MiniPlayerMenu(
     mediaItem: MediaItem,
     onDismiss: () -> Unit,
     onClosePlayer: () -> Unit,
+    onInfo: (() -> Unit)? = null,
     disableScrollingText: Boolean
 ) {
 
@@ -240,6 +244,7 @@ fun MiniPlayerMenu(
                     }
                 }
             },
+            onInfo = onInfo,
             onDismiss = onDismiss,
             disableScrollingText = disableScrollingText
         )

@@ -1948,6 +1948,9 @@ fun Player(
                                             onClosePlayer = {
                                                 onDismiss()
                                             },
+                                            onInfo = {
+                                                navController.navigate("${NavRoutes.videoOrSongInfo.name}/${mediaItem.mediaId}")
+                                            },
                                             disableScrollingText = disableScrollingText
                                         )
                                     }
@@ -2936,6 +2939,9 @@ fun Player(
                                                     binder = binder,
                                                     onClosePlayer = {
                                                         onDismiss()
+                                                    },
+                                                    onInfo = {
+                                                        navController.navigate("${NavRoutes.videoOrSongInfo.name}/${mediaItem.mediaId}")
                                                     },
                                                     disableScrollingText = disableScrollingText
                                                 )

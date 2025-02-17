@@ -773,6 +773,9 @@ fun Podcast(
                                                     menuState.hide()
                                                     forceRecompose = true
                                                 },
+                                                onInfo = {
+                                                    navController.navigate("${NavRoutes.videoOrSongInfo.name}/${song.videoId}")
+                                                },
                                                 mediaItem = song.asMediaItem,
                                                 disableScrollingText = disableScrollingText
                                             )

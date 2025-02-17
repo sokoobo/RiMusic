@@ -928,4 +928,10 @@ CC-BY-SA 3.0</string>
     <string name="songs_add_yt_failed">Failed to add the song in the YouTube Playlist</string>
     <string name="viewType">Change view type</string>
     <string name="copy_translated_lyrics">Copy translated lyrics</string>
+    <string name="description">Description</string>
+    <string name="numbers">Numbers</string>
+    <string name="subscribers">Subscribers</string>
+    <string name="views">Views</string>
+    <string name="likes">Likes</string>
+    <string name="dislikes">Dislikes</string>
 </resources>

@@ -1354,6 +1354,9 @@ fun AlbumDetails(
                                                     menuState.hide()
                                                     forceRecompose = true
                                                 },
+                                                onInfo = {
+                                                    navController.navigate("${NavRoutes.videoOrSongInfo.name}/${song.id}")
+                                                },
                                                 mediaItem = song.asMediaItem,
                                                 disableScrollingText = disableScrollingText
                                             )

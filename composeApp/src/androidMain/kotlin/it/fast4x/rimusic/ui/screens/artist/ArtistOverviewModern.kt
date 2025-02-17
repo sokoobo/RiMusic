@@ -669,6 +669,9 @@ fun ArtistOverviewModern(
                                                                     menuState.hide()
                                                                     forceRecompose = true
                                                                 },
+                                                                onInfo = {
+                                                                    navController.navigate("${NavRoutes.videoOrSongInfo.name}/${item.key}")
+                                                                },
                                                                 mediaItem = item.asMediaItem,
                                                                 disableScrollingText = disableScrollingText
                                                             )

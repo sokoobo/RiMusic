@@ -1196,6 +1196,7 @@ fun BuiltInPlaylistSongs(
                                         navController = navController,
                                         mediaItem = song.asMediaItem,
                                         onDismiss = menuState::hide,
+                                        onInfo = {},
                                         disableScrollingText = disableScrollingText
                                     )
 
@@ -1203,6 +1204,7 @@ fun BuiltInPlaylistSongs(
                                         navController = navController,
                                         song = song,
                                         onDismiss = menuState::hide,
+                                        onInfo = {},
                                         disableScrollingText = disableScrollingText
                                     )
 

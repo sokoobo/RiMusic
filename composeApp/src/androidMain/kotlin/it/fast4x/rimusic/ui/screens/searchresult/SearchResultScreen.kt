@@ -262,6 +262,9 @@ fun SearchResultScreen(
                                                                     menuState.hide()
                                                                     forceRecompose = true
                                                                 },
+                                                                onInfo = {
+                                                                    navController.navigate("${NavRoutes.videoOrSongInfo.name}/${song.key}")
+                                                                },
                                                                 mediaItem = song.asMediaItem,
                                                                 disableScrollingText = disableScrollingText
                                                             )
@@ -619,6 +622,9 @@ fun SearchResultScreen(
                                                                 navController = navController,
                                                                 mediaItem = video.asMediaItem,
                                                                 onDismiss = menuState::hide,
+                                                                onInfo = {
+                                                                    navController.navigate("${NavRoutes.videoOrSongInfo.name}/${video.key}")
+                                                                },
                                                                 disableScrollingText = disableScrollingText
                                                             )
                                                         };

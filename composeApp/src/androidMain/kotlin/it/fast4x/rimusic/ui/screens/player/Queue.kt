@@ -700,6 +700,7 @@ fun Queue(
                                                                 downloadState = isDownloaded
                                                             )
                                                         },
+                                                        onInfo = {},
                                                         disableScrollingText = disableScrollingText
                                                     )
                                                 }

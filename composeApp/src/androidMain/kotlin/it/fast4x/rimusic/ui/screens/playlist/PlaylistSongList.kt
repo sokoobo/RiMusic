@@ -1170,6 +1170,9 @@ fun PlaylistSongList(
                                                     menuState.hide()
                                                     forceRecompose = true
                                                 },
+                                                onInfo = {
+                                                    navController.navigate("${NavRoutes.videoOrSongInfo.name}/${song.key}")
+                                                },
                                                 mediaItem = song.asMediaItem,
                                                 disableScrollingText = disableScrollingText
                                             )

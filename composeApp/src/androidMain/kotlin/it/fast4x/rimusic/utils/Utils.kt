@@ -74,6 +74,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.time.Duration
 import java.util.Calendar
@@ -1196,3 +1197,7 @@ suspend fun addToYtLikedSongs(mediaItems: List<MediaItem>){
     }
 }
 
+fun numberFormatter(n: Int) =
+    DecimalFormat("#,###")
+        .format(n)
+        .replace(",", ".")

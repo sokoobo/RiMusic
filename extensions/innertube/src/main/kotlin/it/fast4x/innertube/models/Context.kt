@@ -146,6 +146,18 @@ data class Context(
             client = DefaultWeb.client.copy(hl = hl)
         )
 
+        val DefaultWeb2 = Context(
+            client = Client(
+                clientName = "WEB",
+                clientVersion = "2.2021111",
+                api_key = "AIzaSyC9XL3ZjWddXya6X74dJoCTL-WEYFDNX3",
+                userAgent = USER_AGENT_WEB,
+            )
+        )
+
+        val DefaultWeb2WithLocale = DefaultWeb2.copy(
+            client = DefaultWeb2.client.copy(hl = hl)
+        )
 
         val DefaultWebCreator = Context(
             client = Client(

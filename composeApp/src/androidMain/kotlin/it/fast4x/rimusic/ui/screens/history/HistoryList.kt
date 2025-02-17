@@ -75,6 +75,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import it.fast4x.rimusic.colorPalette
 import it.fast4x.rimusic.enums.HistoryType
+import it.fast4x.rimusic.enums.NavRoutes
 import it.fast4x.rimusic.enums.PlaylistsType
 import it.fast4x.rimusic.models.PlaylistPreview
 import it.fast4x.rimusic.ui.components.ButtonsRow
@@ -300,6 +301,9 @@ fun HistoryList(
                                                             menuState.hide()
                                                             forceRecompose = true
                                                         },
+                                                        onInfo = {
+                                                            navController.navigate("${NavRoutes.videoOrSongInfo.name}/${event.song.id}")
+                                                        },
                                                         disableScrollingText = disableScrollingText
                                                     )
                                                 }
@@ -392,6 +396,9 @@ fun HistoryList(
                                                 onDismiss = {
                                                     menuState.hide()
                                                     forceRecompose = true
+                                                },
+                                                onInfo = {
+                                                    navController.navigate("${NavRoutes.videoOrSongInfo.name}/${song.mediaId}")
                                                 },
                                                 disableScrollingText = disableScrollingText
                                             )

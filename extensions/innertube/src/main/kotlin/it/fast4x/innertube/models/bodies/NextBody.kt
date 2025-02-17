@@ -16,7 +16,8 @@ data class NextBody(
     val watchEndpointMusicSupportedConfigs: WatchEndpointMusicSupportedConfigs = WatchEndpointMusicSupportedConfigs(
         musicVideoType = "MUSIC_VIDEO_TYPE_ATV"
         //musicVideoType = "MUSIC_VIDEO_TYPE_OMV"
-    )
+    ),
+    val continuation: String? = null,
 ) {
     @Serializable
     data class WatchEndpointMusicSupportedConfigs(

@@ -612,6 +612,9 @@ fun HomeQuickPicks(
                                                                 downloadState = isDownloaded
                                                             )
                                                         },
+                                                        onInfo = {
+                                                            navController.navigate("${NavRoutes.videoOrSongInfo.name}/${song.id}")
+                                                        },
                                                         disableScrollingText = disableScrollingText
                                                     )
                                                 }
@@ -700,6 +703,9 @@ fun HomeQuickPicks(
                                                                 mediaItem = song.asMediaItem,
                                                                 downloadState = isDownloaded
                                                             )
+                                                        },
+                                                        onInfo = {
+                                                            navController.navigate("${NavRoutes.videoOrSongInfo.name}/${song.key}")
                                                         },
                                                         disableScrollingText = disableScrollingText
                                                     )
