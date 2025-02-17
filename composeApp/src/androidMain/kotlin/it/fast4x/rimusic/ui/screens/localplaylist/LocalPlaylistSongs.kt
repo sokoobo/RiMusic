@@ -555,6 +555,8 @@ fun LocalPlaylistSongs(
 
     val shouldSync = remember(playlistPreview?.playlist?.name) {
         playlistPreview?.playlist?.name?.startsWith(YTP_PREFIX) == true
+    } || remember(playlistPreview?.playlist?.browseId) {
+        playlistPreview?.playlist?.browseId?.startsWith("RDTMAK5uy") == true
     }
 
     LaunchedEffect(shouldSync) {
@@ -1554,7 +1556,7 @@ fun LocalPlaylistSongs(
                                             }
                                         },
                                         showOnSyncronize = !playlistPreview.playlist.browseId.isNullOrBlank(),
-                                        showLinkUnlink = isNetworkConnected(context) && (playlistPreview.playlist.browseId != null),
+                                        showLinkUnlink = isNetworkConnected(context) && (!playlistPreview.playlist.browseId.isNullOrBlank()),
                                         /*
                                         onSyncronize = {
                                             if (!playlistPreview.playlist.name.startsWith(

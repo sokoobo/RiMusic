@@ -1,6 +1,5 @@
 package it.fast4x.rimusic.ui.components.themed
 
-//import it.fast4x.rimusic.utils.blurStrength2Key
 import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -25,6 +24,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredSize
@@ -75,6 +75,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -147,6 +148,7 @@ import it.fast4x.rimusic.utils.thumbnailRoundnessKey
 import it.fast4x.rimusic.utils.thumbnailSpacingKey
 import kotlinx.coroutines.delay
 import it.fast4x.rimusic.colorPalette
+import it.fast4x.rimusic.isBassBoostEnabled
 import it.fast4x.rimusic.models.Album
 import it.fast4x.rimusic.models.Playlist
 import it.fast4x.rimusic.models.Song
@@ -160,6 +162,7 @@ import it.fast4x.rimusic.ui.styling.onOverlay
 import it.fast4x.rimusic.ui.styling.px
 import it.fast4x.rimusic.utils.asMediaItem
 import it.fast4x.rimusic.utils.asSong
+import it.fast4x.rimusic.utils.bassboostLevelKey
 import it.fast4x.rimusic.utils.getLikeState
 import it.fast4x.rimusic.utils.isExplicit
 import it.fast4x.rimusic.utils.left
@@ -600,6 +603,20 @@ inline fun SelectorArtistsDialog(
                                     )
                                     .align(Alignment.Center)
                             )
+                            if (artist?.isYoutubeArtist == true) {
+                                Image(
+                                    painter = painterResource(R.drawable.ytmusic),
+                                    colorFilter = ColorFilter.tint(
+                                        Color.Red.copy(0.75f).compositeOver(Color.White)
+                                    ),
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .padding(all = 5.dp)
+                                        .offset(10.dp,10.dp),
+                                    contentDescription = "Background Image",
+                                    contentScale = ContentScale.Fit
+                                )
+                            }
                             values[idArtist].name?.let { it1 ->
                                 BasicText(
                                     text = cleanPrefix(it1),
@@ -2325,12 +2342,14 @@ fun PlaybackParamsDialog(
     //val defaultDeviceVolume = getDeviceVolume(context)
     val defaultDuration = 0f
     val defaultStrength = 25f
+    val defaultBassboost = 0.5f
     var playbackSpeed  by rememberPreference(playbackSpeedKey,   defaultSpeed)
     var playbackPitch  by rememberPreference(playbackPitchKey,   defaultPitch)
     var playbackVolume  by rememberPreference(playbackVolumeKey, 0.5f)
     var playbackDeviceVolume  by rememberPreference(playbackDeviceVolumeKey, getDeviceVolume(context))
     var playbackDuration by rememberPreference(playbackDurationKey, defaultDuration)
     var blurStrength  by rememberPreference(blurStrengthKey, defaultStrength)
+    var bassBoost  by rememberPreference(bassboostLevelKey, defaultBassboost)
 
     DefaultDialog(
         onDismiss = {
@@ -2854,66 +2873,45 @@ fun PlaybackParamsDialog(
                     range = 0.0f..1.0f
                 )
 
-                /*
-                CustomSlider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        //.padding(top = 13.dp)
-                        .padding(horizontal = 5.dp),
-                    value = playbackDeviceVolume,
-                    onValueChange = {
-                        playbackDeviceVolume = it
-                        setDeviceVolume(context, playbackDeviceVolume)
-                    },
-                    valueRange = 0.0f..1.0f,
-                    gap = 1,
-                    //showIndicator = true,
-                    thumb = { thumbValue ->
-                        CustomSliderDefaults.Thumb(
-                            thumbValue = "%.1f".format(playbackDeviceVolume),
-                            color = Color.Transparent,
-                            size = 40.dp,
-                            modifier = Modifier.background(
-                                brush = Brush.linearGradient(
-                                    listOf(
-                                        colorPalette.background1,
-                                        colorPalette.favoritesIcon
-                                    )
-                                ),
-                                shape = CircleShape
-                            )
-                        )
-                    },
-                    track = { sliderPositions ->
-                        Box(
-                            modifier = Modifier
-                                .track()
-                                .border(
-                                    width = 1.dp,
-                                    color = Color.LightGray.copy(alpha = 0.4f),
-                                    shape = CircleShape
-                                )
-                                .background(Color.White)
-                                .padding(1.dp),
-                            contentAlignment = Alignment.CenterStart
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .progress(sliderPositions = sliderPositions)
-                                    .background(
-                                        brush = Brush.linearGradient(
-                                            listOf(
-                                                colorPalette.favoritesIcon,
-                                                Color.Red
-                                            )
-                                        )
-                                    )
-                            )
-                        }
-                    }
-                )
-                 */
             }
+
+        Row(
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            TitleMiniSection(stringResource(R.string.settings_bass_boost_level))
+        }
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            IconButton(
+                onClick = {
+                    playbackDeviceVolume = getDeviceVolume(context)
+                    setDeviceVolume(context, playbackDeviceVolume)
+                },
+                icon = R.drawable.musical_notes,
+                color = colorPalette().favoritesIcon,
+                modifier = Modifier
+                    .size(20.dp)
+            )
+
+            SliderControl(
+                isEnabled = isBassBoostEnabled(),
+                state = bassBoost,
+                onSlide = {
+                    bassBoost = it
+                },
+                onSlideComplete = {},
+                toDisplay = { "%.1f".format(bassBoost) },
+                range = 0.0f..1.0f
+            )
+
+        }
 
     }
 }
