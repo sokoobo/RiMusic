@@ -19,6 +19,7 @@ import it.fast4x.rimusic.isConnectionMeteredEnabled
 import it.fast4x.rimusic.models.Format
 import it.fast4x.rimusic.service.LoginRequiredException
 import it.fast4x.rimusic.service.NoInternetException
+import it.fast4x.rimusic.service.PlayableFormatNotFoundException
 import it.fast4x.rimusic.service.TimeoutException
 import it.fast4x.rimusic.service.UnknownException
 import it.fast4x.rimusic.service.UnplayableException
@@ -30,6 +31,7 @@ import it.fast4x.rimusic.utils.getSignatureTimestampOrNull
 import it.fast4x.rimusic.utils.getStreamUrl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 import me.knighthat.piped.Piped
 import me.knighthat.piped.request.player
 import java.net.ConnectException
@@ -59,12 +61,20 @@ internal suspend fun PlayerServiceModern.dataSpecProcess(
     //var dataSpecReturn: DataSpec = dataSpec
     try {
         //runBlocking(Dispatchers.IO) {
-            //if loggedin use advanced player with webPotoken and new newpipe extractor
-            val format = if (!isYouTubeLoggedIn()) getInnerTubeStream(videoId, audioQualityFormat, connectionMetered)
-            else getAvancedInnerTubeStream(videoId, audioQualityFormat, connectionMetered)
+        println("PlayerServiceModern DataSpecProcess Playing song start timeout ${videoId}")
+            val dataSpecWithTimeout = withTimeout(5000){
+                //if loggedin use advanced player with webPotoken and new newpipe extractor
+                val format = if (!isYouTubeLoggedIn()) getInnerTubeStream(videoId, audioQualityFormat, connectionMetered)
+                else getAvancedInnerTubeStream(videoId, audioQualityFormat, connectionMetered)
 
-            println("PlayerServiceModern DataSpecProcess Playing song ${videoId} from url=${format?.url}")
-            return dataSpec.withUri(Uri.parse(format?.url)).subrange(dataSpec.uriPositionOffset, chunkLength)
+                println("PlayerServiceModern DataSpecProcess Playing song ${videoId} from url=${format?.url}")
+
+                if (format?.url == null) throw PlayableFormatNotFoundException()
+                else
+                return@withTimeout dataSpec.withUri(Uri.parse(format?.url)).subrange(dataSpec.uriPositionOffset, chunkLength)
+            }
+        println("PlayerServiceModern DataSpecProcess Playing song stop timeout ${videoId}")
+            return dataSpecWithTimeout
         //}
 
 
