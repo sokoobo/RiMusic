@@ -1252,6 +1252,104 @@ object Innertube {
             println("PLAYERADVANCED player ERROR ${it.stackTraceToString()}")
         }
 
+    suspend fun noLoginPlayerWithPoToken(
+        videoId: String,
+        playlistId: String? = null
+    ): Result<Triple<String?, PlayerResponse?, MediaType>> =
+        runCatching {
+            println("noLoginPlayerWithPoToken player $videoId $playlistId")
+            val cpn =
+                (1..16)
+                    .map {
+                        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_"[
+                            Random.Default.nextInt(
+                                0,
+                                64,
+                            ),
+                        ]
+                    }.joinToString("")
+            val now = System.currentTimeMillis()
+            val poToken =
+                if (now < poTokenObject.second) {
+                    println("noLoginPlayerWithPoToken player Use saved PoToken")
+                    poTokenObject.first
+                } else {
+                    createPoTokenChallenge()
+                        .bodyAsText()
+                        .let { challenge ->
+                            val listChallenge = poTokenJsonDeserializer.decodeFromString<List<String?>>(challenge)
+                            listChallenge.filterIsInstance<String>().firstOrNull()
+                        }?.let { poTokenChallenge ->
+                            generatePoToken(poTokenChallenge).bodyAsText().getPoToken().also { poToken ->
+                                if (poToken != null) {
+                                    poTokenObject = Pair(poToken, now + 21600000)
+                                }
+                            }
+                        }
+                }
+                println("noLoginPlayerWithPoToken player PoToken $poToken")
+
+                val (tempCookie, visitorData, playbackTracking) = getVisitorData(videoId, playlistId)
+
+                val playerResponse = noLogInPlayer(videoId, tempCookie, visitorData, poToken ?: "").body<PlayerResponse>()
+                println("noLoginPlayerWithPoToken player Player Response $playerResponse")
+                println("noLoginPlayerWithPoToken player Player Response status: ${playerResponse.playabilityStatus?.status}")
+                val firstThumb =
+                    playerResponse.videoDetails
+                        ?.thumbnail
+                        ?.thumbnails
+                        ?.firstOrNull()
+                val thumbnails =
+                    if (firstThumb?.height == firstThumb?.width && firstThumb != null) MediaType.Song else MediaType.Video
+                val formatList = playerResponse.streamingData?.formats?.map { Pair(it.itag, it.isAudio) }
+                println("noLoginPlayerWithPoToken player Player Response formatList $formatList")
+                val adaptiveFormatsList = playerResponse.streamingData?.adaptiveFormats?.map { Pair(it.itag, it.isAudio) }
+                println("noLoginPlayerWithPoToken player Player Response adaptiveFormat $adaptiveFormatsList")
+
+                if (playerResponse.playabilityStatus?.status == "OK" && (formatList != null || adaptiveFormatsList != null)) {
+                    return@runCatching Triple(
+                        cpn,
+                        playerResponse.copy(
+                            videoDetails = playerResponse.videoDetails?.copy(),
+                            playbackTracking = playbackTracking ?: playerResponse.playbackTracking,
+                        ),
+                        thumbnails,
+                    )
+                } else {
+                    throw Exception("noLoginPlayerWithPoToken player ERROR not format playable error")
+//                    for (instance in listPipedInstances) {
+//                        try {
+//                            val piped = pipedStreams(videoId, instance).body<PipedResponse>()
+//                            val audioStreams = piped.audioStreams
+//                            val videoStreams = piped.videoStreams
+//                            val stream = audioStreams + videoStreams
+//                            return@runCatching Triple(
+//                                null,
+//                                playerResponse.copy(
+//                                    streamingData =
+//                                    PlayerResponse.StreamingData(
+//                                        formats = stream.toListFormat(),
+//                                        adaptiveFormats = stream.toListFormat(),
+//                                        expiresInSeconds = 0,
+//                                    ),
+//                                    videoDetails = playerResponse.videoDetails?.copy(),
+//                                    playbackTracking = playbackTracking ?: playerResponse.playbackTracking,
+//                                ),
+//                                thumbnails,
+//                            )
+//                        } catch (e: Exception) {
+//                            e.printStackTrace()
+//                            continue
+//                        }
+//                    }
+                }
+                //throw Exception(playerResponse.playabilityStatus?.status ?: "noLoginPlayerWithPoToken player ERROR Unknown error")
+
+
+        }.onFailure {
+            println("noLoginPlayerWithPoToken player ERROR ${it.stackTraceToString()}")
+        }
+
 
     private fun List<PipedResponse.AudioStream>.toListFormat(): List<PlayerResponse.StreamingData.Format> {
         val list = mutableListOf<PlayerResponse.StreamingData.Format>()
@@ -1425,6 +1523,9 @@ object Innertube {
             )
 
         }
+
+
+
 
 
 }

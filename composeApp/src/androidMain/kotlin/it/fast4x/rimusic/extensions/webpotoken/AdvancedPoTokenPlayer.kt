@@ -6,7 +6,7 @@ import it.fast4x.innertube.models.PlayerResponse
 import it.fast4x.innertube.models.bodies.PlayerBody
 import it.fast4x.rimusic.utils.getSignatureTimestampOrNull
 
-suspend fun advancedPoTokenPlayer(body: PlayerBody): Result<Triple<String?, PlayerResponse?, String?>> = runCatching{
+suspend fun advancedWebPoTokenPlayer(body: PlayerBody): Result<Triple<String?, PlayerResponse?, String?>> = runCatching{
 
     val maxRetries = 2
     var retryCount = 0
@@ -28,7 +28,7 @@ suspend fun advancedPoTokenPlayer(body: PlayerBody): Result<Triple<String?, Play
             webPlayerPot
         ).body<PlayerResponse>()
 
-        println("advancedPoTokenPlayer webStreamingPot: $webStreamingPot webPlayerPot: $webPlayerPot signatureTimestamp: $signatureTimestamp")
+        println("advancedPoTokenPlayer with login webStreamingPot: $webStreamingPot webPlayerPot: $webPlayerPot signatureTimestamp: $signatureTimestamp")
 
 
         if (response.playabilityStatus?.status == "OK" || retryCount >= maxRetries)

@@ -35,7 +35,7 @@ suspend fun Innertube.player(body: PlayerBody, withLogin: Boolean = false, signa
     return@runCatching response
 }
 
-suspend fun Innertube.playerAdvanced(body: PlayerBody, withLogin: Boolean = false,): Result<Pair<String?, PlayerResponse?>> = runCatching {
+suspend fun Innertube.playerAdvanced(body: PlayerBody): Result<Pair<String?, PlayerResponse?>> = runCatching {
 
     val maxRetries = 2
     var retryCount = 0
@@ -43,9 +43,7 @@ suspend fun Innertube.playerAdvanced(body: PlayerBody, withLogin: Boolean = fals
     var response: Triple<String?, PlayerResponse?, MediaType?>? = null
 
     while (loop == true) {
-        response = player(body.videoId, body.playlistId,
-            withLogin = false //withLogin
-        ).getOrNull()
+        response = noLoginPlayerWithPoToken(body.videoId, body.playlistId).getOrNull()
 
         println("Innertube newPlayer response adaptiveFormats ${response?.second?.streamingData?.adaptiveFormats}")
         //println("Innertube newPlayer response Formats ${response?.second?.streamingData?.formats}")

@@ -3,7 +3,6 @@ package it.fast4x.rimusic.service.modern
 import android.content.Context
 import android.net.Uri
 import androidx.annotation.OptIn
-import androidx.core.net.toUri
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSpec
 import it.fast4x.innertube.Innertube
@@ -14,7 +13,7 @@ import it.fast4x.innertube.requests.playerAdvanced
 import it.fast4x.invidious.Invidious
 import it.fast4x.rimusic.Database
 import it.fast4x.rimusic.enums.AudioQualityFormat
-import it.fast4x.rimusic.extensions.webpotoken.advancedPoTokenPlayer
+import it.fast4x.rimusic.extensions.webpotoken.advancedWebPoTokenPlayer
 import it.fast4x.rimusic.isConnectionMeteredEnabled
 import it.fast4x.rimusic.models.Format
 import it.fast4x.rimusic.service.LoginRequiredException
@@ -29,8 +28,6 @@ import it.fast4x.rimusic.ui.screens.settings.isYouTubeLoginEnabled
 import it.fast4x.rimusic.useYtLoginOnlyForBrowse
 import it.fast4x.rimusic.utils.getSignatureTimestampOrNull
 import it.fast4x.rimusic.utils.getStreamUrl
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import me.knighthat.piped.Piped
 import me.knighthat.piped.request.player
@@ -116,7 +113,7 @@ suspend fun getAvancedInnerTubeStream(
     audioQualityFormat: AudioQualityFormat,
     connectionMetered: Boolean
 ): PlayerResponse.StreamingData.Format? {
-    return advancedPoTokenPlayer(
+    return advancedWebPoTokenPlayer(
         body = PlayerBody(videoId = videoId),
     ).fold(
         { playerResponse ->
@@ -220,8 +217,7 @@ suspend fun getInnerTubeStream(
     connectionMetered: Boolean
 ): PlayerResponse.StreamingData.Format? {
     return Innertube.playerAdvanced(
-        body = PlayerBody(videoId = videoId),
-        withLogin =  (!useYtLoginOnlyForBrowse() && isYouTubeLoginEnabled() && isYouTubeLoggedIn()),
+        body = PlayerBody(videoId = videoId)
     ).fold(
         { playerResponse ->
             println("PlayerServiceModern MyDownloadHelper DataSpecProcess getInnerTubeStream playabilityStatus ${playerResponse.second?.playabilityStatus?.status} for song $videoId from adaptiveFormats itag ${playerResponse.second?.streamingData?.adaptiveFormats?.map { it.itag }}")
