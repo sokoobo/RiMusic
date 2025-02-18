@@ -63,6 +63,7 @@ import it.fast4x.rimusic.ui.components.themed.SmartMessage
 import it.fast4x.rimusic.ui.styling.Dimensions
 import it.fast4x.rimusic.utils.RestartPlayerService
 import it.fast4x.rimusic.utils.discordPersonalAccessTokenKey
+import it.fast4x.rimusic.utils.enableYouTubeHistorySyncKey
 import it.fast4x.rimusic.utils.enableYouTubeLoginKey
 import it.fast4x.rimusic.utils.enableYouTubeSyncKey
 import it.fast4x.rimusic.utils.isAtLeastAndroid7
@@ -79,6 +80,7 @@ import it.fast4x.rimusic.utils.preferences
 import it.fast4x.rimusic.utils.rememberPreference
 import it.fast4x.rimusic.utils.restartActivityKey
 import it.fast4x.rimusic.utils.thumbnailRoundnessKey
+import it.fast4x.rimusic.utils.useYtLoginOnlyForBrowseKey
 import it.fast4x.rimusic.utils.ytAccountChannelHandleKey
 import it.fast4x.rimusic.utils.ytAccountEmailKey
 import it.fast4x.rimusic.utils.ytAccountNameKey
@@ -139,9 +141,10 @@ fun AccountsSettings() {
         //TODO MANAGE LOGIN
         /****** YOUTUBE LOGIN ******/
 
-        //var useYtLoginOnlyForBrowse by rememberPreference(useYtLoginOnlyForBrowseKey, false)
+        var useYtLoginOnlyForBrowse by rememberPreference(useYtLoginOnlyForBrowseKey, false)
         var isYouTubeLoginEnabled by rememberPreference(enableYouTubeLoginKey, false)
         var isYouTubeSyncEnabled by rememberPreference(enableYouTubeSyncKey, false)
+        var isYouTubeHistorySyncEnabled by rememberPreference(enableYouTubeHistorySyncKey, false)
         var loginYouTube by remember { mutableStateOf(false) }
         var visitorData by rememberPreference(key = ytVisitorDataKey, defaultValue = "")
         var dataSyncId by rememberPreference(key = ytDataSyncIdKey, defaultValue = "")
@@ -285,14 +288,14 @@ fun AccountsSettings() {
 
                 //}
 
-//                SwitchSettingEntry(
-//                    title = stringResource(R.string.use_ytm_login_only_for_browse),
-//                    text = stringResource(R.string.info_use_ytm_login_only_for_browse),
-//                    isChecked = useYtLoginOnlyForBrowse,
-//                    onCheckedChange = {
-//                        useYtLoginOnlyForBrowse = it
-//                    }
-//                )
+                SwitchSettingEntry(
+                    title = stringResource(R.string.use_ytm_login_only_for_browse),
+                    text = stringResource(R.string.info_use_ytm_login_only_for_browse),
+                    isChecked = useYtLoginOnlyForBrowse,
+                    onCheckedChange = {
+                        useYtLoginOnlyForBrowse = it
+                    }
+                )
 
                 SwitchSettingEntry(
                     //isEnabled = false,
@@ -303,6 +306,17 @@ fun AccountsSettings() {
                         isYouTubeSyncEnabled = it
                     }
                 )
+
+                // TODO MANAGE SYNC HISTORY
+//                SwitchSettingEntry(
+//                    //isEnabled = false,
+//                    title = "Sync playback history with YTM account",
+//                    text = "",
+//                    isChecked = isYouTubeHistorySyncEnabled,
+//                    onCheckedChange = {
+//                        isYouTubeHistorySyncEnabled = it
+//                    }
+//                )
 
             }
         }

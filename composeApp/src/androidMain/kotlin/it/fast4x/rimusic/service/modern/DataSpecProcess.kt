@@ -64,8 +64,9 @@ internal suspend fun PlayerServiceModern.dataSpecProcess(
         println("PlayerServiceModern DataSpecProcess Playing song start timeout ${videoId}")
             val dataSpecWithTimeout = withTimeout(5000){
                 //if loggedin use advanced player with webPotoken and new newpipe extractor
-                val format = if (!isYouTubeLoggedIn()) getInnerTubeStream(videoId, audioQualityFormat, connectionMetered)
-                else getAvancedInnerTubeStream(videoId, audioQualityFormat, connectionMetered)
+                val format = if (!useYtLoginOnlyForBrowse() && isYouTubeLoginEnabled() && isYouTubeLoggedIn())
+                    getAvancedInnerTubeStream(videoId, audioQualityFormat, connectionMetered)
+                else getInnerTubeStream(videoId, audioQualityFormat, connectionMetered)
 
                 println("PlayerServiceModern DataSpecProcess Playing song ${videoId} from url=${format?.url}")
 
@@ -119,7 +120,7 @@ suspend fun getAvancedInnerTubeStream(
         body = PlayerBody(videoId = videoId),
     ).fold(
         { playerResponse ->
-            println("PlayerServiceModern MyDownloadHelper DataSpecProcess getInnerTubeStream playabilityStatus ${playerResponse.second?.playabilityStatus?.status} for song $videoId from adaptiveFormats itag ${playerResponse.second?.streamingData?.adaptiveFormats?.map { it.itag }}")
+            println("PlayerServiceModern MyDownloadHelper DataSpecProcess getAvancedInnerTubeStream playabilityStatus ${playerResponse.second?.playabilityStatus?.status} for song $videoId from adaptiveFormats itag ${playerResponse.second?.streamingData?.adaptiveFormats?.map { it.itag }}")
             //println("PlayerServiceModern MyDownloadHelper DataSpecProcess getInnerTubeStream playabilityStatus ${playerResponse.second?.playabilityStatus?.status} for song $videoId from formats itag ${playerResponse.second?.streamingData?.formats?.map { it.itag }}")
             when(playerResponse.second?.playabilityStatus?.status) {
                 "OK" -> {
@@ -168,7 +169,7 @@ suspend fun getAvancedInnerTubeStream(
                         .also {
                             println("PlayerServiceModern MyDownloadHelper DataSpecProcess getAdvancedInnerTubeStream url ${it?.url}")
 
-                            println("PlayerServiceModern MyDownloadHelper DataSpecProcess getInnerTubeStream song $videoId itag selected ${it}")
+                            println("PlayerServiceModern MyDownloadHelper DataSpecProcess getAvancedInnerTubeStream song $videoId itag selected ${it}")
                             //println("PlayerServiceModern MyDownloadHelper DataSpecProcess getMediaFormat before upsert format $it")
                             Database.asyncTransaction {
                                 if (songExist(videoId) > 0)

@@ -14,6 +14,8 @@ import it.fast4x.rimusic.service.modern.getAvancedInnerTubeStream
 import it.fast4x.rimusic.service.modern.getInnerTubeFormatUrl
 import it.fast4x.rimusic.service.modern.getInnerTubeStream
 import it.fast4x.rimusic.ui.screens.settings.isYouTubeLoggedIn
+import it.fast4x.rimusic.ui.screens.settings.isYouTubeLoginEnabled
+import it.fast4x.rimusic.useYtLoginOnlyForBrowse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
@@ -131,8 +133,9 @@ internal suspend fun MyDownloadHelper.dataSpecProcess(
         println("MyDownloadHelper DataSpecProcess Playing song start timeout ${videoId}")
         val dataSpecWithTimeout = withTimeout(5000){
             //if loggedin use advanced player with webPotoken and new newpipe extractor
-            val format = if (!isYouTubeLoggedIn()) getInnerTubeStream(videoId, audioQualityFormat, connectionMetered)
-            else getAvancedInnerTubeStream(videoId, audioQualityFormat, connectionMetered)
+            val format = if (!useYtLoginOnlyForBrowse() && isYouTubeLoginEnabled() && isYouTubeLoggedIn())
+                getAvancedInnerTubeStream(videoId, audioQualityFormat, connectionMetered)
+            else getInnerTubeStream(videoId, audioQualityFormat, connectionMetered)
 
             println("MyDownloadHelper DataSpecProcess Playing song ${videoId} from url=${format?.url}")
 
@@ -159,27 +162,4 @@ internal suspend fun MyDownloadHelper.dataSpecProcess(
     }
 }
 
-//@OptIn(UnstableApi::class)
-//internal suspend fun MyDownloadHelper.dataSpecProcess(
-//    dataSpec: DataSpec,
-//    context: Context,
-//    connectionMetered: Boolean = false
-//): DataSpec {
-//    val songUri = dataSpec.uri.toString()
-//    val videoId = songUri.substringAfter("watch?v=")
-//
-//    if( dataSpec.isLocal ||
-//        downloadCache.isCached(videoId, dataSpec.position, if (dataSpec.length >= 0) dataSpec.length else 1)
-//    ) {
-//        println("MyDownloadHelper DataSpecProcess Playing song ${videoId} from cached or local file")
-//        return dataSpec.withUri(Uri.parse(dataSpec.uri.toString()))
-//    }
-//
-//    // specify range to avoid YouTube's throttling in download
-//    val format = getInnerTubeFormatUrl(videoId, audioQualityFormat, connectionMetered)
-//        ?.let { it.copy( url = "${it.url}&range=0-${it.contentLength ?: 10000000}") }
-//
-//    println("MyDownloadHelper DataSpecProcess Playing song $videoId from format $format from url=${format?.url}")
-//    return dataSpec.withUri(Uri.parse(format?.url))
-//
-//}
+

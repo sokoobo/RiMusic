@@ -299,7 +299,6 @@ const val enableYouTubeLoginKey = "enableYoutubeLogin"
 const val enableYouTubeSyncKey = "enableYoutubeSync"
 const val useYtLoginOnlyForBrowseKey = "useYtLoginOnlyForBrowse"
 
-
 const val autoLoadSongsInQueueKey = "autoLoadSongsInQueue"
 const val showSecondLineKey = "showSecondLine"
 const val VinylSizeKey = "VinylSize"
@@ -370,6 +369,7 @@ const val pipedApiBaseUrlKey = "pipedApiBaseUrl"
 const val pipedApiTokenKey = "pipedApiToken"
 const val discordPersonalAccessTokenKey = "DiscordPersonalAccessToken"
 const val viewTypeKey = "viewType"
+const val enableYouTubeHistorySyncKey = "enableYouTubeHistorySync"
 
 /*
 @PublishedApi
