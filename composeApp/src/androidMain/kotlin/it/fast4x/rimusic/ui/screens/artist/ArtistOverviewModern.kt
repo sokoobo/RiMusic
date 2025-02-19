@@ -211,9 +211,7 @@ fun ArtistOverviewModern(
     val menuState = LocalMenuState.current
 
     LaunchedEffect(Unit) {
-        if (browseId != null) {
-            Database.artist(browseId).collect { artist = it }
-        }
+        Database.artist(browseId).collect { artist = it }
     }
 
 
@@ -230,170 +228,169 @@ fun ArtistOverviewModern(
             )
     ) {
 
-        if (artistPage != null)
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-            ) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+        ) {
 
-                item {
-                    val modifierArt = Modifier.fillMaxWidth()
+            item {
+                val modifierArt = Modifier.fillMaxWidth()
 
-                    Box(
-                        modifier = modifierArt
-                    ) {
-                        //if (artistPage != null) {
-                        if (!isLandscape)
-                            Box {
-                                AsyncImage(
-                                    model = artistPage.artist.thumbnail?.url?.resize(
-                                        1200,
-                                        1200
-                                    ),
-                                    contentDescription = "loading...",
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .align(Alignment.Center)
-                                        .fadingEdge(
-                                            top = WindowInsets.systemBars
-                                                .asPaddingValues()
-                                                .calculateTopPadding() + Dimensions.fadeSpacingTop,
-                                            bottom = Dimensions.fadeSpacingBottom
-                                        )
-                                )
-                                if (artist?.isYoutubeArtist == true) {
-                                    Image(
-                                        painter = painterResource(R.drawable.ytmusic),
-                                        colorFilter = ColorFilter.tint(
-                                            Color.Red.copy(0.75f).compositeOver(Color.White)
-                                        ),
-                                        modifier = Modifier
-                                            .size(40.dp)
-                                            .padding(all = 5.dp)
-                                            .offset(10.dp,10.dp),
-                                        contentDescription = "Background Image",
-                                        contentScale = ContentScale.Fit
-                                    )
-                                }
-                            }
-
-                        AutoResizeText(
-                            text = artistPage.artist.info?.name ?: "",
-                            style = typography().l.semiBold,
-                            fontSizeRange = FontSizeRange(32.sp, 38.sp),
-                            fontWeight = typography().l.semiBold.fontWeight,
-                            fontFamily = typography().l.semiBold.fontFamily,
-                            color = typography().l.semiBold.color,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .align(Alignment.BottomCenter)
-                                .padding(horizontal = 30.dp)
-                                .conditional(!disableScrollingText) {
-                                    basicMarquee(
-                                        iterations = Int.MAX_VALUE
-                                    )
-                                }
-
-                        )
-
-
-                        HeaderIconButton(
-                            icon = R.drawable.share_social,
-                            color = colorPalette().text,
-                            iconSize = 24.dp,
-                            modifier = Modifier
-                                .align(Alignment.TopEnd)
-                                .padding(top = 5.dp, end = 5.dp),
-                            onClick = {
-                                val sendIntent = Intent().apply {
-                                    action = Intent.ACTION_SEND
-                                    type = "text/plain"
-                                    putExtra(
-                                        Intent.EXTRA_TEXT,
-                                        "https://music.youtube.com/channel/$browseId"
-                                    )
-                                }
-
-                                context.startActivity(
-                                    Intent.createChooser(
-                                        sendIntent,
-                                        null
-                                    )
-                                )
-                            }
-                        )
-
-                    }
-
-                    artistPage.subscribers?.let {
-                        Row(
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        ) {
-                            BasicText(
-                                text = String.format(
-                                    stringResource(R.string.artist_subscribers),
-                                    it
+                Box(
+                    modifier = modifierArt
+                ) {
+                    //if (artistPage != null) {
+                    if (!isLandscape)
+                        Box {
+                            AsyncImage(
+                                model = artistPage.artist.thumbnail?.url?.resize(
+                                    1200,
+                                    1200
                                 ),
-                                style = typography().xs.semiBold,
-                                maxLines = 1
+                                contentDescription = "loading...",
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .align(Alignment.Center)
+                                    .fadingEdge(
+                                        top = WindowInsets.systemBars
+                                            .asPaddingValues()
+                                            .calculateTopPadding() + Dimensions.fadeSpacingTop,
+                                        bottom = Dimensions.fadeSpacingBottom
+                                    )
+                            )
+                            if (artist?.isYoutubeArtist == true) {
+                                Image(
+                                    painter = painterResource(R.drawable.ytmusic),
+                                    colorFilter = ColorFilter.tint(
+                                        Color.Red.copy(0.75f).compositeOver(Color.White)
+                                    ),
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .padding(all = 5.dp)
+                                        .offset(10.dp,10.dp),
+                                    contentDescription = "Background Image",
+                                    contentScale = ContentScale.Fit
+                                )
+                            }
+                        }
+
+                    AutoResizeText(
+                        text = artistPage.artist.info?.name ?: "",
+                        style = typography().l.semiBold,
+                        fontSizeRange = FontSizeRange(32.sp, 38.sp),
+                        fontWeight = typography().l.semiBold.fontWeight,
+                        fontFamily = typography().l.semiBold.fontFamily,
+                        color = typography().l.semiBold.color,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(horizontal = 30.dp)
+                            .conditional(!disableScrollingText) {
+                                basicMarquee(
+                                    iterations = Int.MAX_VALUE
+                                )
+                            }
+
+                    )
+
+
+                    HeaderIconButton(
+                        icon = R.drawable.share_social,
+                        color = colorPalette().text,
+                        iconSize = 24.dp,
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(top = 5.dp, end = 5.dp),
+                        onClick = {
+                            val sendIntent = Intent().apply {
+                                action = Intent.ACTION_SEND
+                                type = "text/plain"
+                                putExtra(
+                                    Intent.EXTRA_TEXT,
+                                    "https://music.youtube.com/channel/$browseId"
+                                )
+                            }
+
+                            context.startActivity(
+                                Intent.createChooser(
+                                    sendIntent,
+                                    null
+                                )
                             )
                         }
-                    }
+                    )
 
+                }
 
+                artistPage.subscribers?.let {
                     Row(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
-                            .padding(top = 10.dp)
                             .fillMaxWidth()
                     ) {
-                        SecondaryTextButton(
-                            text = if (artist?.bookmarkedAt == null) stringResource(R.string.follow) else stringResource(
-                                R.string.following
+                        BasicText(
+                            text = String.format(
+                                stringResource(R.string.artist_subscribers),
+                                it
                             ),
-                            onClick = {
-                                if (isYouTubeSyncEnabled() && !isNetworkConnected(context)){
-                                    SmartMessage(context.resources.getString(R.string.no_connection), context = context, type = PopupType.Error)
-                                } else {
-                                    val bookmarkedAt =
-                                        if (artist?.bookmarkedAt == null) System.currentTimeMillis() else null
-
-                                    Database.asyncTransaction {
-                                        artist?.copy(bookmarkedAt = bookmarkedAt)
-                                            ?.let(::update)
-                                    }
-                                    if (isYouTubeSyncEnabled())
-                                        CoroutineScope(Dispatchers.IO).launch {
-                                            if (bookmarkedAt == null)
-                                                artistPage.artist.channelId.let {
-                                                    if (it != null) {
-                                                        YtMusic.unsubscribeChannel(it)
-                                                        if (artist != null && browseId != null) {
-                                                            Database.update(artist!!.copy(isYoutubeArtist = false))
-                                                        }
-                                                    }
-                                                }
-                                            else
-                                                artistPage.artist.channelId.let {
-                                                    if (it != null) {
-                                                        YtMusic.subscribeChannel(it)
-                                                        if (artist != null && browseId != null) {
-                                                            Database.update(artist!!.copy(isYoutubeArtist = true))
-                                                        }
-                                                    }
-                                                }
-                                        }
-                                }
-
-                            },
-                            alternative = artist?.bookmarkedAt == null,
-                            modifier = Modifier.padding(end = 30.dp)
+                            style = typography().xs.semiBold,
+                            maxLines = 1
                         )
+                    }
+                }
+
+
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .padding(top = 10.dp)
+                        .fillMaxWidth()
+                ) {
+                    SecondaryTextButton(
+                        text = if (artist?.bookmarkedAt == null) stringResource(R.string.follow) else stringResource(
+                            R.string.following
+                        ),
+                        onClick = {
+                            if (isYouTubeSyncEnabled() && !isNetworkConnected(context)){
+                                SmartMessage(context.resources.getString(R.string.no_connection), context = context, type = PopupType.Error)
+                            } else {
+                                val bookmarkedAt =
+                                    if (artist?.bookmarkedAt == null) System.currentTimeMillis() else null
+
+                                Database.asyncTransaction {
+                                    artist?.copy(bookmarkedAt = bookmarkedAt)
+                                        ?.let(::update)
+                                }
+                                if (isYouTubeSyncEnabled())
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        if (bookmarkedAt == null)
+                                            artistPage.artist.channelId.let {
+                                                if (it != null) {
+                                                    YtMusic.unsubscribeChannel(it)
+                                                    if (artist != null) {
+                                                        Database.update(artist!!.copy(isYoutubeArtist = false))
+                                                    }
+                                                }
+                                            }
+                                        else
+                                            artistPage.artist.channelId.let {
+                                                if (it != null) {
+                                                    YtMusic.subscribeChannel(it)
+                                                    if (artist != null) {
+                                                        Database.update(artist!!.copy(isYoutubeArtist = true))
+                                                    }
+                                                }
+                                            }
+                                    }
+                            }
+
+                        },
+                        alternative = artist?.bookmarkedAt == null,
+                        modifier = Modifier.padding(end = 30.dp)
+                    )
 
 //                    HeaderIconButton(
 //                        icon = R.drawable.downloaded,
@@ -473,380 +470,351 @@ fun ArtistOverviewModern(
 //                        )
 //                    }
 
-                        artistPage.shuffleEndpoint?.let { endpoint ->
-                            HeaderIconButton(
-                                icon = R.drawable.shuffle,
-                                enabled = true,
-                                color = colorPalette().text,
-                                onClick = {},
-                                modifier = Modifier
-                                    .padding(horizontal = 5.dp)
-                                    .combinedClickable(
-                                        onClick = {
-                                            binder?.stopRadio()
-                                            binder?.playRadio(endpoint)
-                                        },
-                                        onLongClick = {
-                                            SmartMessage(
-                                                context.resources.getString(R.string.info_shuffle),
-                                                context = context
-                                            )
-                                        }
-                                    )
-                            )
-                        }
-
-                        artistPage.radioEndpoint?.let { endpoint ->
-                            HeaderIconButton(
-                                icon = R.drawable.radio,
-                                enabled = true,
-                                color = colorPalette().text,
-                                onClick = {},
-                                modifier = Modifier
-                                    .padding(horizontal = 5.dp)
-                                    .combinedClickable(
-                                        onClick = {
-                                            binder?.stopRadio()
-                                            binder?.playRadio(endpoint)
-                                        },
-                                        onLongClick = {
-                                            SmartMessage(
-                                                context.resources.getString(R.string.info_start_radio),
-                                                context = context
-                                            )
-                                        }
-                                    )
-                            )
-                        }
-
+                    artistPage.shuffleEndpoint?.let { endpoint ->
+                        HeaderIconButton(
+                            icon = R.drawable.shuffle,
+                            enabled = true,
+                            color = colorPalette().text,
+                            onClick = {},
+                            modifier = Modifier
+                                .padding(horizontal = 5.dp)
+                                .combinedClickable(
+                                    onClick = {
+                                        binder?.stopRadio()
+                                        binder?.playRadio(endpoint)
+                                    },
+                                    onLongClick = {
+                                        SmartMessage(
+                                            context.resources.getString(R.string.info_shuffle),
+                                            context = context
+                                        )
+                                    }
+                                )
+                        )
                     }
+
+                    artistPage.radioEndpoint?.let { endpoint ->
+                        HeaderIconButton(
+                            icon = R.drawable.radio,
+                            enabled = true,
+                            color = colorPalette().text,
+                            onClick = {},
+                            modifier = Modifier
+                                .padding(horizontal = 5.dp)
+                                .combinedClickable(
+                                    onClick = {
+                                        binder?.stopRadio()
+                                        binder?.playRadio(endpoint)
+                                    },
+                                    onLongClick = {
+                                        SmartMessage(
+                                            context.resources.getString(R.string.info_start_radio),
+                                            context = context
+                                        )
+                                    }
+                                )
+                        )
+                    }
+
                 }
+            }
 
-                item {
-                    artistPage.description?.let { description ->
-                        val attributionsIndex = description.lastIndexOf("\n\nFrom Wikipedia")
+            item {
+                artistPage.description?.let { description ->
+                    val attributionsIndex = description.lastIndexOf("\n\nFrom Wikipedia")
 
+                    BasicText(
+                        text = stringResource(R.string.information),
+                        style = typography().m.semiBold.align(TextAlign.Start),
+                        modifier = sectionTextModifier
+                            .fillMaxWidth()
+                    )
+
+                    Row(
+                        modifier = Modifier
+                            .padding(vertical = 16.dp, horizontal = 8.dp)
+                    ) {
                         BasicText(
-                            text = stringResource(R.string.information),
-                            style = typography().m.semiBold.align(TextAlign.Start),
-                            modifier = sectionTextModifier
-                                .fillMaxWidth()
+                            text = "“",
+                            style = typography().xxl.semiBold,
+                            modifier = Modifier
+                                .offset(y = (-8).dp)
+                                .align(Alignment.Top)
                         )
 
-                        Row(
+                        BasicText(
+                            text = if (attributionsIndex == -1) {
+                                description
+                            } else {
+                                description.substring(0, attributionsIndex)
+                            },
+                            style = typography().xxs.secondary.align(TextAlign.Justify),
                             modifier = Modifier
-                                .padding(vertical = 16.dp, horizontal = 8.dp)
-                        ) {
-                            BasicText(
-                                text = "“",
-                                style = typography().xxl.semiBold,
-                                modifier = Modifier
-                                    .offset(y = (-8).dp)
-                                    .align(Alignment.Top)
-                            )
+                                .padding(horizontal = 8.dp)
+                                .weight(1f)
+                        )
 
-                            BasicText(
-                                text = if (attributionsIndex == -1) {
-                                    description
-                                } else {
-                                    description.substring(0, attributionsIndex)
-                                },
-                                style = typography().xxs.secondary.align(TextAlign.Justify),
-                                modifier = Modifier
-                                    .padding(horizontal = 8.dp)
-                                    .weight(1f)
-                            )
+                        BasicText(
+                            text = "„",
+                            style = typography().xxl.semiBold,
+                            modifier = Modifier
+                                .offset(y = 4.dp)
+                                .align(Alignment.Bottom)
+                        )
+                    }
 
-                            BasicText(
-                                text = "„",
-                                style = typography().xxl.semiBold,
-                                modifier = Modifier
-                                    .offset(y = 4.dp)
-                                    .align(Alignment.Bottom)
-                            )
-                        }
+                    if (attributionsIndex != -1) {
+                        BasicText(
+                            text = stringResource(R.string.from_wikipedia_cca),
+                            style = typography().xxs.color(colorPalette().textDisabled)
+                                .align(TextAlign.Start),
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
+                                .padding(bottom = 16.dp)
+                        )
+                    }
 
-                        if (attributionsIndex != -1) {
-                            BasicText(
-                                text = stringResource(R.string.from_wikipedia_cca),
-                                style = typography().xxs.color(colorPalette().textDisabled)
-                                    .align(TextAlign.Start),
-                                modifier = Modifier
-                                    .padding(horizontal = 16.dp)
-                                    .padding(bottom = 16.dp)
-                            )
-                        }
+                }
+            }
 
+            artistPage.sections.forEach() { it ->
+                //println("ArtistOverviewModern title: ${it.title} browseId: ${it.moreEndpoint?.browseId} params: ${it.moreEndpoint?.params}")
+                item {
+                    if (it.items.firstOrNull() is Innertube.SongItem) {
+                        Title(
+                            title = it.title,
+                            enableClick = it.moreEndpoint?.browseId != null,
+                            onClick = {
+                                //println("ArtistOverviewModern onClick: browseId: ${it.moreEndpoint?.browseId} params: ${it.moreEndpoint?.params}")
+                                if (it.moreEndpoint?.browseId != null) {
+                                    itemsBrowseId = it.moreEndpoint!!.browseId!!
+                                    itemsParams = it.moreEndpoint!!.params.toString()
+                                    itemsSectionName = it.title
+                                    showArtistItems = true
+                                }
+
+                            },
+                        )
+                    } else {
+                        Title2Actions(
+                            title = it.title,
+                            enableClick = it.moreEndpoint?.browseId != null,
+                            onClick1 = {
+                                //println("ArtistOverviewModern onClick: browseId: ${it.moreEndpoint?.browseId} params: ${it.moreEndpoint?.params}")
+                                if (it.moreEndpoint?.browseId != null) {
+                                    itemsBrowseId = it.moreEndpoint!!.browseId!!
+                                    itemsParams = it.moreEndpoint!!.params.toString()
+                                    itemsSectionName = it.title
+                                    showArtistItems = true
+                                }
+
+                            },
+                            icon2 = R.drawable.dice,
+                            onClick2 = {
+                                if (it.items.isEmpty()) return@Title2Actions
+                                val idItem = it.items.get(
+                                    if (it.items.size > 1)
+                                        Random(System.currentTimeMillis()).nextInt(0, it.items.size-1)
+                                    else 0
+                                ).key
+                                navController.navigate(route = "${NavRoutes.album.name}/${idItem}")
+                            }
+                        )
                     }
                 }
+                if (it.items.firstOrNull() is Innertube.SongItem) {
+                    items(it.items) { item ->
+                        when (item) {
+                            is Innertube.SongItem -> {
+                                if (parentalControlEnabled && item.explicit) return@items
 
-                artistPage.sections.forEach() { it ->
-                    //println("ArtistOverviewModern title: ${it.title} browseId: ${it.moreEndpoint?.browseId} params: ${it.moreEndpoint?.params}")
-                    item {
-                        if (it.items.firstOrNull() is Innertube.SongItem) {
-                            Title(
-                                title = it.title,
-                                enableClick = it.moreEndpoint?.browseId != null,
-                                onClick = {
-                                    //println("ArtistOverviewModern onClick: browseId: ${it.moreEndpoint?.browseId} params: ${it.moreEndpoint?.params}")
-                                    if (it.moreEndpoint?.browseId != null) {
-                                        itemsBrowseId = it.moreEndpoint!!.browseId!!
-                                        itemsParams = it.moreEndpoint!!.params.toString()
-                                        itemsSectionName = it.title
-                                        showArtistItems = true
-                                    }
-
-                                },
-                            )
-                        } else {
-                            Title2Actions(
-                                title = it.title,
-                                enableClick = it.moreEndpoint?.browseId != null,
-                                onClick1 = {
-                                    //println("ArtistOverviewModern onClick: browseId: ${it.moreEndpoint?.browseId} params: ${it.moreEndpoint?.params}")
-                                    if (it.moreEndpoint?.browseId != null) {
-                                        itemsBrowseId = it.moreEndpoint!!.browseId!!
-                                        itemsParams = it.moreEndpoint!!.params.toString()
-                                        itemsSectionName = it.title
-                                        showArtistItems = true
-                                    }
-
-                                },
-                                icon2 = R.drawable.dice,
-                                onClick2 = {
-                                    if (it.items.isEmpty()) return@Title2Actions
-                                    val idItem = it.items.get(
-                                        if (it.items.size > 1)
-                                            Random(System.currentTimeMillis()).nextInt(0, it.items.size-1)
-                                        else 0
-                                    ).key
-                                    navController.navigate(route = "${NavRoutes.album.name}/${idItem}")
-                                }
-                            )
-                        }
-                    }
-                    if (it.items.firstOrNull() is Innertube.SongItem) {
-                        items(it.items) { item ->
-                            when (item) {
-                                is Innertube.SongItem -> {
-                                    if (parentalControlEnabled && item.explicit) return@items
-
-                                    downloadState = getDownloadState(item.asMediaItem.mediaId)
-                                    val isDownloaded = isDownloadedSong(item.asMediaItem.mediaId)
-                                    println("Innertube artistmodern SongItem: ${item.info?.name}")
-                                    SwipeablePlaylistItem(
-                                        mediaItem = item.asMediaItem,
-                                        onPlayNext = {
-                                            binder?.player?.addNext(item.asMediaItem)
-                                        },
-                                        onDownload = {
-                                            binder?.cache?.removeResource(item.asMediaItem.mediaId)
-                                            CoroutineScope(Dispatchers.IO).launch {
-                                                Database.resetContentLength( item.asMediaItem.mediaId )
-                                            }
-
-                                            manageDownload(
-                                                context = context,
-                                                mediaItem = item.asMediaItem,
-                                                downloadState = isDownloaded
-                                            )
-                                        },
-                                        onEnqueue = {
-                                            binder?.player?.enqueue(item.asMediaItem)
+                                downloadState = getDownloadState(item.asMediaItem.mediaId)
+                                val isDownloaded = isDownloadedSong(item.asMediaItem.mediaId)
+                                println("Innertube artistmodern SongItem: ${item.info?.name}")
+                                SwipeablePlaylistItem(
+                                    mediaItem = item.asMediaItem,
+                                    onPlayNext = {
+                                        binder?.player?.addNext(item.asMediaItem)
+                                    },
+                                    onDownload = {
+                                        binder?.cache?.removeResource(item.asMediaItem.mediaId)
+                                        CoroutineScope(Dispatchers.IO).launch {
+                                            Database.resetContentLength( item.asMediaItem.mediaId )
                                         }
-                                    ) {
-                                        var forceRecompose by remember { mutableStateOf(false) }
-                                        SongItem(
-                                            song = item,
-                                            thumbnailSizePx = songThumbnailSizePx,
-                                            thumbnailSizeDp = songThumbnailSizeDp,
-                                            onDownloadClick = {},
-                                            downloadState = Download.STATE_STOPPED,
-                                            disableScrollingText = disableScrollingText,
-                                            isNowPlaying = false,
-                                            forceRecompose = forceRecompose,
-                                            modifier = Modifier
-                                                .combinedClickable(
-                                                    onLongClick = {
-                                                        menuState.display {
-                                                            NonQueuedMediaItemMenu(
-                                                                navController = navController,
-                                                                onDismiss = {
-                                                                    menuState.hide()
-                                                                    forceRecompose = true
-                                                                },
-                                                                onInfo = {
-                                                                    navController.navigate("${NavRoutes.videoOrSongInfo.name}/${item.key}")
-                                                                },
-                                                                mediaItem = item.asMediaItem,
-                                                                disableScrollingText = disableScrollingText
-                                                            )
-                                                        };
-                                                        hapticFeedback.performHapticFeedback(
-                                                            HapticFeedbackType.LongPress
+
+                                        manageDownload(
+                                            context = context,
+                                            mediaItem = item.asMediaItem,
+                                            downloadState = isDownloaded
+                                        )
+                                    },
+                                    onEnqueue = {
+                                        binder?.player?.enqueue(item.asMediaItem)
+                                    }
+                                ) {
+                                    var forceRecompose by remember { mutableStateOf(false) }
+                                    SongItem(
+                                        song = item,
+                                        thumbnailSizePx = songThumbnailSizePx,
+                                        thumbnailSizeDp = songThumbnailSizeDp,
+                                        onDownloadClick = {},
+                                        downloadState = Download.STATE_STOPPED,
+                                        disableScrollingText = disableScrollingText,
+                                        isNowPlaying = false,
+                                        forceRecompose = forceRecompose,
+                                        modifier = Modifier
+                                            .combinedClickable(
+                                                onLongClick = {
+                                                    menuState.display {
+                                                        NonQueuedMediaItemMenu(
+                                                            navController = navController,
+                                                            onDismiss = {
+                                                                menuState.hide()
+                                                                forceRecompose = true
+                                                            },
+                                                            onInfo = {
+                                                                navController.navigate("${NavRoutes.videoOrSongInfo.name}/${item.key}")
+                                                            },
+                                                            mediaItem = item.asMediaItem,
+                                                            disableScrollingText = disableScrollingText
                                                         )
-                                                    },
-                                                    onClick = {
-                                                        binder?.stopRadio()
-                                                        CoroutineScope(Dispatchers.IO).launch {
-                                                            artistPage.sections.firstOrNull{sec -> sec.items.firstOrNull() is Innertube.SongItem}.let {
-                                                                songsBrowseId = it?.moreEndpoint!!.browseId!!
-                                                                songsParams = it.moreEndpoint!!.params.toString()
-                                                            }
-                                                            BrowseEndpoint(
-                                                                browseId = songsBrowseId,
-                                                                params = songsParams
-                                                            ).let { endpoint ->
-                                                                val artistSongs = YtMusic.getArtistItemsPage(endpoint)
-                                                                    .completed()
-                                                                    .getOrNull()
-                                                                    ?.items
-                                                                    ?.map{ it as Innertube.SongItem }
-                                                                    ?.map { it.asMediaItem }
-                                                                val filteredArtistSongs = artistSongs?.filter {Database.getLikedAt(it.mediaId) != -1L}
-                                                                if (filteredArtistSongs != null) {
-                                                                    if (item.asMediaItem in filteredArtistSongs){
-                                                                        withContext(Dispatchers.Main) {
-                                                                            binder?.player?.forcePlayAtIndex(
-                                                                                filteredArtistSongs,
-                                                                                filteredArtistSongs.indexOf(item.asMediaItem)
-                                                                            )
-                                                                        }
-                                                                    } else {
-                                                                        SmartMessage(context.resources.getString(R.string.disliked_this_song),type = PopupType.Error, context = context)
+                                                    };
+                                                    hapticFeedback.performHapticFeedback(
+                                                        HapticFeedbackType.LongPress
+                                                    )
+                                                },
+                                                onClick = {
+                                                    binder?.stopRadio()
+                                                    CoroutineScope(Dispatchers.IO).launch {
+                                                        artistPage.sections.firstOrNull{sec -> sec.items.firstOrNull() is Innertube.SongItem}.let {
+                                                            songsBrowseId = it?.moreEndpoint!!.browseId!!
+                                                            songsParams = it.moreEndpoint!!.params.toString()
+                                                        }
+                                                        BrowseEndpoint(
+                                                            browseId = songsBrowseId,
+                                                            params = songsParams
+                                                        ).let { endpoint ->
+                                                            val artistSongs = YtMusic.getArtistItemsPage(endpoint)
+                                                                .completed()
+                                                                .getOrNull()
+                                                                ?.items
+                                                                ?.map{ it as Innertube.SongItem }
+                                                                ?.map { it.asMediaItem }
+                                                            val filteredArtistSongs = artistSongs?.filter {Database.getLikedAt(it.mediaId) != -1L}
+                                                            if (filteredArtistSongs != null) {
+                                                                if (item.asMediaItem in filteredArtistSongs){
+                                                                    withContext(Dispatchers.Main) {
+                                                                        binder?.player?.forcePlayAtIndex(
+                                                                            filteredArtistSongs,
+                                                                            filteredArtistSongs.indexOf(item.asMediaItem)
+                                                                        )
                                                                     }
+                                                                } else {
+                                                                    SmartMessage(context.resources.getString(R.string.disliked_this_song),type = PopupType.Error, context = context)
                                                                 }
                                                             }
                                                         }
                                                     }
-                                                )
+                                                }
+                                            )
+                                    )
+                                }
+                            }
+
+                            else -> {}
+                        }
+                    }
+                } else {
+                    item {
+                        LazyRow(contentPadding = endPaddingValues) {
+                            items(it.items) { item ->
+                                when (item) {
+                                    is Innertube.SongItem -> {}
+
+                                    is Innertube.AlbumItem -> {
+                                        println("Innertube artistmodern AlbumItem: ${item.info?.name}")
+                                        var albumById by remember { mutableStateOf<Album?>(null) }
+                                        LaunchedEffect(item) {
+                                            CoroutineScope(Dispatchers.IO).launch {
+                                                albumById = Database.album(item.key).firstOrNull()
+                                            }
+                                        }
+                                        AlbumItem(
+                                            album = item,
+                                            alternative = true,
+                                            thumbnailSizePx = albumThumbnailSizePx,
+                                            thumbnailSizeDp = albumThumbnailSizeDp,
+                                            disableScrollingText = disableScrollingText,
+                                            isYoutubeAlbum = albumById?.isYoutubeAlbum == true,
+                                            modifier = Modifier.clickable(onClick = {
+                                                navController.navigate("${NavRoutes.album.name}/${item.key}")
+                                            })
+
+                                        )
+                                    }
+
+                                    is Innertube.ArtistItem -> {
+                                        println("Innertube v ArtistItem: ${item.info?.name}")
+                                        var artistById by remember { mutableStateOf<Artist?>(null) }
+                                        LaunchedEffect(item) {
+                                            CoroutineScope(Dispatchers.IO).launch {
+                                                artistById = Database.artist(item.key).firstOrNull()
+                                            }
+                                        }
+                                        ArtistItem(
+                                            artist = item,
+                                            thumbnailSizePx = artistThumbnailSizePx,
+                                            thumbnailSizeDp = artistThumbnailSizeDp,
+                                            disableScrollingText = disableScrollingText,
+                                            isYoutubeArtist = artistById?.isYoutubeArtist == true,
+                                            modifier = Modifier.clickable(onClick = {
+                                                navController.navigate("${NavRoutes.artist.name}/${item.key}")
+                                            })
+                                        )
+                                    }
+
+                                    is Innertube.PlaylistItem -> {
+                                        println("Innertube v PlaylistItem: ${item.info?.name}")
+                                        var playlistById by remember { mutableStateOf<Playlist?>(null) }
+                                        LaunchedEffect(item) {
+                                            CoroutineScope(Dispatchers.IO).launch {
+                                                playlistById = Database.playlist(item.key.substringAfter("VL")).firstOrNull()
+                                            }
+                                        }
+                                        PlaylistItem(
+                                            playlist = item,
+                                            alternative = true,
+                                            thumbnailSizePx = playlistThumbnailSizePx,
+                                            thumbnailSizeDp = playlistThumbnailSizeDp,
+                                            disableScrollingText = disableScrollingText,
+                                            isYoutubePlaylist = playlistById?.isYoutubePlaylist == true,
+                                            modifier = Modifier.clickable(onClick = {
+                                                navController.navigate("${NavRoutes.playlist.name}/${item.key}")
+                                            })
+                                        )
+                                    }
+
+                                    is Innertube.VideoItem -> {
+                                        println("Innertube v VideoItem: ${item.info?.name}")
+                                        VideoItem(
+                                            video = item,
+                                            thumbnailHeightDp = playlistThumbnailSizeDp,
+                                            thumbnailWidthDp = playlistThumbnailSizeDp,
+                                            disableScrollingText = disableScrollingText
                                         )
                                     }
                                 }
 
-                                else -> {}
                             }
-                        }
-                    } else {
-                        item {
-                            LazyRow(contentPadding = endPaddingValues) {
-                                items(it.items) { item ->
-                                    when (item) {
-                                        is Innertube.SongItem -> {}
-
-                                        is Innertube.AlbumItem -> {
-                                            println("Innertube artistmodern AlbumItem: ${item.info?.name}")
-                                            var albumById by remember { mutableStateOf<Album?>(null) }
-                                            LaunchedEffect(item) {
-                                                CoroutineScope(Dispatchers.IO).launch {
-                                                    albumById = Database.album(item.key).firstOrNull()
-                                                }
-                                            }
-                                            AlbumItem(
-                                                album = item,
-                                                alternative = true,
-                                                thumbnailSizePx = albumThumbnailSizePx,
-                                                thumbnailSizeDp = albumThumbnailSizeDp,
-                                                disableScrollingText = disableScrollingText,
-                                                isYoutubeAlbum = albumById?.isYoutubeAlbum == true,
-                                                modifier = Modifier.clickable(onClick = {
-                                                    navController.navigate("${NavRoutes.album.name}/${item.key}")
-                                                })
-
-                                            )
-                                        }
-
-                                        is Innertube.ArtistItem -> {
-                                            println("Innertube v ArtistItem: ${item.info?.name}")
-                                            var artistById by remember { mutableStateOf<Artist?>(null) }
-                                            LaunchedEffect(item) {
-                                                CoroutineScope(Dispatchers.IO).launch {
-                                                    artistById = Database.artist(item.key).firstOrNull()
-                                                }
-                                            }
-                                            ArtistItem(
-                                                artist = item,
-                                                thumbnailSizePx = artistThumbnailSizePx,
-                                                thumbnailSizeDp = artistThumbnailSizeDp,
-                                                disableScrollingText = disableScrollingText,
-                                                isYoutubeArtist = artistById?.isYoutubeArtist == true,
-                                                modifier = Modifier.clickable(onClick = {
-                                                    navController.navigate("${NavRoutes.artist.name}/${item.key}")
-                                                })
-                                            )
-                                        }
-
-                                        is Innertube.PlaylistItem -> {
-                                            println("Innertube v PlaylistItem: ${item.info?.name}")
-                                            var playlistById by remember { mutableStateOf<Playlist?>(null) }
-                                            LaunchedEffect(item) {
-                                                CoroutineScope(Dispatchers.IO).launch {
-                                                    playlistById = Database.playlist(item.key.substringAfter("VL")).firstOrNull()
-                                                }
-                                            }
-                                            PlaylistItem(
-                                                playlist = item,
-                                                alternative = true,
-                                                thumbnailSizePx = playlistThumbnailSizePx,
-                                                thumbnailSizeDp = playlistThumbnailSizeDp,
-                                                disableScrollingText = disableScrollingText,
-                                                isYoutubePlaylist = playlistById?.isYoutubePlaylist == true,
-                                                modifier = Modifier.clickable(onClick = {
-                                                    navController.navigate("${NavRoutes.playlist.name}/${item.key}")
-                                                })
-                                            )
-                                        }
-
-                                        is Innertube.VideoItem -> {
-                                            println("Innertube v VideoItem: ${item.info?.name}")
-                                            VideoItem(
-                                                video = item,
-                                                thumbnailHeightDp = playlistThumbnailSizeDp,
-                                                thumbnailWidthDp = playlistThumbnailSizeDp,
-                                                disableScrollingText = disableScrollingText
-                                            )
-                                        }
-                                    }
-
-                                }
-                            }
-                        }
-                    }
-                }
-
-                item(key = "bottom") {
-                    Spacer(modifier = Modifier.height(Dimensions.bottomSpacer))
-                }
-
-            } else {
-            ShimmerHost {
-                TextPlaceholder(modifier = sectionTextModifier)
-
-                repeat(5) {
-                    SongItemPlaceholder(
-                        thumbnailSizeDp = songThumbnailSizeDp,
-                    )
-                }
-
-                BasicText(
-                    text = stringResource(R.string.info_wait_it_may_take_a_few_minutes),
-                    style = typography().xxs.medium,
-                    maxLines = 1
-                )
-
-                repeat(2) {
-                    TextPlaceholder(modifier = sectionTextModifier)
-
-                    Row {
-                        repeat(2) {
-                            AlbumItemPlaceholder(
-                                thumbnailSizeDp = albumThumbnailSizeDp,
-                                alternative = true
-                            )
                         }
                     }
                 }
             }
+
+            item(key = "bottom") {
+                Spacer(modifier = Modifier.height(Dimensions.bottomSpacer))
+            }
+
         }
 
         val showFloatingIcon by rememberPreference(showFloatingIconKey, false)
