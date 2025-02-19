@@ -935,4 +935,6 @@
     <string name="views">Views</string>
     <string name="likes">Likes</string>
     <string name="dislikes">Dislikes</string>
+    <string name="loudness_boost_level">Loudness boost level</string>
+    <string name="loudness_boost_level_info">Additional loudness level, to be used without overdoing it, may damage the device</string>
 </resources>
