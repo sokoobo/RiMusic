@@ -154,6 +154,9 @@ fun ArtistOverviewModern(
     onItemsPageClick: (ArtistSection) -> Unit,
     disableScrollingText: Boolean
 ) {
+
+    if (browseId == null || artistPage == null) return
+
     val binder = LocalPlayerServiceBinder.current
     val windowInsets = LocalPlayerAwareWindowInsets.current
 
