@@ -53,7 +53,7 @@ fun getViewType() = appContext().preferences.getEnum(viewTypeKey, ViewType.Grid)
 
 fun ytAccountName() = appContext().preferences.getString(ytAccountNameKey, "")
 fun ytAccountThumbnail() = appContext().preferences.getString(ytAccountThumbnailKey, "")
-fun useYtLoginOnlyForBrowse() = appContext().preferences.getBoolean(useYtLoginOnlyForBrowseKey, false)
+fun useYtLoginOnlyForBrowse() = appContext().preferences.getBoolean(useYtLoginOnlyForBrowseKey, true)
 fun isVideoEnabled() = appContext().preferences.getBoolean(showButtonPlayerVideoKey, false)
 fun isYouTubeHistorySyncEnabled() = appContext().preferences.getBoolean(enableYouTubeHistorySyncKey, false)
 

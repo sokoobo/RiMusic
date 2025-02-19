@@ -141,7 +141,7 @@ fun AccountsSettings() {
         //TODO MANAGE LOGIN
         /****** YOUTUBE LOGIN ******/
 
-        var useYtLoginOnlyForBrowse by rememberPreference(useYtLoginOnlyForBrowseKey, false)
+        var useYtLoginOnlyForBrowse by rememberPreference(useYtLoginOnlyForBrowseKey, true)
         var isYouTubeLoginEnabled by rememberPreference(enableYouTubeLoginKey, false)
         var isYouTubeSyncEnabled by rememberPreference(enableYouTubeSyncKey, false)
         var isYouTubeHistorySyncEnabled by rememberPreference(enableYouTubeHistorySyncKey, false)
