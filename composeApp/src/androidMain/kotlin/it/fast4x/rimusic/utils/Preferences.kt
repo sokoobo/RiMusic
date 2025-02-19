@@ -370,6 +370,7 @@ const val pipedApiTokenKey = "pipedApiToken"
 const val discordPersonalAccessTokenKey = "DiscordPersonalAccessToken"
 const val viewTypeKey = "viewType"
 const val enableYouTubeHistorySyncKey = "enableYouTubeHistorySync"
+const val volumeBoostLevelKey = "volumeBoostLevel"
 
 /*
 @PublishedApi

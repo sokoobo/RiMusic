@@ -234,6 +234,7 @@ import it.fast4x.rimusic.utils.bassboostEnabledKey
 import it.fast4x.rimusic.utils.bassboostLevelKey
 import it.fast4x.rimusic.utils.handleAudioFocusEnabledKey
 import it.fast4x.rimusic.utils.isConnectionMeteredEnabledKey
+import it.fast4x.rimusic.utils.volumeBoostLevelKey
 
 
 @ExperimentalAnimationApi
@@ -326,6 +327,7 @@ fun GeneralSettings(
 
     var bassboostEnabled by rememberPreference(bassboostEnabledKey,false)
     var bassboostLevel by rememberPreference(bassboostLevelKey, 0.5f)
+    var volumeBoostLevel by rememberPreference(volumeBoostLevelKey, 0f)
     var audioReverb by rememberPreference(audioReverbPresetKey,   PresetsReverb.NONE)
     var audioFocusEnabled by rememberPreference(handleAudioFocusEnabledKey, true)
 
@@ -864,6 +866,9 @@ fun GeneralSettings(
                 val initialValue by remember { derivedStateOf { loudnessBaseGain } }
                 var newValue by remember(initialValue) { mutableFloatStateOf(initialValue) }
 
+                val initialValueVolume by remember { derivedStateOf { volumeBoostLevel } }
+                var newValueVolume by remember(initialValue) { mutableFloatStateOf(initialValueVolume) }
+
 
                 Column(
                     modifier = Modifier.padding(start = 25.dp)
@@ -878,6 +883,18 @@ fun GeneralSettings(
                         },
                         toDisplay = { "%.1f dB".format(loudnessBaseGain).replace(",", ".") },
                         range = -20f..20f
+                    )
+
+                    SliderSettingsEntry(
+                        title = stringResource(R.string.loudness_boost_level),
+                        text = stringResource(R.string.loudness_boost_level_info),
+                        state = newValueVolume,
+                        onSlide = { newValueVolume = it },
+                        onSlideComplete = {
+                            volumeBoostLevel = newValueVolume
+                        },
+                        toDisplay = { "%.2f dB".format(volumeBoostLevel).replace(",", ".") },
+                        range = -30f..30f
                     )
                 }
             }

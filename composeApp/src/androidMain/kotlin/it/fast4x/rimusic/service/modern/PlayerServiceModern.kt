@@ -202,6 +202,7 @@ import it.fast4x.rimusic.utils.audioReverbPresetKey
 import it.fast4x.rimusic.utils.autoDownloadSongWhenLikedKey
 import it.fast4x.rimusic.utils.bassboostEnabledKey
 import it.fast4x.rimusic.utils.bassboostLevelKey
+import it.fast4x.rimusic.utils.volumeBoostLevelKey
 import timber.log.Timber
 import java.io.IOException
 import java.io.ObjectInputStream
@@ -680,7 +681,7 @@ class PlayerServiceModern : MediaLibraryService(),
                     sharedPreferences.getBoolean(key, isPersistentQueueEnabled)
             }
 
-            volumeNormalizationKey, loudnessBaseGainKey -> maybeNormalizeVolume()
+            volumeNormalizationKey, loudnessBaseGainKey, volumeBoostLevelKey -> maybeNormalizeVolume()
 
             resumePlaybackWhenDeviceConnectedKey -> maybeResumePlaybackWhenDeviceConnected()
 
@@ -982,6 +983,7 @@ class PlayerServiceModern : MediaLibraryService(),
         }
 
         val baseGain = preferences.getFloat(loudnessBaseGainKey, 5.00f)
+        val volumeBoostLevel = preferences.getFloat(volumeBoostLevelKey, 0f)
         player.currentMediaItem?.mediaId?.let { songId ->
             volumeNormalizationJob?.cancel()
             volumeNormalizationJob = coroutineScope.launch(Dispatchers.Main) {
@@ -1000,7 +1002,7 @@ class PlayerServiceModern : MediaLibraryService(),
                         } else it
                     }
                     try {
-                        loudnessEnhancer?.setTargetGain(baseGain.toMb() - loudnessMb)
+                        loudnessEnhancer?.setTargetGain(baseGain.toMb() + volumeBoostLevel.toMb() - loudnessMb)
                         loudnessEnhancer?.enabled = true
                     } catch (e: Exception) {
                         Timber.e("PlayerService maybeNormalizeVolume apply targetGain ${e.stackTraceToString()}")
