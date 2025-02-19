@@ -6,6 +6,8 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.os.LocaleListCompat
+import it.fast4x.rimusic.enums.Languages
 import it.fast4x.rimusic.enums.ViewType
 import it.fast4x.rimusic.ui.styling.LocalAppearance
 import it.fast4x.rimusic.utils.autosyncKey
@@ -16,6 +18,7 @@ import it.fast4x.rimusic.utils.getEnum
 import it.fast4x.rimusic.utils.handleAudioFocusEnabledKey
 import it.fast4x.rimusic.utils.isConnectionMetered
 import it.fast4x.rimusic.utils.isConnectionMeteredEnabledKey
+import it.fast4x.rimusic.utils.languageAppKey
 import it.fast4x.rimusic.utils.logDebugEnabledKey
 import it.fast4x.rimusic.utils.preferences
 import it.fast4x.rimusic.utils.rememberPreference

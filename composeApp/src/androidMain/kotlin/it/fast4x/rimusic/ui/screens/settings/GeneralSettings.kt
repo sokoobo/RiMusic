@@ -232,6 +232,7 @@ import it.fast4x.rimusic.utils.autoDownloadSongWhenAlbumBookmarkedKey
 import it.fast4x.rimusic.utils.autoDownloadSongWhenLikedKey
 import it.fast4x.rimusic.utils.bassboostEnabledKey
 import it.fast4x.rimusic.utils.bassboostLevelKey
+import it.fast4x.rimusic.utils.getSystemlanguage
 import it.fast4x.rimusic.utils.handleAudioFocusEnabledKey
 import it.fast4x.rimusic.utils.isConnectionMeteredEnabledKey
 import it.fast4x.rimusic.utils.volumeBoostLevelKey
@@ -245,8 +246,8 @@ fun GeneralSettings(
 ) {
     val binder = LocalPlayerServiceBinder.current
 
-    var languageApp  by rememberPreference(languageAppKey, Languages.English)
     val systemLocale = LocaleListCompat.getDefault().get(0).toString()
+    var languageApp  by rememberPreference(languageAppKey, getSystemlanguage())
 
     var exoPlayerMinTimeForEvent by rememberPreference(
         exoPlayerMinTimeForEventKey,

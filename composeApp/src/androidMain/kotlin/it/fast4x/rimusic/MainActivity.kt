@@ -188,6 +188,7 @@ import it.fast4x.rimusic.utils.encryptedPreferences
 import it.fast4x.rimusic.utils.fontTypeKey
 import it.fast4x.rimusic.utils.forcePlay
 import it.fast4x.rimusic.utils.getEnum
+import it.fast4x.rimusic.utils.getSystemlanguage
 import it.fast4x.rimusic.utils.intent
 import it.fast4x.rimusic.utils.invokeOnReady
 import it.fast4x.rimusic.utils.isAtLeastAndroid6
@@ -520,13 +521,17 @@ class MainActivity :
             var customColor by rememberPreference(customColorKey, Color.Green.hashCode())
             val lightTheme = colorPaletteMode == ColorPaletteMode.Light || (colorPaletteMode == ColorPaletteMode.System && (!isSystemInDarkTheme()))
 
-
+            val locale = Locale.getDefault()
+            val languageTag = locale.toLanguageTag().replace("-Hant", "")
+            val languageApp = appContext().preferences.getEnum(languageAppKey, getSystemlanguage())
             LocalePreferences.preference =
                 LocalePreferenceItem(
-                    hl = Locale.getDefault().toLanguageTag(),
-                    //Locale.getDefault().country
-                    gl = ""
-                    //gl = "US" // US IMPORTANT
+                    hl = languageApp.code.takeIf { it != Languages.System.code }
+                        ?: locale.language.takeIf { it != Languages.System.code }
+                        ?: languageTag.takeIf { it != Languages.System.code }
+                        ?: "en",
+                    gl = locale.country
+                        ?: "US"
                 )
                 //TODO Manage login
             //if (preferences.getBoolean(enableYouTubeLoginKey, false)) {

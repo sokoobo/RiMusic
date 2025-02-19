@@ -7,7 +7,15 @@ import androidx.compose.ui.res.stringResource
 import it.fast4x.rimusic.R
 import it.fast4x.rimusic.enums.Languages
 import me.bush.translator.Language
+import java.util.Locale
 
+fun getSystemlanguage(): Languages {
+    val locale = Locale.getDefault()
+    val languageTag = locale.toLanguageTag().replace("-Hant", "")
+    return Languages.languageFromcode (languageTag.take(2))
+        ?: Languages.languageFromcode (languageTag)
+        ?: Languages.English
+}
 
 @Composable
 fun languageDestination (
