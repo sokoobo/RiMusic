@@ -21,4 +21,6 @@ class TimeoutException : PlaybackException(null, null, ERROR_CODE_IO_NETWORK_CON
 class UnknownException : PlaybackException(null, null, ERROR_CODE_REMOTE_ERROR)
 @UnstableApi
 class FakeException : PlaybackException(null, null, ERROR_CODE_IO_NETWORK_CONNECTION_FAILED)
+@UnstableApi
+class AccessDeniedToPlayableFormatException : PlaybackException(null, null, ERROR_CODE_REMOTE_ERROR)
 
