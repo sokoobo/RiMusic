@@ -2891,8 +2891,7 @@ fun PlaybackParamsDialog(
         ) {
             IconButton(
                 onClick = {
-                    playbackDeviceVolume = getDeviceVolume(context)
-                    setDeviceVolume(context, playbackDeviceVolume)
+                    bassBoost = defaultBassboost
                 },
                 icon = R.drawable.musical_notes,
                 color = colorPalette().favoritesIcon,
