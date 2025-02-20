@@ -82,7 +82,9 @@ import it.fast4x.rimusic.utils.playerPositionKey
 import it.fast4x.rimusic.utils.rememberPreference
 import it.fast4x.rimusic.utils.thumbnailRoundnessKey
 import it.fast4x.rimusic.utils.transitionEffectKey
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -130,7 +132,7 @@ fun AlbumScreen(
             .album(browseId).collect { currentAlbum ->
                 println("AlbumScreen collect ${currentAlbum?.title}")
                 album = currentAlbum
-                runBlocking(Dispatchers.IO) {
+                CoroutineScope(Dispatchers.IO).launch {
                     if (albumPage == null)
                         YtMusic.getAlbum(browseId)
                             .onSuccess { currentAlbumPage ->

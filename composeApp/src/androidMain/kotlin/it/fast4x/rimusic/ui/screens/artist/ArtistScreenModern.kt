@@ -163,7 +163,7 @@ fun ArtistScreenModern(
                 artist = currentArtist
 
                 if (artistPage == null && (currentArtist?.timestamp == null || mustFetch)) {
-                    runBlocking(Dispatchers.IO) {
+                    CoroutineScope(Dispatchers.IO).launch {
                         YtMusic.getArtistPage(browseId = browseId)
                             .onSuccess { currentArtistPage ->
                                 artistPage = currentArtistPage

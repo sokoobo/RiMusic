@@ -179,6 +179,8 @@ fun AlbumDetails(
     onSettingsClick: () -> Unit
 ) {
 
+    if (albumPage == null) return
+
     val binder = LocalPlayerServiceBinder.current
     val menuState = LocalMenuState.current
     val context = LocalContext.current
