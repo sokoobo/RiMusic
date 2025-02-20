@@ -571,9 +571,9 @@ class PlayerServiceModern : MediaLibraryService(),
 
     override fun onRepeatModeChanged(repeatMode: Int) {
         updateDefaultNotification()
-        preferences.edit {
-            putEnum(queueLoopTypeKey, QueueLoopType.from(repeatMode))
-        }
+//        preferences.edit {
+//            putEnum(queueLoopTypeKey, QueueLoopType.from(repeatMode))
+//        }
     }
 
 
@@ -801,13 +801,15 @@ class PlayerServiceModern : MediaLibraryService(),
         }
 
         if (error.errorCode in PlayerErrorsWithCachePurge) {
+            Timber.e("PlayerServiceModern onPlayerError error with cache purge errorCodeName ${error.errorCodeName}")
             println("PlayerServiceModern onPlayerError error with cache purge errorCodeName ${error.errorCodeName}")
-            currentMediaItem.value?.mediaId?.let { 
-                cache.removeResource(it) //try to remove from cache if exists
-                downloadCache.removeResource(it) //try to remove from download cache if exists
-            }
+//            currentMediaItem.value?.mediaId?.let {
+//                cache.removeResource(it) //try to remove from cache if exists
+//                downloadCache.removeResource(it) //try to remove from download cache if exists
+//            }
             player.prepare()
-            player.seekTo(0L) // seek to start force re cache
+            //player.seekTo(0L) // seek to start force re cache
+            player.seekTo(-500)
             player.play()
             return
         }
@@ -1918,7 +1920,13 @@ class PlayerServiceModern : MediaLibraryService(),
         const val SleepTimerNotificationChannelId = "sleep_timer_channel_id"
 
         val PlayerErrorsToReload = arrayOf(416, 4003)
-        val PlayerErrorsWithCachePurge = arrayOf(2000,2003,2004,2005,2008)
+        val PlayerErrorsWithCachePurge = arrayOf(
+            2000, // ERROR_CODE_IO_UNSPECIFIED
+            2003, // ERROR_CODE_IO_INVALID_HTTP_CONTENT_TYPE
+            2004, // ERROR_CODE_IO_BAD_HTTP_STATUS
+            2005, // ERROR_CODE_IO_FILE_NOT_FOUND
+            2008 // ERROR_CODE_IO_READ_POSITION_OUT_OF_RANGE
+        )
 
         const val ROOT = "root"
         const val SONG = "song"
