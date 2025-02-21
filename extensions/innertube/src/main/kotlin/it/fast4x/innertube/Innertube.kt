@@ -76,7 +76,13 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonPrimitive
 import nl.adaptivity.xmlutil.XmlDeclMode
 import nl.adaptivity.xmlutil.serialization.XML
+import okhttp3.Cache
+import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.OkHttpClient
+import okhttp3.dnsoverhttps.DnsOverHttps
 import okhttp3.logging.HttpLoggingInterceptor
+import java.io.File
+import java.net.InetAddress
 import java.net.Proxy
 import java.util.Locale
 import kotlin.random.Random
@@ -121,6 +127,22 @@ object Innertube {
                     level = HttpLoggingInterceptor.Level.BODY
                 }
             )
+//            val appCache = Cache(File("cacheDir", "okhttpcache"), 10 * 1024 * 1024)
+//            val bootstrapClient = OkHttpClient.Builder().cache(appCache).build()
+//            val dns = DnsOverHttps.Builder().client(bootstrapClient)
+//                // Google Dns
+////                .url("https://dns.google/dns-query".toHttpUrl())
+////                .bootstrapDnsHosts(InetAddress.getByName("8.8.4.4"), InetAddress.getByName("8.8.8.8"))
+//                // Cloudflare dns
+//                //.url("https://cloudflare-dns.com/dns-query".toHttpUrl())
+//                //.bootstrapDnsHosts(InetAddress.getByName("1.0.0.1"), InetAddress.getByName("1.1.1.1"))
+//                // OpenDns dns
+//                .url("https://doh.opendns.com/dns-query".toHttpUrl())
+//                .bootstrapDnsHosts(InetAddress.getByName("208.67.222.222"), InetAddress.getByName("208.67.220.220"))
+//                .build()
+//
+//            val clientWithDns = bootstrapClient.newBuilder().dns(dns).build()
+//            preconfigured = clientWithDns
         }
 
         ProxyPreferences.preference?.let {
@@ -138,6 +160,8 @@ object Innertube {
             }
         }
     }
+
+
 
     var proxy: Proxy? = null
         set(value) {
@@ -691,7 +715,7 @@ object Innertube {
         setLogin(setLogin = true)
         setBody(
             SubscribeBody(
-                context = Context.DefaultWeb,
+                context = DefaultWeb,
                 channelIds = listOf(channelId)
             )
         )
@@ -703,7 +727,7 @@ object Innertube {
         setLogin(setLogin = true)
         setBody(
             SubscribeBody(
-                context = Context.DefaultWeb,
+                context = DefaultWeb,
                 channelIds = listOf(channelId)
             )
         )
@@ -716,7 +740,7 @@ object Innertube {
         setLogin(setLogin = true)
         setBody(
             LikeBody(
-                context = Context.DefaultWeb,
+                context = DefaultWeb,
                 target = LikeBody.Target.PlaylistTarget(playlistId = playlistId)
             )
         )
@@ -728,7 +752,7 @@ object Innertube {
         setLogin(setLogin = true)
         setBody(
             LikeBody(
-                context = Context.DefaultWeb,
+                context = DefaultWeb,
                 target = LikeBody.Target.PlaylistTarget(playlistId = playlistId)
             )
         )
@@ -740,7 +764,7 @@ object Innertube {
         setLogin(setLogin = true)
         setBody(
             LikeBody(
-                context = Context.DefaultWeb,
+                context = DefaultWeb,
                 target = LikeBody.Target.VideoTarget(videoId = videoId)
             )
         )
@@ -752,7 +776,7 @@ object Innertube {
         setLogin(setLogin = true)
         setBody(
             LikeBody(
-                context = Context.DefaultWeb,
+                context = DefaultWeb,
                 target = LikeBody.Target.VideoTarget(videoId = videoId)
             )
         )
@@ -761,7 +785,7 @@ object Innertube {
 
 
     suspend fun browse(
-        ytClient: Client = Context.DefaultWeb.client,
+        ytClient: Client = DefaultWeb.client,
         browseId: String? = null,
         params: String? = null,
         continuation: String? = null,
@@ -788,7 +812,7 @@ object Innertube {
         continuation: String? = null,
         setLogin: Boolean = true,
     ) = runCatching {
-        browse(Context.DefaultWeb.client, browseId, params, continuation, setLogin).body<BrowseResponse>()
+        browse(DefaultWeb.client, browseId, params, continuation, setLogin).body<BrowseResponse>()
     }
 
     suspend fun next(

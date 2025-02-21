@@ -103,6 +103,8 @@ kotlin {
 
             implementation(libs.translator)
 
+            implementation(libs.okhttp.dnsoverhttps)
+
         }
     }
 }
