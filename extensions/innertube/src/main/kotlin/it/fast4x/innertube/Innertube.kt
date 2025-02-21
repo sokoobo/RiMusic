@@ -127,22 +127,22 @@ object Innertube {
                     level = HttpLoggingInterceptor.Level.BODY
                 }
             )
-//            val appCache = Cache(File("cacheDir", "okhttpcache"), 10 * 1024 * 1024)
-//            val bootstrapClient = OkHttpClient.Builder().cache(appCache).build()
-//            val dns = DnsOverHttps.Builder().client(bootstrapClient)
-//                // Google Dns
-////                .url("https://dns.google/dns-query".toHttpUrl())
-////                .bootstrapDnsHosts(InetAddress.getByName("8.8.4.4"), InetAddress.getByName("8.8.8.8"))
-//                // Cloudflare dns
-//                //.url("https://cloudflare-dns.com/dns-query".toHttpUrl())
-//                //.bootstrapDnsHosts(InetAddress.getByName("1.0.0.1"), InetAddress.getByName("1.1.1.1"))
-//                // OpenDns dns
+            val appCache = Cache(File("cacheDir", "okhttpcache"), 10 * 1024 * 1024)
+            val bootstrapClient = OkHttpClient.Builder().cache(appCache).build()
+            val dns = DnsOverHttps.Builder().client(bootstrapClient)
+                // Google Dns
+                .url("https://dns.google/dns-query".toHttpUrl())
+                .bootstrapDnsHosts(InetAddress.getByName("8.8.8.8"), InetAddress.getByName("8.8.4.4"))
+                // Cloudflare dns
+                //.url("https://cloudflare-dns.com/dns-query".toHttpUrl())
+                //.bootstrapDnsHosts(InetAddress.getByName("1.0.0.1"), InetAddress.getByName("1.1.1.1"))
+                // OpenDns dns
 //                .url("https://doh.opendns.com/dns-query".toHttpUrl())
 //                .bootstrapDnsHosts(InetAddress.getByName("208.67.222.222"), InetAddress.getByName("208.67.220.220"))
-//                .build()
-//
-//            val clientWithDns = bootstrapClient.newBuilder().dns(dns).build()
-//            preconfigured = clientWithDns
+                .build()
+
+            val clientWithDns = bootstrapClient.newBuilder().dns(dns).build()
+            preconfigured = clientWithDns
         }
 
         ProxyPreferences.preference?.let {
