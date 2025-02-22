@@ -118,10 +118,10 @@ fun OtherSettings() {
             isIgnoringBatteryOptimizations = context.isIgnoringBatteryOptimizations
         }
 
-    var isProxyEnabled by rememberPreference(isProxyEnabledKey, false)
-    var proxyHost by rememberPreference(proxyHostnameKey, "")
-    var proxyPort by rememberPreference(proxyPortKey, 1080)
-    var proxyMode by rememberPreference(proxyModeKey, Proxy.Type.HTTP)
+//    var isProxyEnabled by rememberPreference(isProxyEnabledKey, false)
+//    var proxyHost by rememberPreference(proxyHostnameKey, "")
+//    var proxyPort by rememberPreference(proxyPortKey, 1080)
+//    var proxyMode by rememberPreference(proxyModeKey, Proxy.Type.HTTP)
 
     var defaultFolder by rememberPreference(defaultFolderKey, "/")
 
@@ -355,39 +355,39 @@ fun OtherSettings() {
         )
          */
 
-        SettingsGroupSpacer()
-
-        SettingsGroupSpacer()
-        SettingsEntryGroupText(title = stringResource(R.string.proxy))
-        SettingsDescription(text = stringResource(R.string.restarting_rimusic_is_required))
-        SwitchSettingEntry(
-            title = stringResource(R.string.enable_proxy),
-            text = "",
-            isChecked = isProxyEnabled,
-            onCheckedChange = { isProxyEnabled = it }
-        )
-
-        AnimatedVisibility(visible = isProxyEnabled) {
-            Column {
-                EnumValueSelectorSettingsEntry(title = stringResource(R.string.proxy_mode),
-                    selectedValue = proxyMode,
-                    onValueSelected = { proxyMode = it },
-                    valueText = { it.name }
-                )
-                TextDialogSettingEntry(
-                    title = stringResource(R.string.proxy_host),
-                    text = proxyHost, //stringResource(R.string.set_proxy_hostname),
-                    currentText = proxyHost,
-                    onTextSave = { proxyHost = it },
-                    validationType = ValidationType.Ip
-                )
-                TextDialogSettingEntry(
-                    title = stringResource(R.string.proxy_port),
-                    text = proxyPort.toString(), //stringResource(R.string.set_proxy_port),
-                    currentText = proxyPort.toString(),
-                    onTextSave = { proxyPort = it.toIntOrNull() ?: 1080 })
-            }
-        }
+//        SettingsGroupSpacer()
+//
+//        SettingsGroupSpacer()
+//        SettingsEntryGroupText(title = stringResource(R.string.proxy))
+//        SettingsDescription(text = stringResource(R.string.restarting_rimusic_is_required))
+//        SwitchSettingEntry(
+//            title = stringResource(R.string.enable_proxy),
+//            text = "",
+//            isChecked = isProxyEnabled,
+//            onCheckedChange = { isProxyEnabled = it }
+//        )
+//
+//        AnimatedVisibility(visible = isProxyEnabled) {
+//            Column {
+//                EnumValueSelectorSettingsEntry(title = stringResource(R.string.proxy_mode),
+//                    selectedValue = proxyMode,
+//                    onValueSelected = { proxyMode = it },
+//                    valueText = { it.name }
+//                )
+//                TextDialogSettingEntry(
+//                    title = stringResource(R.string.proxy_host),
+//                    text = proxyHost, //stringResource(R.string.set_proxy_hostname),
+//                    currentText = proxyHost,
+//                    onTextSave = { proxyHost = it },
+//                    validationType = ValidationType.Ip
+//                )
+//                TextDialogSettingEntry(
+//                    title = stringResource(R.string.proxy_port),
+//                    text = proxyPort.toString(), //stringResource(R.string.set_proxy_port),
+//                    currentText = proxyPort.toString(),
+//                    onTextSave = { proxyPort = it.toIntOrNull() ?: 1080 })
+//            }
+//        }
 
         SettingsGroupSpacer()
 

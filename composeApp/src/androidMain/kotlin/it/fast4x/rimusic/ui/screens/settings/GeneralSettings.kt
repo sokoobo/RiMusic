@@ -225,6 +225,7 @@ import it.fast4x.rimusic.utils.volumeNormalizationKey
 import it.fast4x.rimusic.colorPalette
 import it.fast4x.rimusic.enums.DnsOverHttpsType
 import it.fast4x.rimusic.enums.PresetsReverb
+import it.fast4x.rimusic.enums.ValidationType
 import it.fast4x.rimusic.ui.components.themed.Search
 import it.fast4x.rimusic.typography
 import it.fast4x.rimusic.utils.audioReverbPresetKey
@@ -237,8 +238,13 @@ import it.fast4x.rimusic.utils.dnsOverHttpsTypeKey
 import it.fast4x.rimusic.utils.getSystemlanguage
 import it.fast4x.rimusic.utils.handleAudioFocusEnabledKey
 import it.fast4x.rimusic.utils.isConnectionMeteredEnabledKey
+import it.fast4x.rimusic.utils.isProxyEnabledKey
+import it.fast4x.rimusic.utils.proxyHostnameKey
+import it.fast4x.rimusic.utils.proxyModeKey
+import it.fast4x.rimusic.utils.proxyPortKey
 import it.fast4x.rimusic.utils.restartActivityKey
 import it.fast4x.rimusic.utils.volumeBoostLevelKey
+import java.net.Proxy
 
 
 @ExperimentalAnimationApi
@@ -346,6 +352,10 @@ fun GeneralSettings(
     var autoDownloadSongWhenLiked by rememberPreference(autoDownloadSongWhenLikedKey, false)
     var autoDownloadSongWhenAlbumBookmarked by rememberPreference(autoDownloadSongWhenAlbumBookmarkedKey, false)
 
+    var isProxyEnabled by rememberPreference(isProxyEnabledKey, false)
+    var proxyHost by rememberPreference(proxyHostnameKey, "")
+    var proxyPort by rememberPreference(proxyPortKey, 1080)
+    var proxyMode by rememberPreference(proxyModeKey, Proxy.Type.HTTP)
 
     Column(
         modifier = Modifier
@@ -450,19 +460,52 @@ fun GeneralSettings(
                 }
             )
 
-//        if (search.input.isBlank() || "Use alternative dns".contains(search.input,true)) {
-//            EnumValueSelectorSettingsEntry(
-//                title = "Use dns over https",
-//                selectedValue = useDnsOverHttpsType,
-//                onValueSelected = {
-//                    useDnsOverHttpsType = it
-//                    restartActivity = true
-//                },
-//                valueText = { it.textName }
-//            )
-//            SettingsDescription(text = "If you have loading problems, you can use an alternative dns server")
-//            RestartActivity(restartActivity, onRestart = { restartActivity = false })
-//        }
+        if (search.input.isBlank() || "Use alternative dns".contains(search.input,true)) {
+            EnumValueSelectorSettingsEntry(
+                title = "Use dns over https",
+                selectedValue = useDnsOverHttpsType,
+                onValueSelected = {
+                    useDnsOverHttpsType = it
+                    restartActivity = true
+                },
+                valueText = { it.textName }
+            )
+            SettingsDescription(text = "If you have loading problems, you can use an alternative dns server")
+            RestartActivity(restartActivity, onRestart = { restartActivity = false })
+        }
+
+        //SettingsEntryGroupText(title = stringResource(R.string.proxy))
+        //SettingsGroupSpacer()
+
+        SwitchSettingEntry(
+            title = stringResource(R.string.enable_proxy),
+            text = "",
+            isChecked = isProxyEnabled,
+            onCheckedChange = { isProxyEnabled = it }
+        )
+        SettingsDescription(text = stringResource(R.string.restarting_rimusic_is_required))
+
+        AnimatedVisibility(visible = isProxyEnabled) {
+            Column {
+                EnumValueSelectorSettingsEntry(title = stringResource(R.string.proxy_mode),
+                    selectedValue = proxyMode,
+                    onValueSelected = { proxyMode = it },
+                    valueText = { it.name }
+                )
+                TextDialogSettingEntry(
+                    title = stringResource(R.string.proxy_host),
+                    text = proxyHost,
+                    currentText = proxyHost,
+                    onTextSave = { proxyHost = it },
+                    validationType = ValidationType.Ip
+                )
+                TextDialogSettingEntry(
+                    title = stringResource(R.string.proxy_port),
+                    text = proxyPort.toString(),
+                    currentText = proxyPort.toString(),
+                    onTextSave = { proxyPort = it.toIntOrNull() ?: 1080 })
+            }
+        }
 
         SettingsGroupSpacer()
         SettingsEntryGroupText(stringResource(R.string.player))

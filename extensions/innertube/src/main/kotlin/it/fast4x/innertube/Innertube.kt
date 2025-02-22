@@ -138,7 +138,7 @@ object Innertube {
                     .bootstrapDnsHosts(InetAddress.getByName("8.8.8.8"), InetAddress.getByName("8.8.4.4")).build()
                 val cloudflareDns = DnsOverHttps.Builder().client(bootstrapClient)
                     .url("https://cloudflare-dns.com/dns-query".toHttpUrl())
-                    .bootstrapDnsHosts(InetAddress.getByName("1.0.0.1"), InetAddress.getByName("1.1.1.1")).build()
+                    .bootstrapDnsHosts(InetAddress.getByName("1.1.1.1"), InetAddress.getByName("1.0.0.1")).build()
                 val openDns = DnsOverHttps.Builder().client(bootstrapClient)
                     .url("https://doh.opendns.com/dns-query".toHttpUrl())
                     .bootstrapDnsHosts(InetAddress.getByName("208.67.222.222"), InetAddress.getByName("208.67.220.220")).build()
