@@ -140,7 +140,7 @@ WARNING, the custom version is **not** an official release, download only if inv
 ### 🔤 Translations
 - Go to [Crowdin](https://crowdin.com/project/rimusic/invite?h=73f0e6b64be1c64a8aebd467d286cf851925330), help with the translations.
 
-### 🤝 **Developer / Designer that contribute:**
+### 🤝 **Developer /../ Designer that contribute:**
 
 <table>
 <tr>
