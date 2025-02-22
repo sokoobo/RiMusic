@@ -770,9 +770,9 @@
     <string name="actionbar">Панель действий</string>
     <string name="center">По центру</string>
     <string name="lyricsalignment">Выравнивание текста песен</string>
-    <string name="lang_azerbaijani">Азербайджанский</string>
+    <string name="lang_azerbaijani">Азербайджанский (Azərbaycan dili)</string>
     <string name="translators">Переводчики</string>
-    <string name="lang_tamil">Тамильский</string>
+    <string name="lang_tamil">Тамильский (தமிழ்)</string>
     <string name="player_auto_load_songs_in_queue">Автоматическая загрузка песен в очередь</string>
     <string name="player_auto_load_songs_in_queue_description">Добавляет треки, когда очередь подходит к концу</string>
     <string name="show_vinyl_thumbnail_animation"> Показать анимацию винила в виде миниатюры</string>
@@ -910,9 +910,9 @@
     <string name="yt_playlist_limited">YouTube плейлисты ограничены 5000 песнями</string>
     <string name="songs_added_in_yt">песни добавлены в плейлист YouTube. Повторите процесс, если есть недостающие песни</string>
     <string name="songs_adding_in_yt">песни будут добавлены в плейлист YTM</string>
-    <string name="settings_audio_bass_boost">Усиление звука</string>
-    <string name="settings_bass_boost_level">Уровень усиления</string>
-    <string name="settings_audio_reverb">Восстановить</string>
+    <string name="settings_audio_bass_boost">Bass boost аудио</string>
+    <string name="settings_bass_boost_level">Уровень bass boost</string>
+    <string name="settings_audio_reverb">Реверберация аудио</string>
     <string name="settings_audio_reverb_info_apply_a_depth_effect_to_the_audio">Применить эффект глубины к аудио</string>
     <string name="settings_audio_focus">Аудиофокус</string>
     <string name="settings_audio_focus_info">Позволяет автоматически приостанавливать и возобновлять воспроизведение после звонка</string>
