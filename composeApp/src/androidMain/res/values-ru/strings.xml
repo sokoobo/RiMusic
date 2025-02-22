@@ -927,4 +927,14 @@
     <string name="adding_yt_to_pl_failed">Произошла ошибка для следующих 50 песен. Добавление песен в плейлист по одной. Добавляйте песни в плейлист по одной</string>
     <string name="songs_add_yt_success">Добавлена песня в плейлист YouTube</string>
     <string name="songs_add_yt_failed">Не удалось добавить песню в плейлист YouTube</string>
+    <string name="viewType">Change view type</string>
+    <string name="copy_translated_lyrics">Copy translated lyrics</string>
+    <string name="description">Description</string>
+    <string name="numbers">Numbers</string>
+    <string name="subscribers">Subscribers</string>
+    <string name="views">Views</string>
+    <string name="likes">Likes</string>
+    <string name="dislikes">Dislikes</string>
+    <string name="loudness_boost_level">Loudness boost level</string>
+    <string name="loudness_boost_level_info">Additional loudness level, to be used without overdoing it, may damage the device</string>
 </resources>
