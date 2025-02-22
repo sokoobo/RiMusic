@@ -11,11 +11,18 @@
 </div>
 
 
-
 ## 📲 BE CAREFUL!
 ## RiMusic is not present on Google Play Store, do not search and download RiMusic on Google Play Store because they are fake clones to steal your money and personal information.
 
-## Dear friends, unfortunately one user has betrayed the spirit of collaboration of this project. He stole the channel/server on Discord and is using it to steal money and information. Therefore RiMusic no longer has a server on Discord, I recommend you do not access the Discord server, it is a scam.
+<div align="left">
+    <td align="center" style="word-wrap: break-word; width: 90.0; height: 90.0">
+        <a href=https://github.com/fast4x>
+            <img src=https://avatars.githubusercontent.com/u/1484476?v=4 width="60;"  style="border-radius:50%;align-items:center;justify-content:center;overflow:hidden;padding-top:10px" alt=Rino Russo/>
+            <br />
+        </a>
+    </td>
+</div>
+Dear friends, unfortunately one user has betrayed the spirit of collaboration of this project. He stole the channel/server on Discord and is using it to steal money and information. Therefore RiMusic no longer has a server on Discord, I recommend you do not access the Discord server, it is a scam.
 
 Temporarily Rimusic made it's code private, since yesterday, he made this decision due to a fake clone on Google Play. However, Rino will probably take a break, so no new updates are planned for now. He will let you know what he decides later.
 
