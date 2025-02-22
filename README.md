@@ -22,13 +22,19 @@
         </a>
     </td>
 </div>
-Dear friends, unfortunately one user has betrayed the spirit of collaboration of this project. He stole the channel/server on Discord and is using it to steal money and information. Therefore RiMusic no longer has a server on Discord, I recommend you do not access the Discord server, it is a scam.
+Dear friends,
 
-Temporarily Rimusic made it's code private, since yesterday, he made this decision due to a fake clone on Google Play. However, Rino will probably take a break, so no new updates are planned for now. He will let you know what he decides later.
+Unfortunately, a user has betrayed the spirit of collaboration in this project. They have stolen the RiMusic Discord server and are using it to spread false information and even ask for donations—without contributing anything.
 
-Unfortunately, some people took this opportunity to steal the Discord and spread false information
+- 🔴 RiMusic NO LONGER has a Discord server.
+- 🚫 Do NOT access it—it’s a scam!
+- 💰 You do NOT need to donate anything to use RiMusic.
 
-i hope everyone understand 💔
+To protect the project, RiMusic’s code has been temporarily made private since yesterday, following the discovery of a fake clone on Google Play. Rino has decided to take a break, so no new updates are planned for now. He will update you on any future decisions.
+
+Unfortunately, some people have taken advantage of this situation to steal the Discord and spread false information.
+
+Thank you for your understanding and support. Stay safe!
 
 ## ✨ Features
 - **Multilingual:** English, Italian, German, Russian, French, Spanish, Czech, Turkish, Romanian and more. Contributions for other languages are welcome
