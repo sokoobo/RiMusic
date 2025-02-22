@@ -123,7 +123,7 @@
     <string name="delete_playback_events">%1$s പ്ലേബാക്ക് ഇവന്റുകൾ നീക്കം ചെയ്യുക</string>
     <string name="existing_data_will_be_overwritten">Existing data will be overwritten. %1$s will automatically close itself after restoring the database.</string>
     <string name="folder_cache">ഫോൾഡർ കാഷെ</string>
-    <string name="cache_reset_by_clicking_button">Attention by clicking on the button below, the cache location folder will be reset to the default</string>
+    <string name="cache_reset_by_clicking_button"></string>
     <string name="cache_location_folder">സ്ഥലം ഫോൾഡർ</string>
     <string name="custom_cache_from_android_10_may_not_be_available">ആൻഡ്രോയിഡ് 10 മുതൽ ഈ സവിശേഷത ലഭ്യമല്ലാവും</string>
     <string name="reset_cache_location_folder">കാഷെ ലൊക്കേഷൻ ഫോൾഡർ പുന: ക്രമീകരിക്കുക</string>
@@ -925,4 +925,14 @@
     <string name="adding_yt_to_pl_failed">Error occurred for the next 50 songs. Adding songs to the playlist one by one</string>
     <string name="songs_add_yt_success">Added the song in the YouTube Playlist</string>
     <string name="songs_add_yt_failed">Failed to add the song in the YouTube Playlist</string>
+    <string name="viewType">Change view type</string>
+    <string name="copy_translated_lyrics">Copy translated lyrics</string>
+    <string name="description">Description</string>
+    <string name="numbers">Numbers</string>
+    <string name="subscribers">Subscribers</string>
+    <string name="views">Views</string>
+    <string name="likes">Likes</string>
+    <string name="dislikes">Dislikes</string>
+    <string name="loudness_boost_level">Loudness boost level</string>
+    <string name="loudness_boost_level_info">Additional loudness level, to be used without overdoing it, may damage the device</string>
 </resources>
