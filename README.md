@@ -17,6 +17,12 @@
 
 ## Dear friends, unfortunately one user has betrayed the spirit of collaboration of this project. He stole the channel/server on Discord and is using it to steal money and information. Therefore RiMusic no longer has a server on Discord, I recommend you do not access the Discord server, it is a scam.
 
+Temporarily Rimusic made it's code private, since yesterday, he made this decision due to a fake clone on Google Play. However, Rino will probably take a break, so no new updates are planned for now. He will let you know what he decides later.
+
+Unfortunately, some people took this opportunity to steal the Discord and spread false information
+
+i hope everyone understand 💔
+
 ## ✨ Features
 - **Multilingual:** English, Italian, German, Russian, French, Spanish, Czech, Turkish, Romanian and more. Contributions for other languages are welcome
 - UI Mode, swtich from RiMusic to classic ViMusic style, viceversa
@@ -121,7 +127,7 @@ WARNING, the custom version is **not** an official release, download only if inv
 ### 🔤 Translations
 - Go to [Crowdin](https://crowdin.com/project/rimusic/invite?h=73f0e6b64be1c64a8aebd467d286cf851925330), help with the translations.
 
-### 🤝 **Developer /./ Designer that contribute:**
+### 🤝 **Developer / Designer that contribute:**
 
 <table>
 <tr>
