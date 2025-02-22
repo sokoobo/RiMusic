@@ -579,7 +579,7 @@
     <string name="info_prevent_play_songs_with_age_limitation">Evitar reproducir canciones con límite de edad</string>
     <string name="cache_location_private">Privado</string>
     <string name="cache_location_system">Sistema</string>
-    <string name="info_cannot_rename_a_monthly_or_piped_playlist">No se puede renombrar una lista de reproducción mensual, en línea o piped</string>
+    <string name="info_cannot_rename_a_monthly_or_piped_playlist">No se puede renombrar una lista de reproducción mensual, en línea o Piped</string>
     <string name="debug">DEPURACIÓN</string>
     <string name="enable_log_debug">Habilitar registro de depuración</string>
     <string name="if_enabled_create_a_log_file_to_highlight_errors">Si está habilitado, crea un archivo de registro para resaltar errores</string>
@@ -737,7 +737,7 @@
     <string name="vertical_widget">Widget vertical</string>
     <string name="horizontal_widget">Widget horizontal</string>
     <string name="social_reddit">Reddit</string>
-    <string name="social_reddit_info">Únete a la comunidad de Reddit</string>
+    <string name="social_reddit_info">Únete a la comunidad en Reddit</string>
     <string name="sleep_timer_ended">El temporizador de apagado ha finalizado</string>
     <string name="social_discord">Discord</string>
     <string name="social_discord_info">Únete a la comunidad en Discord</string>
@@ -874,7 +874,7 @@
     <string name="use_ytm_login_only_for_browse">Utilizar inicio de sesión de YTM solo para navegar</string>
     <string name="info_use_ytm_login_only_for_browse">Se utiliza si las canciones no se reproducen al iniciar sesión</string>
     <string name="disliked_this_song">No se puede llevar a cabo esta acción con las canciones con un No me gusta</string>
-    <string name="removed_from_disliked">Eliminado de No me gusta</string>
+    <string name="removed_from_disliked">Eliminado de no me gusta</string>
     <string name="disliked_this_collection">No se puede llevar a cabo esta acción cuando todas las canciones tienen un No me gusta o no tienen coincidencia</string>
     <string name="toggle_controls_landscape">Alternar controles en pantalla</string>
     <string name="delete_songs_not_in_library">Eliminar canciones que no se encuentran en la Biblioteca</string>
@@ -891,7 +891,7 @@
     <string name="do_you_really_want_to_match_all">¿Realmente quieres reemplazar todos los videos/canciones no coincidentes con las canciones coincidentes? Esta acción es irreversible</string>
     <string name="online_songs">Canciones en línea</string>
     <string name="explicit">Explícito</string>
-    <string name="filter_by">Filtrar Por</string>
+    <string name="filter_by">Filtrar por</string>
     <string name="updating_playlist">Actualizando la lista de reproducción. Por favor espere. No reduzca o cierre la aplicación</string>
     <string name="updating_playlist_message">Actualizar las canciones con el ID de álbum faltante</string>
     <string name="syncing">Sincronizando...</string>
