@@ -10,8 +10,31 @@
   <a href="https://github.com/fast4x/RiMusic/releases/latest"><img src="https://img.shields.io/github/v/release/fast4x/RiMusic?label=Release"></a>
 </div>
 
+
 ## 📲 BE CAREFUL!
 ## RiMusic is not present on Google Play Store, do not search and download RiMusic on Google Play Store because they are fake clones to steal your money and personal information.
+
+<div align="left">
+    <td align="center" style="word-wrap: break-word; width: 90.0; height: 90.0">
+        <a href=https://github.com/fast4x>
+            <img src=https://avatars.githubusercontent.com/u/1484476?v=4 width="60;"  style="border-radius:50%;align-items:center;justify-content:center;overflow:hidden;padding-top:10px" alt=Rino Russo/>
+            <br />
+        </a>
+    </td>
+</div>
+Dear friends,
+
+Unfortunately, a user has betrayed the spirit of collaboration in this project. They have stolen the RiMusic Discord server and are using it to spread false information and even ask for donations—without contributing anything.
+
+- 🔴 RiMusic NO LONGER has a Discord server.
+- 🚫 Do NOT access it—it’s a scam!
+- 💰 You do NOT need to donate anything to use RiMusic.
+
+To protect the project, RiMusic’s code has been temporarily made private since yesterday, following the discovery of a fake clone on Google Play. Fast4x has decided to take a break, so no new updates are planned for now. He will update you on any future decisions.
+
+Unfortunately, some people have taken advantage of this situation to steal the Discord and spread false information.
+
+Thank you for your understanding and support. Stay safe!
 
 ## ✨ Features
 - **Multilingual:** English, Italian, German, Russian, French, Spanish, Czech, Turkish, Romanian and more. Contributions for other languages are welcome
@@ -117,7 +140,7 @@ WARNING, the custom version is **not** an official release, download only if inv
 ### 🔤 Translations
 - Go to [Crowdin](https://crowdin.com/project/rimusic/invite?h=73f0e6b64be1c64a8aebd467d286cf851925330), help with the translations.
 
-### 🤝 **Developer /./ Designer that contribute:**
+### 🤝 **Developer /../ Designer that contribute:**
 
 <table>
 <tr>
