@@ -925,14 +925,14 @@
     <string name="adding_yt_to_pl_failed">Sonraki 50 şarkı için hata oluştu. Şarkılar çalma listesine tek tek ekleniyor</string>
     <string name="songs_add_yt_success">Şarkı YouTube Çalma Listesine eklendi</string>
     <string name="songs_add_yt_failed">Şarkıyı YouTube Çalma Listesine ekleme başarısız oldu</string>
-    <string name="viewType">Change view type</string>
-    <string name="copy_translated_lyrics">Copy translated lyrics</string>
-    <string name="description">Description</string>
-    <string name="numbers">Numbers</string>
-    <string name="subscribers">Subscribers</string>
-    <string name="views">Views</string>
-    <string name="likes">Likes</string>
-    <string name="dislikes">Dislikes</string>
-    <string name="loudness_boost_level">Loudness boost level</string>
-    <string name="loudness_boost_level_info">Additional loudness level, to be used without overdoing it, may damage the device</string>
+    <string name="viewType">Görünüm türünü değiştirme</string>
+    <string name="copy_translated_lyrics">Çevrilmiş sözleri kopyala</string>
+    <string name="description">Açıklama</string>
+    <string name="numbers">Numaralar</string>
+    <string name="subscribers">Aboneler</string>
+    <string name="views">Görüntülenmeler</string>
+    <string name="likes">Beğeniler</string>
+    <string name="dislikes">Beğenmemeler</string>
+    <string name="loudness_boost_level">Ses yüksekliği arttırma seviyesi</string>
+    <string name="loudness_boost_level_info">Ekstra ses seviyesi, aşırıya kaçılmadan kullanılmalıdır aksi takdirde cihaz zarar görebilir.</string>
 </resources>
