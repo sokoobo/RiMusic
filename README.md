@@ -61,7 +61,7 @@
 - **Finnish:** thanks to [Smk90](https://crowdin.com/profile/smk90), [rikalaj](https://crowdin.com/profile/rikalaj)
 - **French:** thanks to [Mickael81](https://crowdin.com/profile/mickael81), [esophagusdecency](https://crowdin.com/profile/esophagusdecency), [Mickael81](https://github.com/Mickael81), [NEVARLeVrai](https://github.com/NEVARLeVrai)
 - **Galician:** thanks to [zordor](https://crowdin.com/profile/zordor), [ninjum](https://crowdin.com/profile/ninjum)
-- **German:** thanks to [twistqj](https://crowdin.com/profile/twistqj), [nitro4542](https://crowdin.com/profile/nitro4542), [twistios](https://crowdin.com/profile/twistios), [Eddisch](https://crowdin.com/profile/eddisch2010), [materialred](https://crowdin.com/profile/materialred), [OlimitLolli](https://crowdin.com/profile/OlimitLolli), [Lolozweipunktnull](https://crowdin.com/profile/Lolozweipunktnull), [Seryoga1984](https://crowdin.com/profile/Seryoga1984), [Conk](https://crowdin.com/profile/conk), [siggi1984](https://github.com/siggi1984)
+- **German:** thanks to [twistqj](https://crowdin.com/profile/twistqj), [nitro4542](https://crowdin.com/profile/nitro4542), [twistios](https://crowdin.com/profile/twistios), [materialred](https://crowdin.com/profile/materialred), [OlimitLolli](https://crowdin.com/profile/OlimitLolli), [Lolozweipunktnull](https://crowdin.com/profile/Lolozweipunktnull), [Seryoga1984](https://crowdin.com/profile/Seryoga1984), [Conk](https://crowdin.com/profile/conk), [siggi1984](https://github.com/siggi1984)
 - **Greek:** thanks to [Marinkas](https://github.com/Marinkas)
 - **Hebrew:** thanks to [opcitgv](https://crowdin.com/profile/opcitgv), [TheCreeperDuck](https://crowdin.com/profile/thecreeperduck)
 - **Hindi:** thanks to [NikunjKhangwal](https://crowdin.com/profile/nikunjkhangwal), [Sharunkumar](https://crowdin.com/profile/sharunkumar), [Th3-C0der](https://github.com/Th3-C0der)
@@ -79,7 +79,7 @@
 - **Portuguese:** thanks to [Juan Ignacio Tejera](https://crowdin.com/profile/originaljuani), [ManuelCoimbra](https://crowdin.com/profile/ManuelCoimbra), [NEVARLeVrai](https://github.com/NEVARLeVrai)
 - **Portuguese, Brazilian:** thanks to [vs-machado](https://crowdin.com/profile/vs-machado), [luxdev01](https://crowdin.com/profile/luxdev01), [VitoriaLima1802](https://crowdin.com/profile/vitorialima1802), [xSyntheticWave](https://crowdin.com/profile/xSyntheticWave), [RegularWater](https://crowdin.com/profile/RegularWater), [NEVARLeVrai](https://github.com/NEVARLeVrai)
 - **Romanian:** thanks to [OrangeZXZ](https://github.com/OrangeZxZ)
-- **Russian:** thanks to [Eddisch](https://crowdin.com/profile/eddisch2010), [Michael Müller](https://crowdin.com/profile/xqzme1337), [HighMode](https://crowdin.com/profile/highmode), [koliwan](https://crowdin.com/profile/koliwan), [Nebula-Mechanica](https://crowdin.com/profile/Nebula-Mechanica), [Alnoer](https://crowdin.com/profile/Alnoer), [kptmx](https://crowdin.com/profile/kptmx), [Crayz310](https://github.com/Crayz310), [Vladimir](https://crowdin.com/profile/vladimir15426), [@siggi1984](https://github.com/siggi1984)
+- **Russian:** thanks to [Michael Müller](https://crowdin.com/profile/xqzme1337), [HighMode](https://crowdin.com/profile/highmode), [koliwan](https://crowdin.com/profile/koliwan), [Nebula-Mechanica](https://crowdin.com/profile/Nebula-Mechanica), [Alnoer](https://crowdin.com/profile/Alnoer), [kptmx](https://crowdin.com/profile/kptmx), [Crayz310](https://github.com/Crayz310), [Vladimir](https://crowdin.com/profile/vladimir15426), [@siggi1984](https://github.com/siggi1984)
 - **Serbian (Cyrillic, Latin)** thanks to [IvanMaksimovic77](https://github.com/IvanMaksimovic77)
 - **Spanish:** thanks to [MS-PC](https://crowdin.com/profile/ms-pc), [Alejandro Moctezuma](https://crowdin.com/profile/alejandromoc), [Juan Ignacio Tejera](https://crowdin.com/profile/originaljuani), [iOSStarWorld](https://crowdin.com/profile/iosstarworld), [Corotyest](https://crowdin.com/profile/corotyest), [DanielSevillano](https://github.com/DanielSevillano), [Fabian Urra](https://crowdin.com/profile/nsagcl)
 - **Sinhala:** thanks to [VINULA2007](https://crowdin.com/profile/VINULA2007)
@@ -106,7 +106,6 @@ WARNING, the custom version is **not** an official release, download only if inv
 - [Wiki page FAQs](https://github.com/fast4x/RiMusic/wiki/FAQs)
 - [Group on Telegram ](https://t.me/rimusic_app)
 - [Community on Reddit](https://www.reddit.com/r/RiMusicApp/)
-- [Server on Discord](https://discord.gg/y7NJwdwXEM) 
 
 ## 🤝 Contributing
 **Pull requests are welcome**
@@ -118,7 +117,7 @@ WARNING, the custom version is **not** an official release, download only if inv
 ### 🔤 Translations
 - Go to [Crowdin](https://crowdin.com/project/rimusic/invite?h=73f0e6b64be1c64a8aebd467d286cf851925330), help with the translations.
 
-### 🤝 **Developer / Designer that contribute:**
+### 🤝 **Developer /./ Designer that contribute:**
 
 <table>
 <tr>
@@ -437,13 +436,7 @@ WARNING, the custom version is **not** an official release, download only if inv
             <sub style="font-size:14px"><b>TheRedCyclops</b></sub>
         </a>
     </td>
-    <td align="center" style="word-wrap: break-word; width: 90.0; height: 90.0">
-        <a href=https://github.com/eddisch>
-            <img src=https://avatars.githubusercontent.com/u/73175017?v=4 width="60;"  style="border-radius:50%;align-items:center;justify-content:center;overflow:hidden;padding-top:10px" alt=Ed/>
-            <br />
-            <sub style="font-size:14px"><b>Ed</b></sub>
-        </a>
-    </td>
+    
 </tr>
 </table>
 <!--
