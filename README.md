@@ -30,7 +30,7 @@ Unfortunately, a user has betrayed the spirit of collaboration in this project. 
 - 🚫 Do NOT access it—it’s a scam!
 - 💰 You do NOT need to donate anything to use RiMusic.
 
-To protect the project, RiMusic’s code has been temporarily made private since yesterday, following the discovery of a fake clone on Google Play. Rino has decided to take a break, so no new updates are planned for now. He will update you on any future decisions.
+To protect the project, RiMusic’s code has been temporarily made private since yesterday, following the discovery of a fake clone on Google Play. Fast4x has decided to take a break, so no new updates are planned for now. He will update you on any future decisions.
 
 Unfortunately, some people have taken advantage of this situation to steal the Discord and spread false information.
 
