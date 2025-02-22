@@ -26,6 +26,7 @@ dependencies {
     implementation(libs.newpipe.extractor)
     implementation(libs.ksoup.html)
     implementation(libs.ksoup.entities)
+    implementation(libs.okhttp.dnsoverhttps)
 
     //testImplementation(libs.junit)
 }

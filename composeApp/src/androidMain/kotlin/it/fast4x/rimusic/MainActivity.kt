@@ -245,6 +245,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Response
 import timber.log.Timber
 import java.io.File
+import java.io.IOException
 import java.net.Proxy
 import java.util.Locale
 import java.util.Objects
@@ -296,7 +297,7 @@ class MainActivity :
         super.onStart()
 
         runCatching {
-            bindService(intent<PlayerServiceModern>(), serviceConnection, Context.BIND_AUTO_CREATE)
+            bindService(intent<PlayerServiceModern>(), serviceConnection, BIND_AUTO_CREATE)
         }.onFailure {
             Timber.e("MainActivity.onStart bindService ${it.stackTraceToString()}")
         }
@@ -336,7 +337,7 @@ class MainActivity :
         }
 
         if (preferences.getBoolean(shakeEventEnabledKey, false)) {
-            sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+            sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
             Objects.requireNonNull(sensorManager)
                 ?.registerListener(
                     sensorListener,
@@ -506,7 +507,7 @@ class MainActivity :
 
                     }
 
-                    override fun onFailure(call: Call, e: java.io.IOException) {
+                    override fun onFailure(call: Call, e: IOException) {
                         Log.d("UpdatedVersionCode", "Check failure")
                     }
                 })
@@ -552,8 +553,8 @@ class MainActivity :
                             visitordata = visitorData
                                 .takeIf { it != "null" }
                                 ?: Innertube.DEFAULT_VISITOR_DATA,
-                            dataSyncId = preferences.getString(ytDataSyncIdKey, "")
-
+                            dataSyncId = preferences.getString(ytDataSyncIdKey, ""),
+                            dnsOverHttps = getDnsOverHttpsType().type
                         )
             //}
 
@@ -561,7 +562,7 @@ class MainActivity :
 
             var appearance by rememberSaveable(
                 !lightTheme,
-                stateSaver = Appearance.Companion
+                stateSaver = Appearance
             ) {
                 with(preferences) {
                     val colorPaletteName =

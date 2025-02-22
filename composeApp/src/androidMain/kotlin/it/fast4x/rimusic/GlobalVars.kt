@@ -7,12 +7,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.os.LocaleListCompat
+import it.fast4x.rimusic.enums.DnsOverHttpsType
 import it.fast4x.rimusic.enums.Languages
 import it.fast4x.rimusic.enums.ViewType
 import it.fast4x.rimusic.ui.styling.LocalAppearance
 import it.fast4x.rimusic.utils.autosyncKey
 import it.fast4x.rimusic.utils.bassboostEnabledKey
 import it.fast4x.rimusic.utils.bassboostLevelKey
+import it.fast4x.rimusic.utils.dnsOverHttpsTypeKey
 import it.fast4x.rimusic.utils.enableYouTubeHistorySyncKey
 import it.fast4x.rimusic.utils.getEnum
 import it.fast4x.rimusic.utils.handleAudioFocusEnabledKey
@@ -53,7 +55,7 @@ fun appContext(): Context = Dependencies.application.applicationContext
 fun context(): Context = Dependencies.application
 
 fun getViewType() = appContext().preferences.getEnum(viewTypeKey, ViewType.Grid)
-
+fun getDnsOverHttpsType() = appContext().preferences.getEnum(dnsOverHttpsTypeKey, DnsOverHttpsType.Google)
 fun ytAccountName() = appContext().preferences.getString(ytAccountNameKey, "")
 fun ytAccountThumbnail() = appContext().preferences.getString(ytAccountThumbnailKey, "")
 fun useYtLoginOnlyForBrowse() = appContext().preferences.getBoolean(useYtLoginOnlyForBrowseKey, true)

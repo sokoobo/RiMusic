@@ -92,6 +92,8 @@ object Innertube {
     private const val VISITOR_DATA_PREFIX = "Cgt"
     const val DEFAULT_VISITOR_DATA = "CgtMN0FkbDFaWERfdyi8t4u7BjIKCgJWThIEGgAgWQ%3D%3D"
 
+    var dnsToUse: String? = YoutubePreferences.preference?.dnsOverHttps.toString()
+
     @OptIn(ExperimentalSerializationApi::class)
     val client = HttpClient(OkHttp) {
         //BrowserUserAgent()
@@ -127,22 +129,30 @@ object Innertube {
                     level = HttpLoggingInterceptor.Level.BODY
                 }
             )
-            val appCache = Cache(File("cacheDir", "okhttpcache"), 10 * 1024 * 1024)
-            val bootstrapClient = OkHttpClient.Builder().cache(appCache).build()
-            val dns = DnsOverHttps.Builder().client(bootstrapClient)
-                // Google Dns
-                .url("https://dns.google/dns-query".toHttpUrl())
-                .bootstrapDnsHosts(InetAddress.getByName("8.8.8.8"), InetAddress.getByName("8.8.4.4"))
-                // Cloudflare dns
-                //.url("https://cloudflare-dns.com/dns-query".toHttpUrl())
-                //.bootstrapDnsHosts(InetAddress.getByName("1.0.0.1"), InetAddress.getByName("1.1.1.1"))
-                // OpenDns dns
-//                .url("https://doh.opendns.com/dns-query".toHttpUrl())
-//                .bootstrapDnsHosts(InetAddress.getByName("208.67.222.222"), InetAddress.getByName("208.67.220.220"))
-                .build()
 
-            val clientWithDns = bootstrapClient.newBuilder().dns(dns).build()
-            preconfigured = clientWithDns
+            if (dnsToUse != null) {
+                val appCache = Cache(File("cacheDir", "okhttpcache"), 10 * 1024 * 1024)
+                val bootstrapClient = OkHttpClient.Builder().cache(appCache).build()
+                val googleDns = DnsOverHttps.Builder().client(bootstrapClient)
+                    .url("https://dns.google/dns-query".toHttpUrl())
+                    .bootstrapDnsHosts(InetAddress.getByName("8.8.8.8"), InetAddress.getByName("8.8.4.4")).build()
+                val cloudflareDns = DnsOverHttps.Builder().client(bootstrapClient)
+                    .url("https://cloudflare-dns.com/dns-query".toHttpUrl())
+                    .bootstrapDnsHosts(InetAddress.getByName("1.0.0.1"), InetAddress.getByName("1.1.1.1")).build()
+                val openDns = DnsOverHttps.Builder().client(bootstrapClient)
+                    .url("https://doh.opendns.com/dns-query".toHttpUrl())
+                    .bootstrapDnsHosts(InetAddress.getByName("208.67.222.222"), InetAddress.getByName("208.67.220.220")).build()
+                val dns: DnsOverHttps = when (dnsToUse) {
+                    "google" -> googleDns
+                    "cloudflare" -> cloudflareDns
+                    "opendns" -> openDns
+                    else -> googleDns
+                }
+
+                val clientWithDns = bootstrapClient.newBuilder().dns(dns).build()
+                preconfigured = clientWithDns
+            }
+
         }
 
         ProxyPreferences.preference?.let {

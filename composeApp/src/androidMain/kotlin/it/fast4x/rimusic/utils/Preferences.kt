@@ -371,6 +371,7 @@ const val discordPersonalAccessTokenKey = "DiscordPersonalAccessToken"
 const val viewTypeKey = "viewType"
 const val enableYouTubeHistorySyncKey = "enableYouTubeHistorySync"
 const val volumeBoostLevelKey = "volumeBoostLevel"
+const val dnsOverHttpsTypeKey = "dnsOverHttpsType"
 
 /*
 @PublishedApi

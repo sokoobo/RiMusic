@@ -223,6 +223,7 @@ import it.fast4x.rimusic.utils.useVolumeKeysToChangeSongKey
 import it.fast4x.rimusic.utils.visualizerEnabledKey
 import it.fast4x.rimusic.utils.volumeNormalizationKey
 import it.fast4x.rimusic.colorPalette
+import it.fast4x.rimusic.enums.DnsOverHttpsType
 import it.fast4x.rimusic.enums.PresetsReverb
 import it.fast4x.rimusic.ui.components.themed.Search
 import it.fast4x.rimusic.typography
@@ -232,9 +233,11 @@ import it.fast4x.rimusic.utils.autoDownloadSongWhenAlbumBookmarkedKey
 import it.fast4x.rimusic.utils.autoDownloadSongWhenLikedKey
 import it.fast4x.rimusic.utils.bassboostEnabledKey
 import it.fast4x.rimusic.utils.bassboostLevelKey
+import it.fast4x.rimusic.utils.dnsOverHttpsTypeKey
 import it.fast4x.rimusic.utils.getSystemlanguage
 import it.fast4x.rimusic.utils.handleAudioFocusEnabledKey
 import it.fast4x.rimusic.utils.isConnectionMeteredEnabledKey
+import it.fast4x.rimusic.utils.restartActivityKey
 import it.fast4x.rimusic.utils.volumeBoostLevelKey
 
 
@@ -267,6 +270,8 @@ fun GeneralSettings(
     var volumeNormalization by rememberPreference(volumeNormalizationKey, false)
     var audioQualityFormat by rememberPreference(audioQualityFormatKey, AudioQualityFormat.Auto)
     var isConnectionMeteredEnabled by rememberPreference(isConnectionMeteredEnabledKey, true)
+
+    var useDnsOverHttpsType by rememberPreference(dnsOverHttpsTypeKey, DnsOverHttpsType.Google)
 
 
     var keepPlayerMinimized by rememberPreference(keepPlayerMinimizedKey,   false)
@@ -340,7 +345,6 @@ fun GeneralSettings(
     var autoDownloadSong by rememberPreference(autoDownloadSongKey, false)
     var autoDownloadSongWhenLiked by rememberPreference(autoDownloadSongWhenLikedKey, false)
     var autoDownloadSongWhenAlbumBookmarked by rememberPreference(autoDownloadSongWhenAlbumBookmarkedKey, false)
-
 
 
     Column(
@@ -433,7 +437,32 @@ fun GeneralSettings(
                 }
             )
 
+        SettingsEntryGroupText(title = "Network")
+        if (search.input.isBlank() || stringResource(R.string.enable_connection_metered).contains(search.input,true))
+            SwitchSettingEntry(
+                title = stringResource(R.string.enable_connection_metered),
+                text = stringResource(R.string.info_enable_connection_metered),
+                isChecked = isConnectionMeteredEnabled,
+                onCheckedChange = {
+                    isConnectionMeteredEnabled = it
+                    if (it)
+                        audioQualityFormat = AudioQualityFormat.Auto
+                }
+            )
 
+//        if (search.input.isBlank() || "Use alternative dns".contains(search.input,true)) {
+//            EnumValueSelectorSettingsEntry(
+//                title = "Use dns over https",
+//                selectedValue = useDnsOverHttpsType,
+//                onValueSelected = {
+//                    useDnsOverHttpsType = it
+//                    restartActivity = true
+//                },
+//                valueText = { it.textName }
+//            )
+//            SettingsDescription(text = "If you have loading problems, you can use an alternative dns server")
+//            RestartActivity(restartActivity, onRestart = { restartActivity = false })
+//        }
 
         SettingsGroupSpacer()
         SettingsEntryGroupText(stringResource(R.string.player))
@@ -474,18 +503,6 @@ fun GeneralSettings(
             RestartPlayerService(restartService, onRestart = { restartService = false } )
 
         }
-
-        if (search.input.isBlank() || stringResource(R.string.enable_connection_metered).contains(search.input,true))
-            SwitchSettingEntry(
-                title = stringResource(R.string.enable_connection_metered),
-                text = stringResource(R.string.info_enable_connection_metered),
-                isChecked = isConnectionMeteredEnabled,
-                onCheckedChange = {
-                    isConnectionMeteredEnabled = it
-                    if (it)
-                        audioQualityFormat = AudioQualityFormat.Auto
-                }
-            )
 
         if (search.input.isBlank() || stringResource(R.string.jump_previous).contains(search.input,true)) {
             BasicText(
