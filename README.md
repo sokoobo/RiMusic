@@ -117,7 +117,7 @@ WARNING, the custom version is **not** an official release, download only if inv
 ### 🔤 Translations
 - Go to [Crowdin](https://crowdin.com/project/rimusic/invite?h=73f0e6b64be1c64a8aebd467d286cf851925330), help with the translations.
 
-### 🤝 **Developer / Designer that contribute:**
+### 🤝 **Developer /./ Designer that contribute:**
 
 <table>
 <tr>
@@ -436,13 +436,7 @@ WARNING, the custom version is **not** an official release, download only if inv
             <sub style="font-size:14px"><b>TheRedCyclops</b></sub>
         </a>
     </td>
-    <td align="center" style="word-wrap: break-word; width: 90.0; height: 90.0">
-        <a href=https://github.com/eddisch>
-            <img src=https://avatars.githubusercontent.com/u/73175017?v=4 width="60;"  style="border-radius:50%;align-items:center;justify-content:center;overflow:hidden;padding-top:10px" alt=Ed/>
-            <br />
-            <sub style="font-size:14px"><b>Ed</b></sub>
-        </a>
-    </td>
+    
 </tr>
 </table>
 <!--
