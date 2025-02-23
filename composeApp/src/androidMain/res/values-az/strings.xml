@@ -925,14 +925,14 @@
     <string name="adding_yt_to_pl_failed">Sonrakı 50 mahnı üçün xəta baş verdi. Mahnıların pleylistə bir-bir əlavə edilməsi</string>
     <string name="songs_add_yt_success">Mahnı YouTube Pleylistinə əlavə edildi</string>
     <string name="songs_add_yt_failed">Mahnını YouTube Pleylistinə əlavə etmək olmadı</string>
-    <string name="viewType">Change view type</string>
-    <string name="copy_translated_lyrics">Copy translated lyrics</string>
-    <string name="description">Description</string>
-    <string name="numbers">Numbers</string>
-    <string name="subscribers">Subscribers</string>
-    <string name="views">Views</string>
-    <string name="likes">Likes</string>
-    <string name="dislikes">Dislikes</string>
-    <string name="loudness_boost_level">Loudness boost level</string>
-    <string name="loudness_boost_level_info">Additional loudness level, to be used without overdoing it, may damage the device</string>
+    <string name="viewType">Baxış növün dəyişdir</string>
+    <string name="copy_translated_lyrics">Tərcümə edilən lirikanı köçür</string>
+    <string name="description">Açıqlama</string>
+    <string name="numbers">Nömrələr</string>
+    <string name="subscribers">Abunəçilər</string>
+    <string name="views">İzləmə</string>
+    <string name="likes">Bəyənmələr</string>
+    <string name="dislikes">Bəyənməmələr</string>
+    <string name="loudness_boost_level">Səs yüksəltmə dəyəri</string>
+    <string name="loudness_boost_level_info">Hədsiz istifadə edilən əlavə səs dəyəri cihaza zərər verə bilər</string>
 </resources>
