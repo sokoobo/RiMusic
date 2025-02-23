@@ -28,38 +28,38 @@ import io.ktor.http.userAgent
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.serialization.kotlinx.protobuf.protobuf
 import io.ktor.serialization.kotlinx.xml.xml
+import it.fast4x.innertube.utils.YouTubeLocale
 import it.fast4x.innertube.models.AccountInfo
 import it.fast4x.innertube.models.AccountMenuResponse
-import it.fast4x.innertube.models.MusicNavigationButtonRenderer
-import it.fast4x.innertube.models.NavigationEndpoint
-import it.fast4x.innertube.models.Runs
-import it.fast4x.innertube.models.Thumbnail
-import it.fast4x.innertube.clients.YouTubeClient.Companion.IOS
-import it.fast4x.innertube.clients.YouTubeLocale
 import it.fast4x.innertube.models.BrowseResponse
 import it.fast4x.innertube.models.Context
 import it.fast4x.innertube.models.Context.Client
 import it.fast4x.innertube.models.Context.Companion.DefaultIOS
 import it.fast4x.innertube.models.Context.Companion.DefaultWeb
 import it.fast4x.innertube.models.Context.Companion.DefaultWeb2WithLocale
+import it.fast4x.innertube.models.Context.Companion.USER_AGENT_IOS
 import it.fast4x.innertube.models.GridRenderer
 import it.fast4x.innertube.models.MediaType
+import it.fast4x.innertube.models.MusicNavigationButtonRenderer
+import it.fast4x.innertube.models.MusicShelfRenderer
+import it.fast4x.innertube.models.NavigationEndpoint
+import it.fast4x.innertube.models.NextResponse
 import it.fast4x.innertube.models.PipedResponse
 import it.fast4x.innertube.models.PlayerResponse
 import it.fast4x.innertube.models.ResponseContext
+import it.fast4x.innertube.models.ReturnYouTubeDislikeResponse
+import it.fast4x.innertube.models.Runs
+import it.fast4x.innertube.models.Thumbnail
+import it.fast4x.innertube.models.VideoOrSongInfo
 import it.fast4x.innertube.models.bodies.AccountMenuBody
 import it.fast4x.innertube.models.bodies.Action
 import it.fast4x.innertube.models.bodies.BrowseBody
 import it.fast4x.innertube.models.bodies.CreatePlaylistBody
 import it.fast4x.innertube.models.bodies.EditPlaylistBody
-import it.fast4x.innertube.models.bodies.PlayerBody
-import it.fast4x.innertube.models.bodies.PlaylistDeleteBody
-import it.fast4x.innertube.models.MusicShelfRenderer
-import it.fast4x.innertube.models.NextResponse
-import it.fast4x.innertube.models.ReturnYouTubeDislikeResponse
-import it.fast4x.innertube.models.VideoOrSongInfo
 import it.fast4x.innertube.models.bodies.LikeBody
 import it.fast4x.innertube.models.bodies.NextBody
+import it.fast4x.innertube.models.bodies.PlayerBody
+import it.fast4x.innertube.models.bodies.PlaylistDeleteBody
 import it.fast4x.innertube.models.bodies.SubscribeBody
 import it.fast4x.innertube.utils.NewPipeUtils
 import it.fast4x.innertube.utils.NewPipeUtils.decodeSignatureCipher
@@ -956,14 +956,14 @@ object Innertube {
         header("Host", "www.youtube.com")
         header("Origin", "https://www.youtube.com")
         header("Sec-Fetch-Mode", "navigate")
-        header(HttpHeaders.UserAgent, IOS.userAgent)
+        header(HttpHeaders.UserAgent, USER_AGENT_IOS)
         header(
             "Set-Cookie",
             cookie,
         )
         header("X-Goog-Visitor-Id", visitorData ?: this@Innertube.visitorData)
-        header("X-YouTube-Client-Name", IOS.clientName)
-        header("X-YouTube-Client-Version", IOS.clientVersion)
+        header("X-YouTube-Client-Name", DefaultIOS.client.clientName)
+        header("X-YouTube-Client-Version", DefaultIOS.client.clientVersion)
         setBody(
             PlayerBody(
                 context = DefaultIOS,

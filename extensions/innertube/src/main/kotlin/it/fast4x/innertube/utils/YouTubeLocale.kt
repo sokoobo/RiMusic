@@ -1,4 +1,4 @@
-package it.fast4x.innertube.clients
+package it.fast4x.innertube.utils
 
 import kotlinx.serialization.Serializable
 
