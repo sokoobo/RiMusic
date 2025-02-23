@@ -75,7 +75,6 @@ kotlin {
             implementation(libs.newpipe.extractor)
             implementation(libs.nanojson)
             implementation(libs.androidx.webkit)
-            implementation(libs.dotenv)
         }
         commonMain.dependencies {
             implementation(compose.runtime)

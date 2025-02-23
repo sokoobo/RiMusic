@@ -47,7 +47,6 @@ hilt = "2.53.1"
 hypnoticcanvas = "0.3.0"
 ksoup = "0.3.1"
 okhttpDnsOverHttps = "4.12.0"
-dotenv = "6.5.1"
 
 [libraries]
 kotlin-coroutines = {group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlin-coroutine"}
@@ -124,7 +123,6 @@ nanojson = { group = "com.github.TeamNewPipe", name = "nanojson", version = "1d9
 androidx-webkit = { group = "androidx.webkit", name = "webkit", version = "1.9.0" }
 
 okhttp-dnsoverhttps = { group = "com.squareup.okhttp3", name = "okhttp-dnsoverhttps", version.ref = "okhttpDnsOverHttps" }
-dotenv = { group = "io.github.cdimascio", name = "dotenv-kotlin", version.ref = "dotenv" }
 
 
 
