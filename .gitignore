@@ -20,6 +20,7 @@
 **local.properties
 **crowdin.properties
 **__crowdin.properties
+**env
 
 
 ###     DEPENDENCIES
