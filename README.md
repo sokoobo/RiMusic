@@ -108,7 +108,7 @@ Thank you for your understanding and support. Stay safe!
 - **Sinhala:** thanks to [VINULA2007](https://crowdin.com/profile/VINULA2007)
 - **Swedish:** thanks to [sebbe.ekman](https://crowdin.com/profile/sebbe.ekman), [Dženan](https://crowdin.com/profile/Dženan)
 - **Tamil** thanks to [Vignesh-p-s](https://crowdin.com/profile/vignesh-p-s)
-- **Turkish:** thanks to [abfreeman](https://github.com/abfreeman), [2010furs](https://github.com/2010furs), [Muha Aliss](https://crowdin.com/profile/muhaaliss)
+- **Turkish:** thanks to [LinuxUsersLinuxMint](https://github.com/LinuxUsersLinuxMint), [abfreeman](https://github.com/abfreeman), [2010furs](https://github.com/2010furs), [Muha Aliss](https://crowdin.com/profile/muhaaliss)
 - **Telugu** thanks to [SureshTimma](https://crowdin.com/profile/sureshtimma)
 - **Ukrainian:** thanks to [Avin](https://crowdin.com/profile/avinateachip), [Michael Müller](https://crowdin.com/profile/xqzme1337), [NiXT0y](https://crowdin.com/profile/nixt0y), [Crayz310](https://github.com/Crayz310) 
 - **Vietnamese:** thanks to [teaminh](https://crowdin.com/profile/teaminh)
