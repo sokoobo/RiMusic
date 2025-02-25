@@ -22,19 +22,16 @@
         </a>
     </td>
 </div>
-Dear friends,
+Hello Friends, 
+the project is not closed, new releases have been suspended for now waiting to reorganize ideas. I want to thank all of you and not least to thank all the contributors, translators and developers who have joined the project over time. RiMusic is alive and support is active!
 
-Unfortunately, a user has betrayed the spirit of collaboration in this project. They have stolen the RiMusic Discord server and are using it to spread false information and even ask for donations—without contributing anything.
+Despite this, I am sad and sorry that even on the Google Play Store there is a clone of RiMusic that despite the reports is not deleted from the store. 
 
-- 🔴 RiMusic NO LONGER has a Discord server.
-- 🚫 Do NOT access it—it’s a scam!
-- 💰 You do NOT need to donate anything to use RiMusic.
+I only ask you to report at all levels the violation of the license on all other applications born from the copy of RiMusic source code.
 
-To protect the project, RiMusic’s code has been temporarily made private since yesterday, following the discovery of a fake clone on Google Play. Fast4x has decided to take a break, so no new updates are planned for now. He will update you on any future decisions.
+RiMusic is free and anyone who makes a copy of it MUST respect the previous developers, translators and also the rules of the GPL.
 
-Unfortunately, some people have taken advantage of this situation to steal the Discord and spread false information.
-
-Thank you for your understanding and support. Stay safe!
+Thanks ❤️
 
 ## ✨ Features
 - **Multilingual:** English, Italian, German, Russian, French, Spanish, Czech, Turkish, Romanian and more. Contributions for other languages are welcome
