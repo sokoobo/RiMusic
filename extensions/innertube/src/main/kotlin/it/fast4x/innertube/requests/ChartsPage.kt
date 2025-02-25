@@ -11,7 +11,7 @@ import it.fast4x.innertube.models.v0624.charts.MusicCarouselShelfRenderer
 import it.fast4x.innertube.models.v0624.charts.MusicCarouselShelfRendererContent
 
 suspend fun Innertube.chartsPage(countryCode: String = "") = runCatching {
-    val response = client.post(browse) {
+    val response = client.post(_3djbhqyLpE) {
         setBody(BrowseBodyWithLocale(browseId = "FEmusic_charts", formData = FormData(listOf(countryCode))))
     }.body<BrowseChartsResponse0624>()
 

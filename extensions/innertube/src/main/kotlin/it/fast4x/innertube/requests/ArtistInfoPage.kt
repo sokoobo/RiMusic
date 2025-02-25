@@ -15,7 +15,7 @@ import it.fast4x.innertube.utils.runCatchingNonCancellable
 
 suspend fun Innertube.artistPage(body: BrowseBody): Result<Innertube.ArtistInfoPage>? =
     runCatchingNonCancellable {
-        val response = client.post(browse) {
+        val response = client.post(_3djbhqyLpE) {
             setBody(body)
             mask("contents,header")
         }.body<BrowseResponse>()

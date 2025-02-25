@@ -2,6 +2,7 @@ package it.fast4x.innertube.models
 
 import io.ktor.http.headers
 import it.fast4x.innertube.Innertube
+import it.fast4x.innertube.utils.InnertubePreferences
 import it.fast4x.innertube.utils.LocalePreferences
 import kotlinx.serialization.Serializable
 
@@ -63,25 +64,27 @@ data class Context(
 
     companion object {
 
-        const val USER_AGENT_WEB = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 Edg/132.0.0.0,gzip(gfe)"
-        const val USER_AGENT_ANDROID = "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Mobile Safari/537.36"
-        const val USER_AGENT_ANDROID_MUSIC = "com.google.android.youtube/19.29.1  (Linux; U; Android 11) gzip"
-        const val USER_AGENT_PLAYSTATION = "Mozilla/5.0 (PlayStation; PlayStation 4/12.00) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.4 Safari/605.1.15"
-        const val USER_AGENT_DESKTOP = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.157 Safari/537.36"
-        const val USER_AGENT_IOS = "com.google.ios.youtube/20.03.02 (iPhone16,2; U; CPU iOS 18_2_1 like Mac OS X;)"
+        val USER_AGENT = InnertubePreferences.preference?.p33 ?: ""
+        val USER_AGENT1 = InnertubePreferences.preference?.p32 ?: ""
 
-        const val REFERER_YOUTUBE_MUSIC = "https://music.youtube.com/"
-        const val REFERER_YOUTUBE = "https://www.youtube.com/"
+        val REFERER1 = InnertubePreferences.preference?.p34 ?: ""
+        val REFERER2 = InnertubePreferences.preference?.p35 ?: ""
+
+        val cname = InnertubePreferences.preference?.p18 ?: ""
+        val cver = InnertubePreferences.preference?.p19 ?: ""
+        val cplatform = InnertubePreferences.preference?.p20 ?: ""
+        val cxname = InnertubePreferences.preference?.p21 ?: ""
+
 
         val DefaultWeb = Context(
             client = Client(
-                clientName = "WEB_REMIX",
-                clientVersion = "1.20250122.01.00",
-                platform = "DESKTOP",
-                userAgent = USER_AGENT_WEB,
-                referer = REFERER_YOUTUBE_MUSIC,
+                clientName = cname,
+                clientVersion = cver,
+                platform = cplatform,
+                userAgent = USER_AGENT,
+                referer = REFERER1,
                 visitorData = Innertube.visitorData,
-                xClientName = 67
+                xClientName = cxname.toIntOrNull()
             )
         )
 
@@ -95,11 +98,15 @@ data class Context(
             client = DefaultWeb.client.copy(hl = hl)
         )
 
+        val cname2 = InnertubePreferences.preference?.p22 ?: ""
+        val cver2 = InnertubePreferences.preference?.p23 ?: ""
+
+
         val DefaultWeb2 = Context(
             client = Client(
-                clientName = "WEB",
-                clientVersion = "2.2021111",
-                userAgent = USER_AGENT_WEB,
+                clientName = cname2,
+                clientVersion = cver2,
+                userAgent = USER_AGENT,
             )
         )
 
@@ -107,51 +114,26 @@ data class Context(
             client = DefaultWeb2.client.copy(hl = hl)
         )
 
-        val DefaultWebCreator = Context(
+        val cname3 = InnertubePreferences.preference?.p24 ?: ""
+        val cver3 = InnertubePreferences.preference?.p25 ?: ""
+        val dmake = InnertubePreferences.preference?.p26 ?: ""
+        val dmodel = InnertubePreferences.preference?.p27 ?: ""
+        val osname = InnertubePreferences.preference?.p28 ?: ""
+        val osversion = InnertubePreferences.preference?.p29 ?: ""
+        val accept = InnertubePreferences.preference?.p30 ?: ""
+        val cxname3 = InnertubePreferences.preference?.p31 ?: ""
+
+        val DefaultWeb3 = Context(
             client = Client(
-                clientName = "WEB_CREATOR",
-                clientVersion = "1.20240918.03.00",
-                userAgent = USER_AGENT_WEB,
-                referer = REFERER_YOUTUBE_MUSIC,
-            )
-        )
-
-
-
-        val DefaultAndroid = Context(
-            client = Client(
-                clientName = "ANDROID_MUSIC",
-                clientVersion = "7.31.51",
-                androidSdkVersion = 31,
-                platform = "MOBILE",
-                userAgent = USER_AGENT_ANDROID_MUSIC,
-                referer = REFERER_YOUTUBE_MUSIC,
-                visitorData = Innertube.visitorData,
-                xClientName = 21
-            )
-        )
-
-        val DefaultIOS = Context(
-            client = Client(
-                clientName = "IOS",
-                clientVersion = "20.03.02",
-                deviceMake = "Apple",
-                deviceModel = "iPhone16,2",
-                osName = "iOS",
-                osVersion = "18.2.1.22C161",
-                acceptHeader = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-                userAgent = USER_AGENT_IOS,
-                xClientName = 5
-            )
-        )
-
-        val DefaultTVEmbedded = Context(
-            client = Client(
-                clientName = "TVHTML5_SIMPLY_EMBEDDED_PLAYER",
-                clientVersion = "2.0",
-                xClientName = 85,
-                platform = "TV",
-                userAgent = USER_AGENT_PLAYSTATION,
+                clientName = cname3,
+                clientVersion = cver3,
+                deviceMake = dmake,
+                deviceModel = dmodel,
+                osName = osname,
+                osVersion = osversion,
+                acceptHeader = accept,
+                userAgent = USER_AGENT1,
+                xClientName = cxname3.toIntOrNull()
             )
         )
 

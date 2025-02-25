@@ -11,7 +11,7 @@ import it.fast4x.innertube.models.bodies.NextBody
 import it.fast4x.innertube.utils.runCatchingNonCancellable
 
 suspend fun Innertube.lyrics(body: NextBody): Result<String?>? = runCatchingNonCancellable {
-    val nextResponse = client.post(next) {
+    val nextResponse = client.post(_NXIvG4ve8N) {
         setBody(body)
         mask("contents.singleColumnMusicWatchNextResultsRenderer.tabbedRenderer.watchNextTabbedResultsRenderer.tabs.tabRenderer(endpoint,title)")
     }.body<NextResponse>()
@@ -29,7 +29,7 @@ suspend fun Innertube.lyrics(body: NextBody): Result<String?>? = runCatchingNonC
         ?.browseId
         ?: return@runCatchingNonCancellable null
 
-    val response = client.post(browse) {
+    val response = client.post(_3djbhqyLpE) {
         setBody(BrowseBody(browseId = browseId))
         mask("contents.sectionListRenderer.contents.musicDescriptionShelfRenderer.description")
     }.body<BrowseResponse>()

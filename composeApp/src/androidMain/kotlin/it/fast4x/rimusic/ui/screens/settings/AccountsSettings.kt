@@ -61,6 +61,7 @@ import it.fast4x.rimusic.ui.components.themed.Menu
 import it.fast4x.rimusic.ui.components.themed.MenuEntry
 import it.fast4x.rimusic.ui.components.themed.SmartMessage
 import it.fast4x.rimusic.ui.styling.Dimensions
+import it.fast4x.rimusic.utils.RestartActivity
 import it.fast4x.rimusic.utils.RestartPlayerService
 import it.fast4x.rimusic.utils.discordPersonalAccessTokenKey
 import it.fast4x.rimusic.utils.enableYouTubeHistorySyncKey
@@ -304,8 +305,11 @@ fun AccountsSettings() {
                     isChecked = isYouTubeSyncEnabled,
                     onCheckedChange = {
                         isYouTubeSyncEnabled = it
+                        restartActivity = true
                     }
                 )
+
+                RestartActivity(restartActivity, onRestart = { restartActivity = false })
 
                 // TODO MANAGE SYNC HISTORY
 //                SwitchSettingEntry(

@@ -11,7 +11,7 @@ import it.fast4x.innertube.utils.from
 import it.fast4x.innertube.utils.runCatchingNonCancellable
 
 suspend fun Innertube.browse(body: BrowseBodyWithLocale) = runCatchingNonCancellable {
-    val response = client.post(browse) {
+    val response = client.post(_3djbhqyLpE) {
         setBody(body)
     }.body<BrowseResponse>()
 

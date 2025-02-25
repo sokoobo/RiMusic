@@ -15,7 +15,7 @@ import it.fast4x.innertube.models.splitBySeparator
 import it.fast4x.innertube.utils.runCatchingNonCancellable
 
 suspend fun Innertube.searchSuggestions(body: SearchSuggestionsBody) = runCatchingNonCancellable {
-    val response = client.post(searchSuggestions) {
+    val response = client.post(_Uwjb1AiI8t) {
         setBody(body)
         mask("contents.searchSuggestionsSectionRenderer.contents.searchSuggestionRenderer.navigationEndpoint.searchEndpoint.query")
     }.body<SearchSuggestionsResponse>()
@@ -35,7 +35,7 @@ suspend fun Innertube.searchSuggestions(body: SearchSuggestionsBody) = runCatchi
 }
 
 suspend fun Innertube.searchSuggestionsWithItems(body: SearchSuggestionsBody) = runCatchingNonCancellable {
-    val response = client.post(searchSuggestions) {
+    val response = client.post(_Uwjb1AiI8t) {
         setBody(body)
         //mask("contents.searchSuggestionsSectionRenderer.contents.searchSuggestionRenderer.navigationEndpoint.searchEndpoint.query")
     }.body<GetSearchSuggestionsResponse>()

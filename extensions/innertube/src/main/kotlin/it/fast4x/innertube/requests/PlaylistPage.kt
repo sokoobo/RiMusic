@@ -1,14 +1,12 @@
 package it.fast4x.innertube.requests
 
 import io.ktor.client.call.body
-import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import it.fast4x.innertube.Innertube
 import it.fast4x.innertube.Innertube.getBestQuality
 import it.fast4x.innertube.models.BrowseResponse
-import it.fast4x.innertube.models.ContinuationResponse
 import it.fast4x.innertube.models.MusicCarouselShelfRenderer
 import it.fast4x.innertube.models.MusicResponsiveListItemRenderer
 import it.fast4x.innertube.models.MusicShelfRenderer
@@ -68,7 +66,7 @@ data class PlaylistPage(
 }
 
 suspend fun Innertube.playlistPage(body: BrowseBody) = runCatchingCancellable {
-    val response = client.post(browse) {
+    val response = client.post(_3djbhqyLpE) {
         setLogin(setLogin = true)
         setBody(body)
         //body.context.apply()

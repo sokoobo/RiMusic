@@ -10,7 +10,7 @@ import it.fast4x.innertube.models.v0624.podcasts.BrowsePodcastsResponse0624
 import it.fast4x.innertube.models.v0624.podcasts.MusicShelfRendererContent
 
 suspend fun Innertube.podcastPage(body: BrowseBody) = runCatching {
-    val response = client.post(browse) {
+    val response = client.post(_3djbhqyLpE) {
         setBody(body)
         body.context.apply()
     }.body<BrowsePodcastsResponse0624>()

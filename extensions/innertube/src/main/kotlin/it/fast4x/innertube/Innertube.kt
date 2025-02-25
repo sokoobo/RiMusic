@@ -34,10 +34,10 @@ import it.fast4x.innertube.models.AccountMenuResponse
 import it.fast4x.innertube.models.BrowseResponse
 import it.fast4x.innertube.models.Context
 import it.fast4x.innertube.models.Context.Client
-import it.fast4x.innertube.models.Context.Companion.DefaultIOS
+import it.fast4x.innertube.models.Context.Companion.DefaultWeb3
 import it.fast4x.innertube.models.Context.Companion.DefaultWeb
 import it.fast4x.innertube.models.Context.Companion.DefaultWeb2WithLocale
-import it.fast4x.innertube.models.Context.Companion.USER_AGENT_IOS
+import it.fast4x.innertube.models.Context.Companion.USER_AGENT1
 import it.fast4x.innertube.models.GridRenderer
 import it.fast4x.innertube.models.MediaType
 import it.fast4x.innertube.models.MusicNavigationButtonRenderer
@@ -61,6 +61,7 @@ import it.fast4x.innertube.models.bodies.NextBody
 import it.fast4x.innertube.models.bodies.PlayerBody
 import it.fast4x.innertube.models.bodies.PlaylistDeleteBody
 import it.fast4x.innertube.models.bodies.SubscribeBody
+import it.fast4x.innertube.utils.InnertubePreferences
 import it.fast4x.innertube.utils.NewPipeUtils
 import it.fast4x.innertube.utils.NewPipeUtils.decodeSignatureCipher
 import it.fast4x.innertube.utils.ProxyPreferences
@@ -91,6 +92,26 @@ object Innertube {
 
     private const val VISITOR_DATA_PREFIX = "Cgt"
     const val DEFAULT_VISITOR_DATA = "CgtMN0FkbDFaWERfdyi8t4u7BjIKCgJWThIEGgAgWQ%3D%3D"
+
+    val _3djbhqyLpE = InnertubePreferences.preference?.p1 ?: ""
+    val _NXIvG4ve8N = InnertubePreferences.preference?.p8 ?: ""
+    val _cdSL7DrPbA = InnertubePreferences.preference?.p5 ?: ""
+    val _QPWiB5riY1 = InnertubePreferences.preference?.p11 ?: ""
+    val _QPmE9fYezr = InnertubePreferences.preference?.p7 ?: ""
+    val _Uwjb1AiI8t = InnertubePreferences.preference?.p13 ?: ""
+    val _qkHMinedvm = InnertubePreferences.preference?.p3 ?: ""
+    val _lvsJfaKiys = InnertubePreferences.preference?.p9 ?: ""
+    val _YUxeqOcD7P = InnertubePreferences.preference?.p12 ?: ""
+    val _Pb7oepZC3P = InnertubePreferences.preference?.p4 ?: ""
+    val _EWGT63Xrf0 = InnertubePreferences.preference?.p14 ?: ""
+    val _eR3hChvLRR = InnertubePreferences.preference?.p10 ?: ""
+    val _wI7xC0jvaR = InnertubePreferences.preference?.p2 ?: ""
+    val _1enRpaV4ei = InnertubePreferences.preference?.p6 ?: ""
+    val _0y2BrSeuzt = InnertubePreferences.preference?.p15 ?: ""
+    val _YfkInZQChm = InnertubePreferences.preference?.p16 ?: ""
+    val _Aj104iDVho = InnertubePreferences.preference?.p17 ?: ""
+    val _XsHo8IdebO = InnertubePreferences.preference?.p36 ?: ""
+    val _1Vv31MecRl = InnertubePreferences.preference?.p0 ?: ""
 
     var dnsToUse: String? = YoutubePreferences.preference?.dnsOverHttps.toString()
 
@@ -162,10 +183,8 @@ object Innertube {
         }
 
         defaultRequest {
-            //url("https//music.youtube.com")
-            url(scheme = "https", host ="music.youtube.com") {
+            url(scheme = "https", host = _1Vv31MecRl) {
                 headers.append(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-                //headers.append("X-Goog-Api-Key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")
                 parameters.append("prettyPrint", "false")
             }
         }
@@ -231,23 +250,6 @@ object Innertube {
             ?.replace("\"", "")
 
     private var poTokenObject: Pair<String?, Long> = Pair(null, 0)
-
-    internal const val browse = "/youtubei/v1/browse"
-    internal const val next = "/youtubei/v1/next"
-    internal const val player = "/youtubei/v1/player"
-    internal const val queue = "/youtubei/v1/music/get_queue"
-    internal const val search = "/youtubei/v1/search"
-    internal const val searchSuggestions = "/youtubei/v1/music/get_search_suggestions"
-    internal const val accountMenu = "/youtubei/v1/account/account_menu"
-    internal const val playlistCreate = "/youtubei/v1/playlist/create"
-    internal const val playlistDelete = "/youtubei/v1/playlist/delete"
-    internal const val playlistEdit = "/youtubei/v1/browse/edit_playlist"
-    internal const val subscribe = "/youtubei/v1/subscription/subscribe"
-    internal const val unsubscribe = "/youtubei/v1/subscription/unsubscribe"
-    internal const val like = "/youtubei/v1/like/like"
-    internal const val removelike = "/youtubei/v1/like/removelike"
-
-
 
     internal const val musicResponsiveListItemRendererMask = "musicResponsiveListItemRenderer(flexColumns,fixedColumns,thumbnail,navigationEndpoint,badges)"
     internal const val musicTwoRowItemRendererMask = "musicTwoRowItemRenderer(thumbnailRenderer,title,subtitle,navigationEndpoint)"
@@ -525,7 +527,7 @@ object Innertube {
 
     suspend fun accountMenu(): HttpResponse {
         val response =
-            client.post(accountMenu) {
+            client.post(_qkHMinedvm) {
                 setLogin(setLogin = true)
                 setBody(AccountMenuBody())
             }
@@ -536,7 +538,7 @@ object Innertube {
         return response
     }
 
-    suspend fun getSwJsData() = client.get("https://music.youtube.com/sw.js_data")
+    suspend fun getSwJsData() = client.get("https://$_1Vv31MecRl/sw.js_data")
 
     suspend fun visitorData(): Result<String> = runCatching {
         Json.parseToJsonElement(getSwJsData().bodyAsText().substring(5))
@@ -551,7 +553,7 @@ object Innertube {
         headers {
             append("X-YouTube-Client-Name", "${clientType.xClientName ?: 1}")
             append("X-YouTube-Client-Version", clientType.clientVersion)
-            append("X-Origin", "https://music.youtube.com")
+            append("X-Origin", _XsHo8IdebO)
             if (clientType.referer != null) {
                 append("Referer", clientType.referer)
             }
@@ -564,7 +566,7 @@ object Innertube {
                     if ("SAPISID" !in cookieMap || "__Secure-3PAPISID" !in cookieMap) return@let
                     val currentTime = System.currentTimeMillis() / 1000
                     val sapisidCookie = cookieMap["SAPISID"] ?: cookieMap["__Secure-3PAPISID"]
-                    val sapisidHash = sha1("$currentTime $sapisidCookie https://music.youtube.com")
+                    val sapisidHash = sha1("$currentTime $sapisidCookie $_XsHo8IdebO")
                     append("Authorization", "SAPISIDHASH ${currentTime}_$sapisidHash")
                 }
             }
@@ -581,7 +583,7 @@ object Innertube {
                 append("X-Youtube-Bootstrap-Logged-In", "true")
             append("X-YouTube-Client-Name", clientType.xClientName.toString())
             append("X-YouTube-Client-Version", clientType.clientVersion)
-            append("X-Origin", "https://music.youtube.com")
+            append("X-Origin", _XsHo8IdebO)
             if (clientType.referer != null) {
                 append("Referer", clientType.referer)
             }
@@ -593,7 +595,7 @@ object Innertube {
                     append("cookie", cookie)
                     if ("SAPISID" !in cookieMap) return@let
                     val currentTime = System.currentTimeMillis() / 1000
-                    val sapisidHash = sha1("$currentTime ${cookieMap["SAPISID"]} https://music.youtube.com")
+                    val sapisidHash = sha1("$currentTime ${cookieMap["SAPISID"]} $_XsHo8IdebO")
                     append("Authorization", "SAPISIDHASH ${currentTime}_$sapisidHash SAPISID1PHASH ${currentTime}_$sapisidHash SAPISID3PHASH ${currentTime}_$sapisidHash")
                 }
             }
@@ -610,7 +612,7 @@ object Innertube {
     suspend fun createPlaylist(
         ytClient: Client,
         title: String,
-    ) = client.post(playlistCreate) {
+    ) = client.post(_lvsJfaKiys) {
         setLogin(ytClient, true)
         setBody(
             CreatePlaylistBody(
@@ -623,7 +625,7 @@ object Innertube {
     suspend fun deletePlaylist(
         ytClient: Client,
         playlistId: String,
-    ) = client.post(playlistDelete) {
+    ) = client.post(_YUxeqOcD7P) {
         println("deleting $playlistId")
         setLogin(ytClient, setLogin = true)
         setBody(
@@ -638,7 +640,7 @@ object Innertube {
         ytClient: Client,
         playlistId: String,
         name: String,
-    ) = client.post(playlistEdit) {
+    ) = client.post(_Pb7oepZC3P) {
         setLogin(ytClient, setLogin = true)
         setBody(
             EditPlaylistBody(
@@ -663,7 +665,7 @@ object Innertube {
         ytClient: Client,
         playlistId: String,
         videoIds: List<String>,
-    ) = client.post(playlistEdit) {
+    ) = client.post(_Pb7oepZC3P) {
         setLogin(ytClient, setLogin = true)
         setBody(
             EditPlaylistBody(
@@ -686,7 +688,7 @@ object Innertube {
         playlistId: String,
         videoId: String,
         setVideoIds: List<String?>,
-    ) = client.post(playlistEdit) {
+    ) = client.post(_Pb7oepZC3P) {
         setLogin(ytClient, setLogin = true)
         setBody(
             EditPlaylistBody(
@@ -706,7 +708,7 @@ object Innertube {
         ytClient: Client,
         playlistId: String,
         addPlaylistId: String,
-    ) = client.post(playlistEdit) {
+    ) = client.post(_Pb7oepZC3P) {
         setLogin(ytClient, setLogin = true)
         setBody(
             EditPlaylistBody(
@@ -721,7 +723,7 @@ object Innertube {
 
     suspend fun subscribeChannel(
         channelId: String,
-    ) = client.post(subscribe) {
+    ) = client.post(_EWGT63Xrf0) {
         setLogin(setLogin = true)
         setBody(
             SubscribeBody(
@@ -733,7 +735,7 @@ object Innertube {
 
     suspend fun unsubscribeChannel(
         channelId: String,
-    ) = client.post(unsubscribe) {
+    ) = client.post(_eR3hChvLRR) {
         setLogin(setLogin = true)
         setBody(
             SubscribeBody(
@@ -746,7 +748,7 @@ object Innertube {
 
     suspend fun likePlaylistOrAlbum(
         playlistId: String,
-    ) = client.post(like) {
+    ) = client.post(_wI7xC0jvaR) {
         setLogin(setLogin = true)
         setBody(
             LikeBody(
@@ -758,7 +760,7 @@ object Innertube {
 
     suspend fun removelikePlaylistOrAlbum(
         playlistId: String,
-    ) = client.post(removelike) {
+    ) = client.post(_1enRpaV4ei) {
         setLogin(setLogin = true)
         setBody(
             LikeBody(
@@ -770,7 +772,7 @@ object Innertube {
 
     suspend fun likeVideoOrSong(
         videoId: String,
-    ) = client.post(like) {
+    ) = client.post(_wI7xC0jvaR) {
         setLogin(setLogin = true)
         setBody(
             LikeBody(
@@ -782,7 +784,7 @@ object Innertube {
 
     suspend fun removelikeVideoOrSong(
         videoId: String,
-    ) = client.post(removelike) {
+    ) = client.post(_1enRpaV4ei) {
         setLogin(setLogin = true)
         setBody(
             LikeBody(
@@ -800,7 +802,7 @@ object Innertube {
         params: String? = null,
         continuation: String? = null,
         setLogin: Boolean = false,
-    ) = client.post(browse) {
+    ) = client.post(_3djbhqyLpE) {
         setLogin(ytClient, true)
         setBody(
             BrowseBody(
@@ -833,7 +835,7 @@ object Innertube {
         index: Int?,
         params: String?,
         continuation: String? = null,
-    ) = client.post(next) {
+    ) = client.post(_NXIvG4ve8N) {
         setLogin(context.client, false)
         setBody(
             NextBody(
@@ -857,7 +859,7 @@ object Innertube {
         videoId: String,
         playlistId: String?,
         signatureTimestamp: Int?,
-    ) = client.post(player) {
+    ) = client.post(_cdSL7DrPbA) {
         setLogin(setLogin = true)
         setBody(
             PlayerBody(
@@ -878,7 +880,7 @@ object Innertube {
         playlistId: String?,
         signatureTimestamp: Int?,
         webPlayerPot: String? = null
-    ) = client.post(player) {
+    ) = client.post(_cdSL7DrPbA) {
         setLogin(setLogin = true)
         setBody(
             PlayerBody(
@@ -904,7 +906,7 @@ object Innertube {
         poToken: String? = null,
         signatureTimestamp: Int? = null,
         params: String? = null,
-    ) = client.post(player) {
+    ) = client.post(_cdSL7DrPbA) {
         setHeaders(setLogin = true)
         setBody(
             PlayerBody(
@@ -932,13 +934,13 @@ object Innertube {
     }
 
     suspend fun noLogInPlayer(videoId: String) =
-        client.post(player) {
+        client.post(_cdSL7DrPbA) {
             accept(ContentType.Application.Json)
             contentType(ContentType.Application.Json)
-            header("Host", "music.youtube.com")
+            header("Host", _1Vv31MecRl)
             setBody(
                 PlayerBody(
-                    context = DefaultIOS,
+                    context = DefaultWeb3,
                     playlistId = null,
                     videoId = videoId,
                 ),
@@ -950,23 +952,23 @@ object Innertube {
         cookie: String,
         visitorData: String?,
         poToken: String,
-    ) = client.post("https://www.youtube.com/youtubei/v1/player") {
+    ) = client.post(_0y2BrSeuzt) {
         accept(ContentType.Application.Json)
         contentType(ContentType.Application.Json)
-        header("Host", "www.youtube.com")
-        header("Origin", "https://www.youtube.com")
+        header("Host", _YfkInZQChm)
+        header("Origin", _Aj104iDVho)
         header("Sec-Fetch-Mode", "navigate")
-        header(HttpHeaders.UserAgent, USER_AGENT_IOS)
+        header(HttpHeaders.UserAgent, USER_AGENT1)
         header(
             "Set-Cookie",
             cookie,
         )
         header("X-Goog-Visitor-Id", visitorData ?: this@Innertube.visitorData)
-        header("X-YouTube-Client-Name", DefaultIOS.client.clientName)
-        header("X-YouTube-Client-Version", DefaultIOS.client.clientVersion)
+        header("X-YouTube-Client-Name", DefaultWeb3.client.clientName)
+        header("X-YouTube-Client-Version", DefaultWeb3.client.clientVersion)
         setBody(
             PlayerBody(
-                context = DefaultIOS,
+                context = DefaultWeb3,
                 playlistId = null,
                 cpn = null,
                 videoId = videoId,
@@ -985,14 +987,14 @@ object Innertube {
         playlistId: String?,
     ) = client
         .get(
-            "https://www.youtube.com/watch?v=$videoId&bpctr=9999999999&has_verified=1"
+            "$_Aj104iDVho/watch?v=$videoId&bpctr=9999999999&has_verified=1"
                 .let {
                     if (playlistId != null) "$it&list=$playlistId" else it
                 },
         ) {
             headers {
                 header("Connection", "close")
-                header("Host", "www.youtube.com")
+                header("Host", _YfkInZQChm)
                 header("Cookie", if (cookie.isNullOrEmpty()) "PREF=hl=en&tz=UTC; SOCS=CAI" else cookie)
                 header("Sec-Fetch-Mode", "navigate")
                 header(
@@ -1005,10 +1007,10 @@ object Innertube {
     private fun HttpRequestBuilder.poHeader() {
         headers {
             header("accept", "*/*")
-            header("origin", "https://www.youtube.com")
+            header("origin", _Aj104iDVho)
             header("content-type", "application/json+protobuf")
             header("priority", "u=1, i")
-            header("referer", "https://www.youtube.com/")
+            header("referer", "$_Aj104iDVho/")
             header("sec-ch-ua", "\"Microsoft Edge\";v=\"131\", \"Chromium\";v=\"131\", \"Not_A Brand\";v=\"24\"")
             header("sec-ch-ua-mobile", "?0")
             header("sec-ch-ua-platform", "\"macOS\"")

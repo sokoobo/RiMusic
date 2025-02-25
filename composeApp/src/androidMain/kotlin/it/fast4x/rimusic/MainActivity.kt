@@ -103,6 +103,8 @@ import it.fast4x.innertube.Innertube
 import it.fast4x.innertube.models.bodies.BrowseBody
 import it.fast4x.innertube.requests.playlistPage
 import it.fast4x.innertube.requests.song
+import it.fast4x.innertube.utils.InnertubePreferenceItem
+import it.fast4x.innertube.utils.InnertubePreferences
 import it.fast4x.innertube.utils.LocalePreferenceItem
 import it.fast4x.innertube.utils.LocalePreferences
 import it.fast4x.innertube.utils.ProxyPreferenceItem
@@ -123,6 +125,8 @@ import it.fast4x.rimusic.enums.PipModule
 import it.fast4x.rimusic.enums.PlayerBackgroundColors
 import it.fast4x.rimusic.enums.PopupType
 import it.fast4x.rimusic.enums.ThumbnailRoundness
+import it.fast4x.rimusic.extensions.configuration.getConfiguration
+import it.fast4x.rimusic.extensions.configuration.getConfigurationsList
 import it.fast4x.rimusic.extensions.connectivity.InternetConnectivityObserver
 import it.fast4x.rimusic.extensions.pip.PipEventContainer
 import it.fast4x.rimusic.extensions.pip.PipModuleContainer
@@ -512,6 +516,8 @@ class MainActivity :
                     }
                 })
             }
+
+            InitializeEnvironment()
 
             val coroutineScope = rememberCoroutineScope()
             val isSystemInDarkTheme = isSystemInDarkTheme()
@@ -1417,6 +1423,47 @@ class MainActivity :
         }
     }
 
+    fun InitializeEnvironment() {
+        InnertubePreferences.preference = InnertubePreferenceItem(
+            p0 = getConfiguration("CrQ0JjAXgv"),
+            p1 = getConfiguration("hNpBzzAn7i"),
+            p2 = getConfiguration("lEi9YM74OL"),
+            p3 = getConfiguration("C0ZR993zmk"),
+            p4 = getConfiguration("w3TFBFL74Y"),
+            p5 = getConfiguration("mcchaHCWyK"),
+            p6 = getConfiguration("L2u4JNdp7L"),
+            p7 = getConfiguration("sqDlfmV4Mt"),
+            p8 = getConfiguration("WpLlatkrVv"),
+            p9 = getConfiguration("1zNshDpFoh"),
+            p10 = getConfiguration("mPVWVuCxJz"),
+            p11 = getConfiguration("auDsjnylCZ"),
+            p12 = getConfiguration("AW52cvJIJx"),
+            p13 = getConfiguration("0RGAyC1Zqu"),
+            p14 = getConfiguration("4Fdmu9Jkax"),
+            p15 = getConfiguration("kuSdQLhP8I"),
+            p16 = getConfiguration("QrgDKwvam1"),
+            p17 = getConfiguration("wLwNESpPtV"),
+            p18 = getConfiguration("JJUQaehRFg"),
+            p19 = getConfiguration("i7WX2bHV6R"),
+            p20 = getConfiguration("XpiuASubrV"),
+            p21 = getConfiguration("lOlIIVw38L"),
+            p22 = getConfiguration("mtcR0FhFEl"),
+            p23 = getConfiguration("DTihHAFaBR"),
+            p24 = getConfiguration("a4AcHS8CSg"),
+            p25 = getConfiguration("krdLqpYLxM"),
+            p26 = getConfiguration("ye6KGLZL7n"),
+            p27 = getConfiguration("ec09m20YH5"),
+            p28 = getConfiguration("LDRlbOvbF1"),
+            p29 = getConfiguration("EEqX0yizf2"),
+            p30 = getConfiguration("i3BRhLrV1v"),
+            p31 = getConfiguration("MApdyHLMyJ"),
+            p32 = getConfiguration("hizI7yLjL4"),
+            p33 = getConfiguration("rLoZP7BF4c"),
+            p34 = getConfiguration("nza34sU88C"),
+            p35 = getConfiguration("dwbUvjWUl3"),
+            p36 = getConfiguration("fqqhBZd0cf")
+        )
+    }
 
 }
 

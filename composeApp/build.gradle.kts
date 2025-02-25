@@ -199,6 +199,10 @@ android {
         generateLocaleConfig = true
     }
 
+    lint {
+        abortOnError = true
+    }
+
 }
 
 

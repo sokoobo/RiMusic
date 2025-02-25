@@ -10,7 +10,7 @@ import it.fast4x.innertube.utils.from
 import it.fast4x.innertube.utils.runCatchingNonCancellable
 
 suspend fun Innertube.queue(body: QueueBody) = runCatchingNonCancellable {
-    val response = client.post(queue) {
+    val response = client.post(_QPWiB5riY1) {
         setBody(body)
         mask("queueDatas.content.$playlistPanelVideoRendererMask")
     }.body<GetQueueResponse>()

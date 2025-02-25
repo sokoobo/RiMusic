@@ -13,7 +13,7 @@ import it.fast4x.innertube.models.bodies.BrowseBodyWithLocale
 import it.fast4x.innertube.models.bodies.FormData
 
 suspend fun Innertube.chartsPageComplete(countryCode: String = "") = runCatching {
-    val response = client.post(browse) {
+    val response = client.post(_3djbhqyLpE) {
         setBody(
             BrowseBodyWithLocale(
                 browseId = "FEmusic_charts",

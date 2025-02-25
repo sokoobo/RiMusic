@@ -11,7 +11,7 @@ import it.fast4x.innertube.models.oddElements
 import it.fast4x.innertube.models.splitBySeparator
 
 suspend fun Innertube.discoverPage() = runCatching {
-    val response = client.post(browse) {
+    val response = client.post(_3djbhqyLpE) {
         setBody(BrowseBodyWithLocale(browseId = "FEmusic_explore"))
         mask("contents")
     }.body<BrowseResponse>()
@@ -33,7 +33,7 @@ suspend fun Innertube.discoverPage() = runCatching {
 }
 
 suspend fun Innertube.discoverPageNewAlbums() = runCatching {
-    val response = client.post(browse) {
+    val response = client.post(_3djbhqyLpE) {
         setBody(BrowseBodyWithLocale(browseId = "FEmusic_explore"))
         mask("contents")
     }.body<BrowseResponse>()
@@ -49,7 +49,7 @@ suspend fun Innertube.discoverPageNewAlbums() = runCatching {
 }
 
 suspend fun Innertube.discoverPageNewAlbumsComplete() = runCatching {
-    val response = client.post(browse) {
+    val response = client.post(_3djbhqyLpE) {
         setBody(BrowseBodyWithLocale(browseId = "FEmusic_new_releases_albums"))
         mask("contents")
     }.body<BrowseResponse>()

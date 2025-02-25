@@ -16,7 +16,7 @@ suspend fun <T : Innertube.Item> Innertube.searchPage(
     body: SearchBody,
     fromMusicShelfRendererContent: (MusicShelfRenderer.Content) -> T?
 ) = runCatchingNonCancellable {
-    val response = client.post(search) {
+    val response = client.post(_QPmE9fYezr) {
         setBody(body)
         mask("contents.tabbedSearchResultsRenderer.tabs.tabRenderer.content.sectionListRenderer.contents.musicShelfRenderer(continuations,contents.$musicResponsiveListItemRendererMask)")
     }.body<SearchResponse>()
@@ -39,7 +39,7 @@ suspend fun <T : Innertube.Item> Innertube.searchPage(
     body: ContinuationBody,
     fromMusicShelfRendererContent: (MusicShelfRenderer.Content) -> T?
 ) = runCatchingNonCancellable {
-    val response = client.post(search) {
+    val response = client.post(_QPmE9fYezr) {
         setBody(body)
         mask("continuationContents.musicShelfContinuation(continuations,contents.$musicResponsiveListItemRendererMask)")
     }.body<ContinuationResponse>()
