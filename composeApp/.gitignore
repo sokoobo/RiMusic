@@ -2,7 +2,7 @@
 /release
 /lint-baseline.xml
 /accrescent
-/foss
+/full
 /.gradle
 /_conveyor.conf
 /conveyor.conf
