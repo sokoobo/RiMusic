@@ -795,24 +795,26 @@ class PlayerServiceModern : MediaLibraryService(),
         println("PlayerServiceModern onPlayerError errorCode ${error.errorCode} errorCodeName ${error.errorCodeName}")
         if (error.errorCode in PlayerErrorsToReload) {
             //println("mediaItem onPlayerError recovered occurred errorCodeName ${error.errorCodeName}")
+            player.stop()
             player.prepare()
-            player.play()
+            player.playWhenReady = true
+            //player.play()
             return
         }
 
-        if (error.errorCode in PlayerErrorsWithCachePurge) {
-            Timber.e("PlayerServiceModern onPlayerError error with cache purge errorCodeName ${error.errorCodeName}")
-            println("PlayerServiceModern onPlayerError error with cache purge errorCodeName ${error.errorCodeName}")
-//            currentMediaItem.value?.mediaId?.let {
-//                cache.removeResource(it) //try to remove from cache if exists
-//                downloadCache.removeResource(it) //try to remove from download cache if exists
-//            }
-            player.prepare()
-            //player.seekTo(0L) // seek to start force re cache
-            player.seekTo(-500)
-            player.play()
-            return
-        }
+//        if (error.errorCode in PlayerErrorsWithCachePurge) {
+//            Timber.e("PlayerServiceModern onPlayerError error with cache purge errorCodeName ${error.errorCodeName}")
+//            println("PlayerServiceModern onPlayerError error with cache purge errorCodeName ${error.errorCodeName}")
+////            currentMediaItem.value?.mediaId?.let {
+////                cache.removeResource(it) //try to remove from cache if exists
+////                downloadCache.removeResource(it) //try to remove from download cache if exists
+////            }
+//            player.prepare()
+//            //player.seekTo(0L) // seek to start force re cache
+//            player.seekTo(-500)
+//            player.play()
+//            return
+//        }
 
         /*
         if (error.errorCode in PlayerErrorsToSkip) {

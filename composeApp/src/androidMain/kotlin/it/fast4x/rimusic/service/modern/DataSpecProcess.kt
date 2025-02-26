@@ -10,7 +10,6 @@ import it.fast4x.innertube.models.PlayerResponse
 import it.fast4x.innertube.models.bodies.PlayerBody
 import it.fast4x.innertube.requests.player
 import it.fast4x.innertube.requests.playerAdvanced
-import it.fast4x.invidious.Invidious
 import it.fast4x.rimusic.Database
 import it.fast4x.rimusic.enums.AudioQualityFormat
 import it.fast4x.rimusic.extensions.webpotoken.advancedWebPoTokenPlayer
@@ -29,8 +28,6 @@ import it.fast4x.rimusic.useYtLoginOnlyForBrowse
 import it.fast4x.rimusic.utils.getSignatureTimestampOrNull
 import it.fast4x.rimusic.utils.getStreamUrl
 import kotlinx.coroutines.withTimeout
-import me.knighthat.piped.Piped
-import me.knighthat.piped.request.player
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -406,79 +403,79 @@ suspend fun getInnerTubeFormatUrl(
     )
 }
 
-private suspend fun getPipedFormatUrl(
-    videoId: String,
-    audioQualityFormat: AudioQualityFormat
-): Uri {
-    val format = Piped.player( videoId )?.fold(
-        {
-            when (audioQualityFormat) {
-                AudioQualityFormat.Auto -> it?.autoMaxQualityFormat
-                AudioQualityFormat.High -> it?.highestQualityFormat
-                AudioQualityFormat.Medium -> it?.mediumQualityFormat
-                AudioQualityFormat.Low -> it?.lowestQualityFormat
-            }.also {
-                //println("PlayerService MyDownloadHelper DataSpecProcess getPipedFormatUrl before upsert format $it")
-                Database.asyncTransaction {
-                    if ( songExist(videoId) > 0 )
-                        upsert(
-                            Format(
-                                songId = videoId,
-                                itag = it?.itag?.toInt(),
-                                mimeType = it?.mimeType,
-                                contentLength = it?.contentLength?.toLong(),
-                                bitrate = it?.bitrate?.toLong()
-                            )
-                        )
-                }
-                //println("PlayerService MyDownloadHelper DataSpecProcess getPipedFormatUrl after upsert format $it")
-            }
-        },
-        {
-            println("PlayerService MyDownloadHelper DataSpecProcess Error: ${it.stackTraceToString()}")
-            throw it
-        }
-    )
-
-    // Return parsed URL to play song or throw error if none of the responses is valid
-    return Uri.parse( format?.url ) ?: throw NoSuchElementException( "Could not find any playable format from Piped ($videoId)" )
-}
-
-private suspend fun getInvidiousFormatUrl(
-    videoId: String,
-    audioQualityFormat: AudioQualityFormat
-): Uri {
-    val format = Invidious.api.videos( videoId )?.fold(
-        {
-            when( audioQualityFormat ){
-                AudioQualityFormat.Auto -> it.autoMaxQualityFormat
-                AudioQualityFormat.High -> it.highestQualityFormat
-                AudioQualityFormat.Medium -> it.mediumQualityFormat
-                AudioQualityFormat.Low -> it.lowestQualityFormat
-            }.also {
-                //println("PlayerService MyDownloadHelper DataSpecProcess getInvidiousFormatUrl before upsert format $it")
-                Database.asyncTransaction {
-                    if( songExist(videoId) > 0 )
-                        upsert(
-                            Format(
-                                songId = videoId,
-                                itag = it?.itag?.toInt(),
-                                mimeType = it?.mimeType,
-                                bitrate = it?.bitrate?.toLong()
-                            )
-                        )
-                }
-                //println("PlayerService MyDownloadHelper DataSpecProcess getInvidiousFormatUrl after upsert format $it")
-            }
-        },
-        {
-            println("PlayerService MyDownloadHelper DataSpecProcess Error: ${it.stackTraceToString()}")
-            throw it
-        }
-    )
-
-    // Return parsed URL to play song or throw error if none of the responses is valid
-    return Uri.parse( format?.url ) ?: throw NoSuchElementException( "Could not find any playable format from Piped ($videoId)" )
-}
-
+//private suspend fun getPipedFormatUrl(
+//    videoId: String,
+//    audioQualityFormat: AudioQualityFormat
+//): Uri {
+//    val format = Piped.player( videoId )?.fold(
+//        {
+//            when (audioQualityFormat) {
+//                AudioQualityFormat.Auto -> it?.autoMaxQualityFormat
+//                AudioQualityFormat.High -> it?.highestQualityFormat
+//                AudioQualityFormat.Medium -> it?.mediumQualityFormat
+//                AudioQualityFormat.Low -> it?.lowestQualityFormat
+//            }.also {
+//                //println("PlayerService MyDownloadHelper DataSpecProcess getPipedFormatUrl before upsert format $it")
+//                Database.asyncTransaction {
+//                    if ( songExist(videoId) > 0 )
+//                        upsert(
+//                            Format(
+//                                songId = videoId,
+//                                itag = it?.itag?.toInt(),
+//                                mimeType = it?.mimeType,
+//                                contentLength = it?.contentLength?.toLong(),
+//                                bitrate = it?.bitrate?.toLong()
+//                            )
+//                        )
+//                }
+//                //println("PlayerService MyDownloadHelper DataSpecProcess getPipedFormatUrl after upsert format $it")
+//            }
+//        },
+//        {
+//            println("PlayerService MyDownloadHelper DataSpecProcess Error: ${it.stackTraceToString()}")
+//            throw it
+//        }
+//    )
+//
+//    // Return parsed URL to play song or throw error if none of the responses is valid
+//    return Uri.parse( format?.url ) ?: throw NoSuchElementException( "Could not find any playable format from Piped ($videoId)" )
+//}
+//
+//private suspend fun getInvidiousFormatUrl(
+//    videoId: String,
+//    audioQualityFormat: AudioQualityFormat
+//): Uri {
+//    val format = Invidious.api.videos( videoId )?.fold(
+//        {
+//            when( audioQualityFormat ){
+//                AudioQualityFormat.Auto -> it.autoMaxQualityFormat
+//                AudioQualityFormat.High -> it.highestQualityFormat
+//                AudioQualityFormat.Medium -> it.mediumQualityFormat
+//                AudioQualityFormat.Low -> it.lowestQualityFormat
+//            }.also {
+//                //println("PlayerService MyDownloadHelper DataSpecProcess getInvidiousFormatUrl before upsert format $it")
+//                Database.asyncTransaction {
+//                    if( songExist(videoId) > 0 )
+//                        upsert(
+//                            Format(
+//                                songId = videoId,
+//                                itag = it?.itag?.toInt(),
+//                                mimeType = it?.mimeType,
+//                                bitrate = it?.bitrate?.toLong()
+//                            )
+//                        )
+//                }
+//                //println("PlayerService MyDownloadHelper DataSpecProcess getInvidiousFormatUrl after upsert format $it")
+//            }
+//        },
+//        {
+//            println("PlayerService MyDownloadHelper DataSpecProcess Error: ${it.stackTraceToString()}")
+//            throw it
+//        }
+//    )
+//
+//    // Return parsed URL to play song or throw error if none of the responses is valid
+//    return Uri.parse( format?.url ) ?: throw NoSuchElementException( "Could not find any playable format from Piped ($videoId)" )
+//}
+//
 
