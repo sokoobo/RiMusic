@@ -90,8 +90,8 @@ import kotlin.random.Random
 
 object Innertube {
 
-    private const val VISITOR_DATA_PREFIX = "Cgt"
-    const val DEFAULT_VISITOR_DATA = "CgtMN0FkbDFaWERfdyi8t4u7BjIKCgJWThIEGgAgWQ%3D%3D"
+    val _7ZoUy0mkCP = InnertubePreferences.preference?.p37 ?: ""
+    val _uMYwa66ycM = InnertubePreferences.preference?.p38 ?: ""
 
     val _3djbhqyLpE = InnertubePreferences.preference?.p1 ?: ""
     val _NXIvG4ve8N = InnertubePreferences.preference?.p8 ?: ""
@@ -544,7 +544,7 @@ object Innertube {
         Json.parseToJsonElement(getSwJsData().bodyAsText().substring(5))
             .jsonArray[0]
             .jsonArray[2]
-            .jsonArray.first { (it as? JsonPrimitive)?.content?.startsWith(VISITOR_DATA_PREFIX) == true }
+            .jsonArray.first { (it as? JsonPrimitive)?.content?.startsWith(_7ZoUy0mkCP) == true }
             .jsonPrimitive.content
     }
 

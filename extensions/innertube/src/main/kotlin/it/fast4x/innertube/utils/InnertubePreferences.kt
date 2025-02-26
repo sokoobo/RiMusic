@@ -42,6 +42,11 @@ data class InnertubePreferenceItem(
     var p34: String? = null,
     var p35: String? = null,
     var p36: String? = null,
+    var p37: String? = null,
+    var p38: String? = null,
+    var p39: String? = null,
+    var p40: String? = null,
+    var p41: String? = null,
 
 
 

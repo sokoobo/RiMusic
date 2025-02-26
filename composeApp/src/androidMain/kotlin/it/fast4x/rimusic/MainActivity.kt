@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityManager
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.SharedPreferences
@@ -58,7 +57,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -126,8 +124,6 @@ import it.fast4x.rimusic.enums.PlayerBackgroundColors
 import it.fast4x.rimusic.enums.PopupType
 import it.fast4x.rimusic.enums.ThumbnailRoundness
 import it.fast4x.rimusic.extensions.configuration.getConfiguration
-import it.fast4x.rimusic.extensions.configuration.getConfigurationsList
-import it.fast4x.rimusic.extensions.connectivity.InternetConnectivityObserver
 import it.fast4x.rimusic.extensions.pip.PipEventContainer
 import it.fast4x.rimusic.extensions.pip.PipModuleContainer
 import it.fast4x.rimusic.extensions.pip.PipModuleCover
@@ -187,8 +183,6 @@ import it.fast4x.rimusic.utils.customThemeLight_textSecondaryKey
 import it.fast4x.rimusic.utils.disableClosingPlayerSwipingDownKey
 import it.fast4x.rimusic.utils.disablePlayerHorizontalSwipeKey
 import it.fast4x.rimusic.utils.effectRotationKey
-import it.fast4x.rimusic.utils.enableYouTubeLoginKey
-import it.fast4x.rimusic.utils.encryptedPreferences
 import it.fast4x.rimusic.utils.fontTypeKey
 import it.fast4x.rimusic.utils.forcePlay
 import it.fast4x.rimusic.utils.getEnum
@@ -219,7 +213,6 @@ import it.fast4x.rimusic.utils.preferences
 import it.fast4x.rimusic.utils.proxyHostnameKey
 import it.fast4x.rimusic.utils.proxyModeKey
 import it.fast4x.rimusic.utils.proxyPortKey
-import it.fast4x.rimusic.utils.rememberEncryptedPreference
 import it.fast4x.rimusic.utils.rememberPreference
 import it.fast4x.rimusic.utils.resize
 import it.fast4x.rimusic.utils.restartActivityKey
@@ -544,7 +537,7 @@ class MainActivity :
             //if (preferences.getBoolean(enableYouTubeLoginKey, false)) {
                     var visitorData by rememberPreference(
                         key = ytVisitorDataKey,
-                        defaultValue = Innertube.DEFAULT_VISITOR_DATA
+                        defaultValue = Innertube._uMYwa66ycM
                     )
 
                     if (visitorData.isEmpty()) runBlocking {
@@ -558,7 +551,7 @@ class MainActivity :
                             cookie = preferences.getString(ytCookieKey, ""),
                             visitordata = visitorData
                                 .takeIf { it != "null" }
-                                ?: Innertube.DEFAULT_VISITOR_DATA,
+                                ?: Innertube._uMYwa66ycM,
                             dataSyncId = preferences.getString(ytDataSyncIdKey, ""),
                             dnsOverHttps = getDnsOverHttpsType().type
                         )
@@ -1461,7 +1454,10 @@ class MainActivity :
             p33 = getConfiguration("rLoZP7BF4c"),
             p34 = getConfiguration("nza34sU88C"),
             p35 = getConfiguration("dwbUvjWUl3"),
-            p36 = getConfiguration("fqqhBZd0cf")
+            p36 = getConfiguration("fqqhBZd0cf"),
+            p37 = getConfiguration("9sZKrkMg8p"),
+            p38 = getConfiguration("aQpNCVOe2i"),
+
         )
     }
 
