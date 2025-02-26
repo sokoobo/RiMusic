@@ -25,11 +25,11 @@
 Hello Friends, 
 the project is not closed, new releases have been suspended for now waiting to reorganize ideas. I want to thank all of you and not least to thank all the contributors, translators and developers who have joined the project over time. RiMusic is alive and support is active!
 
-Despite this, I am sad and sorry that even on the Google Play Store there is a clone of RiMusic that despite the reports is not deleted from the store. 
+Despite this, I am sad and sorry that even on the Google Play Store there are various clones of RiMusic that despite the reports are not deleted from the store. 
 
 I only ask you to report at all levels the violation of the license on all other applications born from the copy of RiMusic source code.
 
-RiMusic is free and anyone who makes a copy of it MUST respect the previous developers, translators and also the rules of the GPL.
+RiMusic is free and anyone who makes a copy, or a forked copy, of it MUST respect the previous developers, translators and also the rules of the GPL.
 
 Thanks ❤️
 
@@ -126,6 +126,7 @@ WARNING, the custom version is **not** an official release, download only if inv
 - [Wiki page FAQs](https://github.com/fast4x/RiMusic/wiki/FAQs)
 - [Group on Telegram ](https://t.me/rimusic_app)
 - [Community on Reddit](https://www.reddit.com/r/RiMusicApp/)
+- [Server on Discord](https://discord.gg/h7eS2PcGeW)
 
 ## 🤝 Contributing
 **Pull requests are welcome**
