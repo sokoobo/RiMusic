@@ -31,6 +31,7 @@ import kotlinx.coroutines.withTimeout
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
+import kotlin.time.Duration.Companion.seconds
 
 @OptIn(UnstableApi::class)
 internal suspend fun PlayerServiceModern.dataSpecProcess(
@@ -116,6 +117,14 @@ suspend fun getAvancedInnerTubeStream(
         { playerResponse ->
             println("PlayerServiceModern MyDownloadHelper DataSpecProcess getAvancedInnerTubeStream playabilityStatus ${playerResponse.second?.playabilityStatus?.status} for song $videoId from adaptiveFormats itag ${playerResponse.second?.streamingData?.adaptiveFormats?.map { it.itag }}")
             //println("PlayerServiceModern MyDownloadHelper DataSpecProcess getInnerTubeStream playabilityStatus ${playerResponse.second?.playabilityStatus?.status} for song $videoId from formats itag ${playerResponse.second?.streamingData?.formats?.map { it.itag }}")
+
+            // not required with login enabled?
+//            if ( playerResponse.second?.streamingData?.expiresInSeconds?.let {
+//                    println("PlayerServiceModern getAdvancedInnerTubeStream expiresInSeconds ${it}")
+//                    println("PlayerServiceModern getAdvancedInnerTubeStream currentTimeMillis+expireinsecond ${System.currentTimeMillis().plus (it)}")
+//                    println("PlayerServiceModern getAdvancedInnerTubeStream currentTimeMillis ${System.currentTimeMillis()}")
+//                    System.currentTimeMillis().plus (it)
+//                }!! < System.currentTimeMillis() ) throw UnplayableException()
 
             when(playerResponse.second?.playabilityStatus?.status) {
                 "OK" -> {
@@ -220,6 +229,14 @@ suspend fun getInnerTubeStream(
         { playerResponse ->
             println("PlayerServiceModern MyDownloadHelper DataSpecProcess getInnerTubeStream playabilityStatus ${playerResponse.second?.playabilityStatus?.status} for song $videoId from adaptiveFormats itag ${playerResponse.second?.streamingData?.adaptiveFormats?.map { it.itag }}")
             //println("PlayerServiceModern MyDownloadHelper DataSpecProcess getInnerTubeStream playabilityStatus ${playerResponse.second?.playabilityStatus?.status} for song $videoId from formats itag ${playerResponse.second?.streamingData?.formats?.map { it.itag }}")
+
+            if ( playerResponse.second?.streamingData?.expiresInSeconds?.let {
+                println("PlayerServiceModern getInnerTubeStream expiresInSeconds ${it}")
+                    println("PlayerServiceModern getInnerTubeStream currentTimeMillis+expireinsecond ${System.currentTimeMillis().plus (it)}")
+                    println("PlayerServiceModern getInnerTubeStream currentTimeMillis ${System.currentTimeMillis()}")
+                    System.currentTimeMillis().plus (it)
+                }!! < System.currentTimeMillis() ) return null
+
             when(playerResponse.second?.playabilityStatus?.status) {
                 "OK" -> {
                     // SELECT FORMAT BY ITAG

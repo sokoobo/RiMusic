@@ -791,7 +791,8 @@ class PlayerServiceModern : MediaLibraryService(),
         Timber.e("PlayerServiceModern onPlayerError ${error.stackTraceToString()}")
         println("PlayerServiceModern onPlayerError errorCode ${error.errorCode} errorCodeName ${error.errorCodeName}")
         if (error.errorCode in PlayerErrorsToReload) {
-            //println("mediaItem onPlayerError recovered occurred errorCodeName ${error.errorCodeName}")
+            Timber.e("PlayerServiceModern onPlayerError recovered occurred errorCodeName ${error.errorCodeName}")
+            println("PlayerServiceModern onPlayerError recovered occurred errorCodeName ${error.errorCodeName}")
             player.stop()
             player.prepare()
             player.playWhenReady = true
@@ -1918,7 +1919,10 @@ class PlayerServiceModern : MediaLibraryService(),
         const val SleepTimerNotificationId = 1002
         const val SleepTimerNotificationChannelId = "sleep_timer_channel_id"
 
-        val PlayerErrorsToReload = arrayOf(416, 4003)
+        val PlayerErrorsToReload = arrayOf(
+            416,
+            //4003
+        )
         val PlayerErrorsWithCachePurge = arrayOf(
             2000, // ERROR_CODE_IO_UNSPECIFIED
             2003, // ERROR_CODE_IO_INVALID_HTTP_CONTENT_TYPE

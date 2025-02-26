@@ -76,8 +76,7 @@ fun manageDownload(
 
     if (downloadState) {
         MyDownloadHelper.removeDownload(context = context, mediaItem = mediaItem)
-    }
-    else {
+    } else {
         if (isNetworkAvailable(context)) {
             MyDownloadHelper.addDownload(context = context, mediaItem = mediaItem)
         }
