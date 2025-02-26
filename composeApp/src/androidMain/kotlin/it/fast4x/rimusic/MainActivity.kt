@@ -97,18 +97,18 @@ import com.kieronquinn.monetcompat.interfaces.MonetColorsChangedListener
 import com.valentinilk.shimmer.LocalShimmerTheme
 import com.valentinilk.shimmer.defaultShimmerTheme
 import dev.kdrag0n.monet.theme.ColorScheme
-import it.fast4x.innertube.Innertube
-import it.fast4x.innertube.models.bodies.BrowseBody
-import it.fast4x.innertube.requests.playlistPage
-import it.fast4x.innertube.requests.song
-import it.fast4x.innertube.utils.InnertubePreferenceItem
-import it.fast4x.innertube.utils.InnertubePreferences
-import it.fast4x.innertube.utils.LocalePreferenceItem
-import it.fast4x.innertube.utils.LocalePreferences
-import it.fast4x.innertube.utils.ProxyPreferenceItem
-import it.fast4x.innertube.utils.ProxyPreferences
-import it.fast4x.innertube.utils.YoutubePreferenceItem
-import it.fast4x.innertube.utils.YoutubePreferences
+import it.fast4x.environment.Environment
+import it.fast4x.environment.models.bodies.BrowseBody
+import it.fast4x.environment.requests.playlistPage
+import it.fast4x.environment.requests.song
+import it.fast4x.environment.utils.EnvironmentPreferenceItem
+import it.fast4x.environment.utils.EnvironmentPreferences
+import it.fast4x.environment.utils.LocalePreferenceItem
+import it.fast4x.environment.utils.LocalePreferences
+import it.fast4x.environment.utils.ProxyPreferenceItem
+import it.fast4x.environment.utils.ProxyPreferences
+import it.fast4x.environment.utils.YoutubePreferenceItem
+import it.fast4x.environment.utils.YoutubePreferences
 import it.fast4x.rimusic.enums.AnimatedGradient
 import it.fast4x.rimusic.enums.AudioQualityFormat
 import it.fast4x.rimusic.enums.CheckUpdateState
@@ -537,11 +537,11 @@ class MainActivity :
             //if (preferences.getBoolean(enableYouTubeLoginKey, false)) {
                     var visitorData by rememberPreference(
                         key = ytVisitorDataKey,
-                        defaultValue = Innertube._uMYwa66ycM
+                        defaultValue = Environment._uMYwa66ycM
                     )
 
                     if (visitorData.isEmpty()) runBlocking {
-                        Innertube.visitorData().getOrNull()?.also {
+                        Environment.visitorData().getOrNull()?.also {
                             visitorData = it
                         }
                     }
@@ -551,7 +551,7 @@ class MainActivity :
                             cookie = preferences.getString(ytCookieKey, ""),
                             visitordata = visitorData
                                 .takeIf { it != "null" }
-                                ?: Innertube._uMYwa66ycM,
+                                ?: Environment._uMYwa66ycM,
                             dataSyncId = preferences.getString(ytDataSyncIdKey, ""),
                             dnsOverHttps = getDnsOverHttpsType().type
                         )
@@ -1226,7 +1226,7 @@ class MainActivity :
                             val browseId = "VL$playlistId"
 
                             if (playlistId.startsWith("OLAK5uy_")) {
-                                Innertube.playlistPage(BrowseBody(browseId = browseId))
+                                Environment.playlistPage(BrowseBody(browseId = browseId))
                                     ?.getOrNull()?.let {
                                         it.songsPage?.items?.firstOrNull()?.album?.endpoint?.browseId?.let { browseId ->
                                             navController.navigate(route = "${NavRoutes.album.name}/$browseId")
@@ -1255,7 +1255,7 @@ class MainActivity :
                             uri.host == "youtu.be" -> path
                             else -> null
                         }?.let { videoId ->
-                            Innertube.song(videoId)?.getOrNull()?.let { song ->
+                            Environment.song(videoId)?.getOrNull()?.let { song ->
                                 val binder = snapshotFlow { binder }.filterNotNull().first()
                                 withContext(Dispatchers.Main) {
                                     if (!song.explicit && !preferences.getBoolean(
@@ -1417,7 +1417,7 @@ class MainActivity :
     }
 
     fun InitializeEnvironment() {
-        InnertubePreferences.preference = InnertubePreferenceItem(
+        EnvironmentPreferences.preference = EnvironmentPreferenceItem(
             p0 = getConfiguration("CrQ0JjAXgv"),
             p1 = getConfiguration("hNpBzzAn7i"),
             p2 = getConfiguration("lEi9YM74OL"),

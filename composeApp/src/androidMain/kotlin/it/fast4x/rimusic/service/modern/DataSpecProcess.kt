@@ -5,11 +5,11 @@ import android.net.Uri
 import androidx.annotation.OptIn
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSpec
-import it.fast4x.innertube.Innertube
-import it.fast4x.innertube.models.PlayerResponse
-import it.fast4x.innertube.models.bodies.PlayerBody
-import it.fast4x.innertube.requests.player
-import it.fast4x.innertube.requests.playerAdvanced
+import it.fast4x.environment.Environment
+import it.fast4x.environment.models.PlayerResponse
+import it.fast4x.environment.models.bodies.PlayerBody
+import it.fast4x.environment.requests.player
+import it.fast4x.environment.requests.playerAdvanced
 import it.fast4x.rimusic.Database
 import it.fast4x.rimusic.enums.AudioQualityFormat
 import it.fast4x.rimusic.extensions.webpotoken.advancedWebPoTokenPlayer
@@ -214,7 +214,7 @@ suspend fun getInnerTubeStream(
     audioQualityFormat: AudioQualityFormat,
     connectionMetered: Boolean
 ): PlayerResponse.StreamingData.Format? {
-    return Innertube.playerAdvanced(
+    return Environment.playerAdvanced(
         body = PlayerBody(videoId = videoId)
     ).fold(
         { playerResponse ->
@@ -309,7 +309,7 @@ suspend fun getInnerTubeFormatUrl(
     connectionMetered: Boolean,
     signatureTimestamp: Int? = getSignatureTimestampOrNull(videoId)
 ): PlayerResponse.StreamingData.Format? {
-    return Innertube.player(
+    return Environment.player(
         body = PlayerBody(videoId = videoId),
         //TODO manage login
         withLogin =  (!useYtLoginOnlyForBrowse() && isYouTubeLoginEnabled() && isYouTubeLoggedIn()),

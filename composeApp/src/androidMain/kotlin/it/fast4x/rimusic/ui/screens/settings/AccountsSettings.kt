@@ -40,7 +40,7 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import io.ktor.http.Url
 import it.fast4x.compose.persist.persistList
-import it.fast4x.innertube.utils.parseCookieString
+import it.fast4x.environment.utils.parseCookieString
 import it.fast4x.piped.Piped
 import it.fast4x.piped.models.Instance
 import it.fast4x.piped.models.Session

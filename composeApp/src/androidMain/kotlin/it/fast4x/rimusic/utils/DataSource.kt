@@ -12,8 +12,8 @@ import androidx.media3.datasource.HttpDataSource.InvalidResponseCodeException
 import androidx.media3.datasource.TransferListener
 import androidx.media3.datasource.cache.CacheDataSource
 import androidx.media3.datasource.okhttp.OkHttpDataSource
-import it.fast4x.innertube.utils.ProxyPreferences
-import it.fast4x.innertube.utils.getProxy
+import it.fast4x.environment.utils.ProxyPreferences
+import it.fast4x.environment.utils.getProxy
 import okhttp3.OkHttpClient
 import java.time.Duration
 import java.util.concurrent.atomic.AtomicBoolean

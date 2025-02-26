@@ -89,9 +89,9 @@ import androidx.media3.common.C
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.util.UnstableApi
 import com.valentinilk.shimmer.shimmer
-import it.fast4x.innertube.Innertube
-import it.fast4x.innertube.models.bodies.NextBody
-import it.fast4x.innertube.requests.lyrics
+import it.fast4x.environment.Environment
+import it.fast4x.environment.models.bodies.NextBody
+import it.fast4x.environment.requests.lyrics
 import it.fast4x.kugou.KuGou
 import it.fast4x.lrclib.LrcLib
 import it.fast4x.lrclib.models.Track
@@ -593,7 +593,7 @@ fun Lyrics(
                         isError = false
                         lyrics = null
                         kotlin.runCatching {
-                            Innertube.lyrics(NextBody(videoId = mediaId))
+                            Environment.lyrics(NextBody(videoId = mediaId))
                                 ?.onSuccess { fixedLyrics ->
                                     Database.upsert(
                                         Lyrics(

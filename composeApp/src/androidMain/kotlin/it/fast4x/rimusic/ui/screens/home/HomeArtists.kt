@@ -43,7 +43,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.util.UnstableApi
 import it.fast4x.compose.persist.persistList
-import it.fast4x.innertube.YtMusic
+import it.fast4x.environment.EnvironmentExt
 import it.fast4x.rimusic.Database
 import it.fast4x.rimusic.R
 import it.fast4x.rimusic.enums.ArtistSortBy
@@ -180,7 +180,7 @@ fun HomeArtists(
             withContext(Dispatchers.IO) {
                 items.filter { it.thumbnailUrl == null }.forEach { artist ->
                     coroutineScope.launch(Dispatchers.IO) {
-                        val artistThumbnail = YtMusic.getArtistPage(artist.id).getOrNull()?.artist?.thumbnail?.url
+                        val artistThumbnail = EnvironmentExt.getArtistPage(artist.id).getOrNull()?.artist?.thumbnail?.url
                         Database.asyncTransaction {
                             update(artist.copy(thumbnailUrl = artistThumbnail))
                         }

@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -61,14 +60,13 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.offline.Download
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import dev.chrisbanes.haze.hazeChild
 import it.fast4x.compose.persist.persist
-import it.fast4x.innertube.Innertube
-import it.fast4x.innertube.YtMusic
-import it.fast4x.innertube.models.BrowseEndpoint
-import it.fast4x.innertube.requests.ArtistPage
-import it.fast4x.innertube.requests.ArtistSection
-import it.fast4x.innertube.utils.completed
+import it.fast4x.environment.Environment
+import it.fast4x.environment.EnvironmentExt
+import it.fast4x.environment.models.BrowseEndpoint
+import it.fast4x.environment.requests.ArtistPage
+import it.fast4x.environment.requests.ArtistSection
+import it.fast4x.environment.utils.completed
 import it.fast4x.rimusic.Database
 import it.fast4x.rimusic.LocalPlayerAwareWindowInsets
 import it.fast4x.rimusic.LocalPlayerServiceBinder
@@ -78,7 +76,6 @@ import it.fast4x.rimusic.colorPalette
 import it.fast4x.rimusic.enums.NavRoutes
 import it.fast4x.rimusic.enums.NavigationBarPosition
 import it.fast4x.rimusic.enums.PopupType
-import it.fast4x.rimusic.enums.QueueType
 import it.fast4x.rimusic.enums.ThumbnailRoundness
 import it.fast4x.rimusic.enums.UiType
 import it.fast4x.rimusic.models.Album
@@ -88,7 +85,6 @@ import it.fast4x.rimusic.thumbnailShape
 import it.fast4x.rimusic.typography
 import it.fast4x.rimusic.ui.components.CustomModalBottomSheet
 import it.fast4x.rimusic.ui.components.LocalMenuState
-import it.fast4x.rimusic.ui.components.ShimmerHost
 import it.fast4x.rimusic.ui.components.SwipeablePlaylistItem
 import it.fast4x.rimusic.ui.components.themed.AutoResizeText
 import it.fast4x.rimusic.ui.components.themed.FontSizeRange
@@ -97,17 +93,13 @@ import it.fast4x.rimusic.ui.components.themed.MultiFloatingActionsContainer
 import it.fast4x.rimusic.ui.components.themed.NonQueuedMediaItemMenu
 import it.fast4x.rimusic.ui.components.themed.SecondaryTextButton
 import it.fast4x.rimusic.ui.components.themed.SmartMessage
-import it.fast4x.rimusic.ui.components.themed.TextPlaceholder
 import it.fast4x.rimusic.ui.components.themed.Title
 import it.fast4x.rimusic.ui.components.themed.Title2Actions
 import it.fast4x.rimusic.ui.items.AlbumItem
-import it.fast4x.rimusic.ui.items.AlbumItemPlaceholder
 import it.fast4x.rimusic.ui.items.ArtistItem
 import it.fast4x.rimusic.ui.items.PlaylistItem
 import it.fast4x.rimusic.ui.items.SongItem
-import it.fast4x.rimusic.ui.items.SongItemPlaceholder
 import it.fast4x.rimusic.ui.items.VideoItem
-import it.fast4x.rimusic.ui.screens.player.Queue
 import it.fast4x.rimusic.ui.screens.settings.isYouTubeSyncEnabled
 import it.fast4x.rimusic.ui.styling.Dimensions
 import it.fast4x.rimusic.ui.styling.px
@@ -118,14 +110,12 @@ import it.fast4x.rimusic.utils.color
 import it.fast4x.rimusic.utils.conditional
 import it.fast4x.rimusic.utils.enqueue
 import it.fast4x.rimusic.utils.fadingEdge
-import it.fast4x.rimusic.utils.forcePlay
 import it.fast4x.rimusic.utils.forcePlayAtIndex
 import it.fast4x.rimusic.utils.getDownloadState
 import it.fast4x.rimusic.utils.isDownloadedSong
 import it.fast4x.rimusic.utils.isLandscape
 import it.fast4x.rimusic.utils.isNetworkConnected
 import it.fast4x.rimusic.utils.manageDownload
-import it.fast4x.rimusic.utils.medium
 import it.fast4x.rimusic.utils.parentalControlEnabledKey
 import it.fast4x.rimusic.utils.rememberPreference
 import it.fast4x.rimusic.utils.resize
@@ -369,7 +359,7 @@ fun ArtistOverviewModern(
                                         if (bookmarkedAt == null)
                                             artistPage.artist.channelId.let {
                                                 if (it != null) {
-                                                    YtMusic.unsubscribeChannel(it)
+                                                    EnvironmentExt.unsubscribeChannel(it)
                                                     if (artist != null) {
                                                         Database.update(artist!!.copy(isYoutubeArtist = false))
                                                     }
@@ -378,7 +368,7 @@ fun ArtistOverviewModern(
                                         else
                                             artistPage.artist.channelId.let {
                                                 if (it != null) {
-                                                    YtMusic.subscribeChannel(it)
+                                                    EnvironmentExt.subscribeChannel(it)
                                                     if (artist != null) {
                                                         Database.update(artist!!.copy(isYoutubeArtist = true))
                                                     }
@@ -580,7 +570,7 @@ fun ArtistOverviewModern(
             artistPage.sections.forEach() { it ->
                 //println("ArtistOverviewModern title: ${it.title} browseId: ${it.moreEndpoint?.browseId} params: ${it.moreEndpoint?.params}")
                 item {
-                    if (it.items.firstOrNull() is Innertube.SongItem) {
+                    if (it.items.firstOrNull() is Environment.SongItem) {
                         Title(
                             title = it.title,
                             enableClick = it.moreEndpoint?.browseId != null,
@@ -622,10 +612,10 @@ fun ArtistOverviewModern(
                         )
                     }
                 }
-                if (it.items.firstOrNull() is Innertube.SongItem) {
+                if (it.items.firstOrNull() is Environment.SongItem) {
                     items(it.items) { item ->
                         when (item) {
-                            is Innertube.SongItem -> {
+                            is Environment.SongItem -> {
                                 if (parentalControlEnabled && item.explicit) return@items
 
                                 downloadState = getDownloadState(item.asMediaItem.mediaId)
@@ -686,7 +676,7 @@ fun ArtistOverviewModern(
                                                 onClick = {
                                                     binder?.stopRadio()
                                                     CoroutineScope(Dispatchers.IO).launch {
-                                                        artistPage.sections.firstOrNull{sec -> sec.items.firstOrNull() is Innertube.SongItem}.let {
+                                                        artistPage.sections.firstOrNull{sec -> sec.items.firstOrNull() is Environment.SongItem}.let {
                                                             songsBrowseId = it?.moreEndpoint!!.browseId!!
                                                             songsParams = it.moreEndpoint!!.params.toString()
                                                         }
@@ -694,11 +684,11 @@ fun ArtistOverviewModern(
                                                             browseId = songsBrowseId,
                                                             params = songsParams
                                                         ).let { endpoint ->
-                                                            val artistSongs = YtMusic.getArtistItemsPage(endpoint)
+                                                            val artistSongs = EnvironmentExt.getArtistItemsPage(endpoint)
                                                                 .completed()
                                                                 .getOrNull()
                                                                 ?.items
-                                                                ?.map{ it as Innertube.SongItem }
+                                                                ?.map{ it as Environment.SongItem }
                                                                 ?.map { it.asMediaItem }
                                                             val filteredArtistSongs = artistSongs?.filter {Database.getLikedAt(it.mediaId) != -1L}
                                                             if (filteredArtistSongs != null) {
@@ -729,9 +719,9 @@ fun ArtistOverviewModern(
                         LazyRow(contentPadding = endPaddingValues) {
                             items(it.items) { item ->
                                 when (item) {
-                                    is Innertube.SongItem -> {}
+                                    is Environment.SongItem -> {}
 
-                                    is Innertube.AlbumItem -> {
+                                    is Environment.AlbumItem -> {
                                         println("Innertube artistmodern AlbumItem: ${item.info?.name}")
                                         var albumById by remember { mutableStateOf<Album?>(null) }
                                         LaunchedEffect(item) {
@@ -753,7 +743,7 @@ fun ArtistOverviewModern(
                                         )
                                     }
 
-                                    is Innertube.ArtistItem -> {
+                                    is Environment.ArtistItem -> {
                                         println("Innertube v ArtistItem: ${item.info?.name}")
                                         var artistById by remember { mutableStateOf<Artist?>(null) }
                                         LaunchedEffect(item) {
@@ -773,7 +763,7 @@ fun ArtistOverviewModern(
                                         )
                                     }
 
-                                    is Innertube.PlaylistItem -> {
+                                    is Environment.PlaylistItem -> {
                                         println("Innertube v PlaylistItem: ${item.info?.name}")
                                         var playlistById by remember { mutableStateOf<Playlist?>(null) }
                                         LaunchedEffect(item) {
@@ -794,7 +784,7 @@ fun ArtistOverviewModern(
                                         )
                                     }
 
-                                    is Innertube.VideoItem -> {
+                                    is Environment.VideoItem -> {
                                         println("Innertube v VideoItem: ${item.info?.name}")
                                         VideoItem(
                                             video = item,

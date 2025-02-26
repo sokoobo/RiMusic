@@ -20,7 +20,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -39,7 +38,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.util.UnstableApi
 import it.fast4x.compose.persist.persistList
-import it.fast4x.innertube.YtMusic
+import it.fast4x.environment.EnvironmentExt
 import it.fast4x.rimusic.Database
 import it.fast4x.rimusic.MONTHLY_PREFIX
 import it.fast4x.rimusic.PINNED_PREFIX
@@ -182,7 +181,7 @@ fun HomeLibrary(
         override fun onSet(newValue: String) {
             if (isYouTubeSyncEnabled()) {
                 CoroutineScope(Dispatchers.IO).launch {
-                    YtMusic.createPlaylist(newValue).getOrNull()
+                    EnvironmentExt.createPlaylist(newValue).getOrNull()
                         .also {
                             println("Innertube YtMusic createPlaylist: $it")
                             Database.asyncTransaction {

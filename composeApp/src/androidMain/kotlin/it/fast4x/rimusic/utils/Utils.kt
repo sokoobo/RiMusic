@@ -29,18 +29,18 @@ import io.ktor.client.HttpClient
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.UserAgent
 import io.ktor.http.HttpStatusCode
-import it.fast4x.innertube.Innertube
-import it.fast4x.innertube.YtMusic
-import it.fast4x.innertube.YtMusic.addToPlaylist
-import it.fast4x.innertube.YtMusic.likeVideoOrSong
-import it.fast4x.innertube.YtMusic.removelikeVideoOrSong
-import it.fast4x.innertube.models.bodies.ContinuationBody
-import it.fast4x.innertube.models.bodies.SearchBody
-import it.fast4x.innertube.requests.playlistPage
-import it.fast4x.innertube.requests.searchPage
-import it.fast4x.innertube.utils.ProxyPreferences
-import it.fast4x.innertube.utils.from
-import it.fast4x.innertube.utils.getProxy
+import it.fast4x.environment.Environment
+import it.fast4x.environment.EnvironmentExt
+import it.fast4x.environment.EnvironmentExt.addToPlaylist
+import it.fast4x.environment.EnvironmentExt.likeVideoOrSong
+import it.fast4x.environment.EnvironmentExt.removelikeVideoOrSong
+import it.fast4x.environment.models.bodies.ContinuationBody
+import it.fast4x.environment.models.bodies.SearchBody
+import it.fast4x.environment.requests.playlistPage
+import it.fast4x.environment.requests.searchPage
+import it.fast4x.environment.utils.ProxyPreferences
+import it.fast4x.environment.utils.from
+import it.fast4x.environment.utils.getProxy
 import it.fast4x.kugou.KuGou
 import it.fast4x.lrclib.LrcLib
 import it.fast4x.rimusic.Database
@@ -53,7 +53,6 @@ import it.fast4x.rimusic.context
 import it.fast4x.rimusic.enums.PopupType
 import it.fast4x.rimusic.models.Album
 import it.fast4x.rimusic.models.Artist
-import it.fast4x.rimusic.models.Info
 import it.fast4x.rimusic.models.Lyrics
 import it.fast4x.rimusic.models.Playlist
 import it.fast4x.rimusic.models.Song
@@ -144,7 +143,7 @@ fun mediaItemToggleLike( mediaItem: MediaItem) {
     }
 }
 
-fun albumItemToggleBookmarked( albumItem: Innertube.AlbumItem ) {
+fun albumItemToggleBookmarked( albumItem: Environment.AlbumItem ) {
     Database.asyncTransaction {
         //if (Database.albumExist(albumItem.key) == 0)
         //    Database.insert(albumItem.asAlbum, Album::toggleLike)
@@ -162,7 +161,7 @@ fun albumItemToggleBookmarked( albumItem: Innertube.AlbumItem ) {
     }
 }
 
-val Innertube.AlbumItem.asAlbum: Album
+val Environment.AlbumItem.asAlbum: Album
     get() = Album (
         id = key,
         title = info?.name,
@@ -172,7 +171,7 @@ val Innertube.AlbumItem.asAlbum: Album
         //shareUrl =
     )
 
-val Innertube.Podcast.EpisodeItem.asMediaItem: MediaItem
+val Environment.Podcast.EpisodeItem.asMediaItem: MediaItem
     @UnstableApi
     get() = MediaItem.Builder()
         .setMediaId(videoId)
@@ -197,7 +196,7 @@ val Innertube.Podcast.EpisodeItem.asMediaItem: MediaItem
         )
         .build()
 
-val Innertube.SongItem.asMediaItem: MediaItem
+val Environment.SongItem.asMediaItem: MediaItem
     @UnstableApi
     get() = MediaItem.Builder()
         .setMediaId(key)
@@ -224,7 +223,7 @@ val Innertube.SongItem.asMediaItem: MediaItem
         )
         .build()
 
-val Innertube.SongItem.asSong: Song
+val Environment.SongItem.asSong: Song
     @UnstableApi
     get() = Song (
         id = key,
@@ -234,7 +233,7 @@ val Innertube.SongItem.asSong: Song
         thumbnailUrl = thumbnail?.url
     )
 
-val Innertube.VideoItem.asMediaItem: MediaItem
+val Environment.VideoItem.asMediaItem: MediaItem
     @UnstableApi
     get() = MediaItem.Builder()
         .setMediaId(key)
@@ -453,9 +452,9 @@ fun getCalculatedMonths( month: Int): String? {
 }
 
 @JvmName("ResultInnertubeItemsPageCompleted")
-suspend fun Result<Innertube.ItemsPage<Innertube.SongItem>?>.completed(
+suspend fun Result<Environment.ItemsPage<Environment.SongItem>?>.completed(
     maxDepth: Int =  Int.MAX_VALUE
-): Result<Innertube.ItemsPage<Innertube.SongItem>?> = runCatching {
+): Result<Environment.ItemsPage<Environment.SongItem>?> = runCatching {
     val page = getOrThrow()
     val songs = page?.items.orEmpty().toMutableList()
     var continuation = page?.continuation
@@ -467,7 +466,7 @@ suspend fun Result<Innertube.ItemsPage<Innertube.SongItem>?>.completed(
     println("mediaItem playlist completed() continuation? $continuation")
 
     while (continuation != null && depth++ < maxDepth) {
-        val newSongs = Innertube
+        val newSongs = Environment
             .playlistPage(
                 body = ContinuationBody(continuation = continuation)
             )
@@ -488,9 +487,9 @@ suspend fun Result<Innertube.ItemsPage<Innertube.SongItem>?>.completed(
 }.also { it.exceptionOrNull()?.printStackTrace() }
 
 @JvmName("ResultInnertubePlaylistOrAlbumPageCompleted")
-suspend fun Result<Innertube.PlaylistOrAlbumPage>.completed(
+suspend fun Result<Environment.PlaylistOrAlbumPage>.completed(
     maxDepth: Int =  Int.MAX_VALUE
-): Result<Innertube.PlaylistOrAlbumPage> = runCatching {
+): Result<Environment.PlaylistOrAlbumPage> = runCatching {
     val page = getOrThrow()
     val songsPage = runCatching {
         page.songsPage
@@ -509,7 +508,7 @@ suspend fun Result<LibraryPage?>.completed(): Result<LibraryPage> = runCatching 
     val items = page?.items?.toMutableList()
     var continuation = page?.continuation
     while (continuation != null) {
-        val continuationPage = Innertube.libraryContinuation(continuation).getOrNull()
+        val continuationPage = Environment.libraryContinuation(continuation).getOrNull()
         if (continuationPage != null)
             if (items != null) {
                 items += continuationPage.items
@@ -730,12 +729,12 @@ suspend fun getAlbumVersionFromVideo(song: Song,playlistId : Long, position : In
         return filteredText
     }
 
-    val searchQuery = Innertube.searchPage(
+    val searchQuery = Environment.searchPage(
         body = SearchBody(
             query = filteredText("${cleanPrefix(song.title)} ${song.artistsText}"),
-            params = Innertube.SearchFilter.Song.value
+            params = Environment.SearchFilter.Song.value
         ),
-        fromMusicShelfRendererContent = Innertube.SongItem.Companion::from
+        fromMusicShelfRendererContent = Environment.SongItem.Companion::from
     )
 
     val searchResults = searchQuery?.getOrNull()?.items
@@ -837,7 +836,7 @@ suspend fun getAlbumVersionFromVideo(song: Song,playlistId : Long, position : In
                     album?.copy(thumbnailUrl = matchedSong.thumbnail?.url)?.let { update(it) }
 
                     if (isYouTubeSyncEnabled() && playlist?.isYoutubePlaylist == true && playlist.isEditable){
-                        YtMusic.addToPlaylist(playlist.browseId ?: "", matchedSong.asMediaItem.mediaId)
+                        EnvironmentExt.addToPlaylist(playlist.browseId ?: "", matchedSong.asMediaItem.mediaId)
                     }
                 }
                 if ((artistsNames != null) && (artistsIds != null)) {
@@ -875,12 +874,12 @@ suspend fun getAlbumVersionFromVideo(song: Song,playlistId : Long, position : In
 }
 
 suspend fun updateLocalPlaylist(song: Song){
-    val searchQuery = Innertube.searchPage(
+    val searchQuery = Environment.searchPage(
         body = SearchBody(
             query = "${cleanPrefix(song.title)} ${song.artistsText}",
-            params = Innertube.SearchFilter.Song.value
+            params = Environment.SearchFilter.Song.value
         ),
-        fromMusicShelfRendererContent = Innertube.SongItem.Companion::from
+        fromMusicShelfRendererContent = Environment.SongItem.Companion::from
     )
 
     val searchResults = searchQuery?.getOrNull()?.items

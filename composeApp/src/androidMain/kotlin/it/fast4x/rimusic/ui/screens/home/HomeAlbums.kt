@@ -46,12 +46,10 @@ import androidx.compose.ui.unit.dp
 import androidx.media3.common.util.UnstableApi
 import androidx.navigation.NavController
 import it.fast4x.compose.persist.persistList
-import it.fast4x.innertube.YtMusic
 import it.fast4x.rimusic.Database
 import it.fast4x.rimusic.LocalPlayerServiceBinder
 import it.fast4x.rimusic.MODIFIED_PREFIX
 import it.fast4x.rimusic.R
-import it.fast4x.rimusic.cleanPrefix
 import it.fast4x.rimusic.enums.AlbumSortBy
 import it.fast4x.rimusic.enums.AlbumsType
 import it.fast4x.rimusic.enums.NavigationBarPosition
@@ -83,7 +81,6 @@ import it.fast4x.rimusic.enums.FilterBy
 import it.fast4x.rimusic.enums.NavRoutes
 import it.fast4x.rimusic.enums.ViewType
 import it.fast4x.rimusic.getViewType
-import it.fast4x.rimusic.models.Artist
 import it.fast4x.rimusic.ui.components.themed.Search
 import it.fast4x.rimusic.ui.components.navigation.header.TabToolBar
 import it.fast4x.rimusic.ui.components.tab.ItemSize
@@ -103,7 +100,6 @@ import it.fast4x.rimusic.utils.autoSyncToolbutton
 import it.fast4x.rimusic.utils.autosyncKey
 import it.fast4x.rimusic.utils.filterByKey
 import it.fast4x.rimusic.utils.importYTMLikedAlbums
-import it.fast4x.rimusic.utils.importYTMSubscribedChannels
 import it.fast4x.rimusic.utils.semiBold
 import it.fast4x.rimusic.utils.viewTypeToolbutton
 import kotlinx.coroutines.CoroutineScope

@@ -60,14 +60,14 @@ import androidx.media3.exoplayer.offline.Download
 import androidx.navigation.NavController
 import it.fast4x.compose.persist.persist
 import it.fast4x.compose.persist.persistList
-import it.fast4x.innertube.Innertube
-import it.fast4x.innertube.YtMusic
-import it.fast4x.innertube.models.NavigationEndpoint
-import it.fast4x.innertube.models.bodies.NextBody
-import it.fast4x.innertube.requests.HomePage
-import it.fast4x.innertube.requests.chartsPageComplete
-import it.fast4x.innertube.requests.discoverPage
-import it.fast4x.innertube.requests.relatedPage
+import it.fast4x.environment.Environment
+import it.fast4x.environment.EnvironmentExt
+import it.fast4x.environment.models.NavigationEndpoint
+import it.fast4x.environment.models.bodies.NextBody
+import it.fast4x.environment.requests.HomePage
+import it.fast4x.environment.requests.chartsPageComplete
+import it.fast4x.environment.requests.discoverPage
+import it.fast4x.environment.requests.relatedPage
 import it.fast4x.rimusic.Database
 import it.fast4x.rimusic.EXPLICIT_PREFIX
 import it.fast4x.rimusic.LocalPlayerAwareWindowInsets
@@ -141,13 +141,7 @@ import kotlinx.coroutines.launch
 import it.fast4x.rimusic.colorPalette
 import it.fast4x.rimusic.isVideoEnabled
 import it.fast4x.rimusic.typography
-import it.fast4x.rimusic.ui.components.ShimmerHost
-import it.fast4x.rimusic.ui.components.themed.TextPlaceholder
 import it.fast4x.rimusic.ui.components.themed.TitleMiniSection
-import it.fast4x.rimusic.ui.components.themed.TitleSection
-import it.fast4x.rimusic.ui.items.AlbumItemPlaceholder
-import it.fast4x.rimusic.ui.items.PlaylistItemPlaceholder
-import it.fast4x.rimusic.ui.items.SongItemPlaceholder
 import it.fast4x.rimusic.ui.items.VideoItem
 import it.fast4x.rimusic.ui.screens.settings.isYouTubeLoggedIn
 import it.fast4x.rimusic.utils.playVideo
@@ -172,7 +166,7 @@ fun HomeQuickPicks(
     onArtistClick: (String) -> Unit,
     onPlaylistClick: (String) -> Unit,
     onSearchClick: () -> Unit,
-    onMoodClick: (mood: Innertube.Mood.Item) -> Unit,
+    onMoodClick: (mood: Environment.Mood.Item) -> Unit,
     onSettingsClick: () -> Unit
 ) {
     val binder = LocalPlayerServiceBinder.current
@@ -184,20 +178,20 @@ fun HomeQuickPicks(
     val trendingInit by persist<Song?>(tag = "home/trending")
     var trendingPreference by rememberPreference(quickPicsTrendingSongKey, trendingInit)
 
-    var relatedPageResult by persist<Result<Innertube.RelatedPage?>?>(tag = "home/relatedPageResult")
-    var relatedInit by persist<Innertube.RelatedPage?>(tag = "home/relatedPage")
+    var relatedPageResult by persist<Result<Environment.RelatedPage?>?>(tag = "home/relatedPageResult")
+    var relatedInit by persist<Environment.RelatedPage?>(tag = "home/relatedPage")
     var relatedPreference by rememberPreference(quickPicsRelatedPageKey, relatedInit)
 
-    var discoverPageResult by persist<Result<Innertube.DiscoverPage?>>("home/discoveryAlbums")
-    var discoverPageInit by persist<Innertube.DiscoverPage>("home/discoveryAlbums")
+    var discoverPageResult by persist<Result<Environment.DiscoverPage?>>("home/discoveryAlbums")
+    var discoverPageInit by persist<Environment.DiscoverPage>("home/discoveryAlbums")
     var discoverPagePreference by rememberPreference(quickPicsDiscoverPageKey, discoverPageInit)
 
     var homePageResult by persist<Result<HomePage?>>("home/homePage")
     var homePageInit by persist<HomePage?>("home/homePage")
     var homePagePreference by rememberPreference(quickPicsHomePageKey, homePageInit)
 
-    var chartsPageResult by persist<Result<Innertube.ChartsPage?>>("home/chartsPage")
-    var chartsPageInit by persist<Innertube.ChartsPage>("home/chartsPage")
+    var chartsPageResult by persist<Result<Environment.ChartsPage?>>("home/chartsPage")
+    var chartsPageInit by persist<Environment.ChartsPage>("home/chartsPage")
 //    var chartsPagePreference by rememberPreference(quickPicsChartsPageKey, chartsPageInit)
 
 
@@ -246,7 +240,7 @@ fun HomeQuickPicks(
         //Used to refresh chart when country change
         if (showCharts)
             chartsPageResult =
-                Innertube.chartsPageComplete(countryCode = selectedCountryCode.name)
+                Environment.chartsPageComplete(countryCode = selectedCountryCode.name)
 
         if (loadedData) return
 
@@ -258,7 +252,7 @@ fun HomeQuickPicks(
                             .collect { songs ->
                                 val song = songs.firstOrNull()
                                 if (relatedPageResult == null || trending?.id != song?.id) {
-                                    relatedPageResult = Innertube.relatedPage(
+                                    relatedPageResult = Environment.relatedPage(
                                         NextBody(
                                             videoId = (song?.id ?: "HZnNt9nnEhw")
                                         )
@@ -275,7 +269,7 @@ fun HomeQuickPicks(
                                 else songs.shuffled().firstOrNull()
                             if (relatedPageResult == null || trending?.id != song?.id) {
                                 relatedPageResult =
-                                    Innertube.relatedPage(
+                                    Environment.relatedPage(
                                         NextBody(
                                             videoId = (song?.id ?: "HZnNt9nnEhw")
                                         )
@@ -289,11 +283,11 @@ fun HomeQuickPicks(
             }
 
             if (showNewAlbums || showNewAlbumsArtists || showMoodsAndGenres) {
-                discoverPageResult = Innertube.discoverPage()
+                discoverPageResult = Environment.discoverPage()
             }
 
             if (isYouTubeLoggedIn())
-                homePageResult = YtMusic.getHomePage()
+                homePageResult = EnvironmentExt.getHomePage()
 
         }.onFailure {
             Timber.e("Failed loadData in QuickPicsModern ${it.stackTraceToString()}")
@@ -652,7 +646,7 @@ fun HomeQuickPicks(
                                 }
                                     ?.dropLast(if (trending == null) 0 else 1)
                                     ?: emptyList(),
-                                key = Innertube.SongItem::key
+                                key = Environment.SongItem::key
                             ) { song ->
                                 val isLocal by remember { derivedStateOf { song.asMediaItem.isLocal } }
                                 downloadState = getDownloadState(song.asMediaItem.mediaId)
@@ -738,7 +732,7 @@ fun HomeQuickPicks(
 
                 discoverPageInit?.let { page ->
 
-                    var newReleaseAlbumsFiltered by persistList<Innertube.AlbumItem>("discovery/newalbumsartist")
+                    var newReleaseAlbumsFiltered by persistList<Environment.AlbumItem>("discovery/newalbumsartist")
                     page.newReleaseAlbums.forEach { album ->
                         preferitesArtists.forEach { artist ->
                             if (artist.name == album.authors?.first()?.name) {
@@ -812,7 +806,7 @@ fun HomeQuickPicks(
                         LazyRow(contentPadding = endPaddingValues) {
                             items(
                                 items = albums.distinctBy { it.key },
-                                key = Innertube.AlbumItem::key
+                                key = Environment.AlbumItem::key
                             ) { album ->
                                 AlbumItem(
                                     album = album,
@@ -838,7 +832,7 @@ fun HomeQuickPicks(
                         LazyRow(contentPadding = endPaddingValues) {
                             items(
                                 items = artists.distinctBy { it.key },
-                                key = Innertube.ArtistItem::key,
+                                key = Environment.ArtistItem::key,
                             ) { artist ->
                                 ArtistItem(
                                     artist = artist,
@@ -866,7 +860,7 @@ fun HomeQuickPicks(
                         LazyRow(contentPadding = endPaddingValues) {
                             items(
                                 items = playlists.distinctBy { it.key },
-                                key = Innertube.PlaylistItem::key,
+                                key = Environment.PlaylistItem::key,
                             ) { playlist ->
                                 PlaylistItem(
                                     playlist = playlist,
@@ -998,7 +992,7 @@ fun HomeQuickPicks(
                             LazyRow(contentPadding = endPaddingValues) {
                                 items(
                                     items = playlists.distinctBy { it.key },
-                                    key = Innertube.PlaylistItem::key,
+                                    key = Environment.PlaylistItem::key,
                                 ) { playlist ->
                                     PlaylistItem(
                                         playlist = playlist,
@@ -1151,7 +1145,7 @@ fun HomeQuickPicks(
                         LazyRow(contentPadding = endPaddingValues) {
                             items(it.items) { item ->
                                 when (item) {
-                                    is Innertube.SongItem -> {
+                                    is Environment.SongItem -> {
                                         println("Innertube homePage SongItem: ${item.info?.name}")
                                         SongItem(
                                             song = item,
@@ -1167,7 +1161,7 @@ fun HomeQuickPicks(
                                         )
                                     }
 
-                                    is Innertube.AlbumItem -> {
+                                    is Environment.AlbumItem -> {
                                         println("Innertube homePage AlbumItem: ${item.info?.name}")
                                         AlbumItem(
                                             album = item,
@@ -1182,7 +1176,7 @@ fun HomeQuickPicks(
                                         )
                                     }
 
-                                    is Innertube.ArtistItem -> {
+                                    is Environment.ArtistItem -> {
                                         println("Innertube homePage ArtistItem: ${item.info?.name}")
                                         ArtistItem(
                                             artist = item,
@@ -1195,7 +1189,7 @@ fun HomeQuickPicks(
                                         )
                                     }
 
-                                    is Innertube.PlaylistItem -> {
+                                    is Environment.PlaylistItem -> {
                                         println("Innertube homePage PlaylistItem: ${item.info?.name}")
                                         PlaylistItem(
                                             playlist = item,
@@ -1209,7 +1203,7 @@ fun HomeQuickPicks(
                                         )
                                     }
 
-                                    is Innertube.VideoItem -> {
+                                    is Environment.VideoItem -> {
                                         println("Innertube homePage VideoItem: ${item.info?.name}")
                                         VideoItem(
                                             video = item,

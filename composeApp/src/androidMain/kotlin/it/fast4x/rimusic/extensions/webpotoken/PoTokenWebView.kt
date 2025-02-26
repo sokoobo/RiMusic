@@ -10,7 +10,7 @@ import android.webkit.WebView
 import androidx.annotation.MainThread
 import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
-import it.fast4x.innertube.Innertube
+import it.fast4x.environment.Environment
 import it.fast4x.rimusic.R
 import it.fast4x.rimusic.isDebugModeEnabled
 import kotlinx.coroutines.*
@@ -292,7 +292,7 @@ class PoTokenWebView private constructor(
         private const val JS_INTERFACE = "PoTokenWebView"
 
         private val httpClient = OkHttpClient.Builder()
-            .proxy(Innertube.proxy)
+            .proxy(Environment.proxy)
             .build()
 
         private fun botguardRequest(

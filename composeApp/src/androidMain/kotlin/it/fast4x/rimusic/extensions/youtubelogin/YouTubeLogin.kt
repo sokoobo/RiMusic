@@ -17,7 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
-import it.fast4x.innertube.Innertube
+import it.fast4x.environment.Environment
 import it.fast4x.rimusic.LocalPlayerAwareWindowInsets
 import it.fast4x.rimusic.R
 import it.fast4x.rimusic.ui.components.themed.Title
@@ -43,7 +43,7 @@ fun YouTubeLogin(
 
     val scope = rememberCoroutineScope()
 
-    var visitorData by rememberPreference(key = ytVisitorDataKey, defaultValue = Innertube._uMYwa66ycM)
+    var visitorData by rememberPreference(key = ytVisitorDataKey, defaultValue = Environment._uMYwa66ycM)
     var dataSyncId by rememberPreference(key = ytDataSyncIdKey, defaultValue = "")
     var cookie by rememberPreference(key = ytCookieKey, defaultValue = "")
     var accountName by rememberPreference(key = ytAccountNameKey, defaultValue = "")
@@ -78,7 +78,7 @@ fun YouTubeLogin(
                                 //onLogin(cookie)
 
                                 GlobalScope.launch {
-                                    Innertube.accountInfo().onSuccess {
+                                    Environment.accountInfo().onSuccess {
                                         println("YoutubeLogin doUpdateVisitedHistory accountInfo() $it")
                                         accountName = it?.name.orEmpty()
                                         accountEmail = it?.email.orEmpty()

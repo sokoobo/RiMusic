@@ -3,9 +3,9 @@ package it.fast4x.rimusic.extensions.webpotoken
 import androidx.annotation.OptIn
 import androidx.media3.common.util.UnstableApi
 import io.ktor.client.call.body
-import it.fast4x.innertube.Innertube.playerWithWebPoToken
-import it.fast4x.innertube.models.PlayerResponse
-import it.fast4x.innertube.models.bodies.PlayerBody
+import it.fast4x.environment.Environment.playerWithWebPoToken
+import it.fast4x.environment.models.PlayerResponse
+import it.fast4x.environment.models.bodies.PlayerBody
 import it.fast4x.rimusic.service.UnplayableException
 import it.fast4x.rimusic.utils.getSignatureTimestampOrNull
 

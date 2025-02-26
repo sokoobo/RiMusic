@@ -1,7 +1,7 @@
 package it.fast4x.rimusic.utils
 
-import it.fast4x.innertube.models.PlayerResponse
-import it.fast4x.innertube.utils.NewPipeUtils
+import it.fast4x.environment.models.PlayerResponse
+import it.fast4x.environment.utils.NewPipeUtils
 import timber.log.Timber
 
 fun getSignatureTimestampOrNull(
