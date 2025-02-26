@@ -871,7 +871,7 @@
     <string name="albumCoverRotation">Animazione Rotazione Sfondo</string>
     <string name="enable_connection_metered">Utilizza la connessione a consumo per risparmiare dati</string>
     <string name="info_enable_connection_metered">Il risparmio dei dati diminuisce la qualità, da usare solo se si ha una connessione debole</string>
-    <string name="use_ytm_login_only_for_browse">Accedi con YTM solo dal browser</string>
+    <string name="use_ytm_login_only_for_browse">Usa l\'accesso YTM solo per navigare</string>
     <string name="info_use_ytm_login_only_for_browse">Da usare se le canzoni non vengono riprodotte quando accedi</string>
     <string name="disliked_this_song">Impossibile eseguire questa azione con i brani non piaciuti</string>
     <string name="removed_from_disliked">Rimosso dai non piaciuti</string>
