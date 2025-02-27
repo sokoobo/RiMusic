@@ -1096,47 +1096,6 @@ inline fun StringListDialog(
 
 }
 
-
-
-@Composable
-inline fun GenericDialog(
-    modifier: Modifier = Modifier,
-    noinline onDismiss: () -> Unit,
-    title: String,
-    textButton: String = stringResource(R.string.cancel),
-    crossinline content: @Composable () -> Unit,
-) {
-    Dialog(onDismissRequest = onDismiss) {
-        Column(
-            modifier = modifier
-                .padding(all = 48.dp)
-                .background(color = colorPalette().background1, shape = RoundedCornerShape(8.dp))
-                .padding(vertical = 16.dp)
-        ) {
-            BasicText(
-                text = title,
-                style = typography().s.bold,
-                modifier = Modifier
-                    .padding(vertical = 8.dp, horizontal = 24.dp)
-            )
-
-            content()
-
-            Box(
-                modifier = Modifier
-                    .align(Alignment.End)
-                    .padding(end = 24.dp)
-            ) {
-                DialogTextButton(
-                    text = textButton,
-                    onClick = onDismiss,
-                    modifier = Modifier
-                )
-            }
-        }
-    }
-}
-
 @Composable
 fun NewVersionDialog (
     updatedProductName: String,

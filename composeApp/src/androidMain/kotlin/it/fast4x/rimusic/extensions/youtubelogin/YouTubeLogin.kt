@@ -75,21 +75,21 @@ fun YouTubeLogin(
                         override fun doUpdateVisitedHistory(view: WebView, url: String, isReload: Boolean) {
                             if (url.startsWith("https://music.youtube.com")) {
                                 cookie = CookieManager.getInstance().getCookie(url)
-                                //onLogin(cookie)
-
-                                GlobalScope.launch {
-                                    Environment.accountInfo().onSuccess {
-                                        println("YoutubeLogin doUpdateVisitedHistory accountInfo() $it")
-                                        accountName = it?.name.orEmpty()
-                                        accountEmail = it?.email.orEmpty()
-                                        accountChannelHandle = it?.channelHandle.orEmpty()
-                                        accountThumbnail = it?.thumbnailUrl.orEmpty()
-                                        onLogin(cookie)
-                                    }.onFailure {
-                                        Timber.e("Error YoutubeLogin: $it.stackTraceToString()")
-                                        println("Error YoutubeLogin: ${it.stackTraceToString()}")
-                                    }
-                                }
+                                println("YoutubeLogin doUpdateVisitedHistory cookie $cookie")
+                                onLogin(cookie)
+//                                GlobalScope.launch {
+//                                    Environment.accountInfo().onSuccess {
+//                                        println("YoutubeLogin doUpdateVisitedHistory accountInfo() $it")
+//                                        accountName = it?.name.orEmpty()
+//                                        accountEmail = it?.email.orEmpty()
+//                                        accountChannelHandle = it?.channelHandle.orEmpty()
+//                                        accountThumbnail = it?.thumbnailUrl.orEmpty()
+//                                        onLogin(cookie)
+//                                    }.onFailure {
+//                                        Timber.e("Error YoutubeLogin: $it.stackTraceToString()")
+//                                        println("Error YoutubeLogin: ${it.stackTraceToString()}")
+//                                    }
+//                                }
                             }
                         }
 

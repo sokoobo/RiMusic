@@ -9,15 +9,18 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,6 +43,7 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import io.ktor.http.Url
 import it.fast4x.compose.persist.persistList
+import it.fast4x.environment.Environment
 import it.fast4x.environment.utils.parseCookieString
 import it.fast4x.piped.Piped
 import it.fast4x.piped.models.Instance
@@ -53,6 +57,7 @@ import it.fast4x.rimusic.enums.ThumbnailRoundness
 import it.fast4x.rimusic.extensions.discord.DiscordLoginAndGetToken
 import it.fast4x.rimusic.extensions.youtubelogin.YouTubeLogin
 import it.fast4x.rimusic.thumbnailShape
+import it.fast4x.rimusic.typography
 import it.fast4x.rimusic.ui.components.CustomModalBottomSheet
 import it.fast4x.rimusic.ui.components.LocalMenuState
 import it.fast4x.rimusic.ui.components.themed.DefaultDialog
@@ -63,6 +68,7 @@ import it.fast4x.rimusic.ui.components.themed.SmartMessage
 import it.fast4x.rimusic.ui.styling.Dimensions
 import it.fast4x.rimusic.utils.RestartActivity
 import it.fast4x.rimusic.utils.RestartPlayerService
+import it.fast4x.rimusic.utils.bold
 import it.fast4x.rimusic.utils.discordPersonalAccessTokenKey
 import it.fast4x.rimusic.utils.enableYouTubeHistorySyncKey
 import it.fast4x.rimusic.utils.enableYouTubeLoginKey
@@ -80,6 +86,7 @@ import it.fast4x.rimusic.utils.pipedUsernameKey
 import it.fast4x.rimusic.utils.preferences
 import it.fast4x.rimusic.utils.rememberPreference
 import it.fast4x.rimusic.utils.restartActivityKey
+import it.fast4x.rimusic.utils.semiBold
 import it.fast4x.rimusic.utils.thumbnailRoundnessKey
 import it.fast4x.rimusic.utils.useYtLoginOnlyForBrowseKey
 import it.fast4x.rimusic.utils.ytAccountChannelHandleKey
@@ -89,11 +96,14 @@ import it.fast4x.rimusic.utils.ytAccountThumbnailKey
 import it.fast4x.rimusic.utils.ytCookieKey
 import it.fast4x.rimusic.utils.ytDataSyncIdKey
 import it.fast4x.rimusic.utils.ytVisitorDataKey
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-@androidx.annotation.OptIn(UnstableApi::class)
-@OptIn(ExperimentalMaterial3Api::class)
+@UnstableApi
+@DelicateCoroutinesApi
+@ExperimentalMaterial3Api
 @SuppressLint("BatteryLife")
 @ExperimentalAnimationApi
 @Composable
@@ -106,6 +116,7 @@ fun AccountsSettings() {
 
     var restartActivity by rememberPreference(restartActivityKey, false)
     var restartService by rememberSaveable { mutableStateOf(false) }
+    var showUserInfoDialog by rememberSaveable { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -192,7 +203,7 @@ fun AccountsSettings() {
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
+                        verticalAlignment = Alignment.Top,
                         horizontalArrangement = Arrangement.SpaceBetween
 
                     ){
@@ -202,7 +213,7 @@ fun AccountsSettings() {
                                 model = accountThumbnail,
                                 contentDescription = null,
                                 modifier = Modifier
-                                    .height(50.dp)
+                                    .height(45.dp)
                                     .clip(thumbnailShape())
                             )
 
@@ -210,7 +221,7 @@ fun AccountsSettings() {
                             ButtonBarSettingEntry(
                                 isEnabled = true,
                                 title = if (isLoggedIn) "Disconnect" else "Connect",
-                                text = if (isLoggedIn) "$accountName ${accountChannelHandle}" else "",
+                                text = "", //if (isLoggedIn) "$accountName ${accountChannelHandle}" else "",
                                 icon = R.drawable.ytmusic,
                                 iconColor = colorPalette().text,
                                 onClick = {
@@ -231,6 +242,30 @@ fun AccountsSettings() {
                                         restartService = true
                                     } else
                                         loginYouTube = true
+                                }
+                            )
+
+                            ButtonBarSettingEntry(
+                                isEnabled = true,
+                                title = "Account info",
+                                text = "", //if (isLoggedIn) "$accountName ${accountChannelHandle}" else "",
+                                icon = R.drawable.person,
+                                iconColor = colorPalette().text,
+                                onClick = {
+                                    if (accountThumbnail == "" || accountName == "" || accountEmail == "")
+                                        GlobalScope.launch {
+                                            Environment.accountInfo().onSuccess {
+                                                println("YoutubeLogin doUpdateVisitedHistory accountInfo() $it")
+                                                accountName = it?.name.orEmpty()
+                                                accountEmail = it?.email.orEmpty()
+                                                accountChannelHandle = it?.channelHandle.orEmpty()
+                                                accountThumbnail = it?.thumbnailUrl.orEmpty()
+                                            }.onFailure {
+                                                Timber.e("Error YoutubeLogin: $it.stackTraceToString()")
+                                                println("Error YoutubeLogin: ${it.stackTraceToString()}")
+                                            }
+                                        }
+                                    showUserInfoDialog = true
                                 }
                             )
                             /*
@@ -265,6 +300,7 @@ fun AccountsSettings() {
                             ) {
                                 YouTubeLogin(
                                     onLogin = { cookieRetrieved ->
+                                        cookie = cookieRetrieved
                                         if (cookieRetrieved.contains("SAPISID")) {
                                             isLoggedIn = true
                                             loginYouTube = false
@@ -273,7 +309,22 @@ fun AccountsSettings() {
                                                 type = PopupType.Info,
                                                 context = context
                                             )
+
+//                                            GlobalScope.launch {
+//                                                Environment.accountInfo().onSuccess {
+//                                                    println("YoutubeLogin getAccounfInfo from settings $it")
+//                                                    accountName = it?.name.orEmpty()
+//                                                    accountEmail = it?.email.orEmpty()
+//                                                    accountChannelHandle = it?.channelHandle.orEmpty()
+//                                                    accountThumbnail = it?.thumbnailUrl.orEmpty()
+//                                                }.onFailure {
+//                                                    Timber.e("Error YoutubeLogin getAccounfInfo from settings : $it.stackTraceToString()")
+//                                                    println("Error YoutubeLogin getAccounfInfo from settings : ${it.stackTraceToString()}")
+//                                                }
+//                                            }
+
                                             restartService = true
+                                            //restartActivity = !restartActivity // used only to force restart of activity
                                         }
 
                                     }
@@ -281,7 +332,7 @@ fun AccountsSettings() {
                             }
                             RestartPlayerService(restartService, onRestart = {
                                 restartService = false
-                                restartActivity = !restartActivity
+                                //restartActivity = !restartActivity
                             })
                         }
 
@@ -289,14 +340,14 @@ fun AccountsSettings() {
 
                 //}
 
-//                SwitchSettingEntry(
-//                    title = stringResource(R.string.use_ytm_login_only_for_browse),
-//                    text = stringResource(R.string.info_use_ytm_login_only_for_browse),
-//                    isChecked = useYtLoginOnlyForBrowse,
-//                    onCheckedChange = {
-//                        useYtLoginOnlyForBrowse = it
-//                    }
-//                )
+                SwitchSettingEntry(
+                    title = stringResource(R.string.use_ytm_login_only_for_browse),
+                    text = stringResource(R.string.info_use_ytm_login_only_for_browse),
+                    isChecked = useYtLoginOnlyForBrowse,
+                    onCheckedChange = {
+                        useYtLoginOnlyForBrowse = it
+                    }
+                )
 
                 SwitchSettingEntry(
                     //isEnabled = false,
@@ -309,7 +360,7 @@ fun AccountsSettings() {
                     }
                 )
 
-                RestartActivity(restartActivity, onRestart = { restartActivity = false })
+                //RestartActivity(restartActivity, onRestart = { restartActivity = false })
 
                 // TODO MANAGE SYNC HISTORY
 //                SwitchSettingEntry(
@@ -322,6 +373,35 @@ fun AccountsSettings() {
 //                    }
 //                )
 
+            }
+        }
+
+        if (showUserInfoDialog) {
+            DefaultDialog(
+                onDismiss = { showUserInfoDialog = false },
+                modifier = Modifier.padding(all = 16.dp).fillMaxWidth(),
+                horizontalAlignment = Alignment.Start
+            ) {
+                BasicText(
+                    text = stringResource(R.string.information),
+                    style = typography().s.bold.copy(color = colorPalette().text),
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                BasicText(
+                    text = "User: $accountName",
+                    style = typography().xs.semiBold.copy(color = colorPalette().textSecondary),
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                BasicText(
+                    text = "Email: $accountEmail",
+                    style = typography().xs.semiBold.copy(color = colorPalette().textSecondary),
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                BasicText(
+                    text = "Channel: $accountChannelHandle",
+                    style = typography().xs.semiBold.copy(color = colorPalette().textSecondary),
+                )
+                Spacer(modifier = Modifier.height(10.dp))
             }
         }
 
