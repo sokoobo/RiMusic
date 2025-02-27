@@ -16,6 +16,7 @@ import it.fast4x.rimusic.extensions.webpotoken.advancedWebPoTokenPlayer
 import it.fast4x.rimusic.isConnectionMeteredEnabled
 import it.fast4x.rimusic.models.Format
 import it.fast4x.rimusic.service.LoginRequiredException
+import it.fast4x.rimusic.service.MyDownloadHelper
 import it.fast4x.rimusic.service.NoInternetException
 import it.fast4x.rimusic.service.PlayableFormatNotFoundException
 import it.fast4x.rimusic.service.TimeoutException
@@ -59,9 +60,11 @@ internal suspend fun PlayerServiceModern.dataSpecProcess(
         println("PlayerServiceModern DataSpecProcess Playing song start timeout ${videoId}")
             val dataSpecWithTimeout = withTimeout(5000){
                 //if loggedin use advanced player with webPotoken and new newpipe extractor
-                val format = if (!useYtLoginOnlyForBrowse() && isYouTubeLoginEnabled() && isYouTubeLoggedIn())
-                    getAvancedInnerTubeStream(videoId, audioQualityFormat, connectionMetered)
-                else getInnerTubeStream(videoId, audioQualityFormat, connectionMetered)
+//            val format = if (!useYtLoginOnlyForBrowse() && isYouTubeLoginEnabled() && isYouTubeLoggedIn())
+//                getAvancedInnerTubeStream(videoId, audioQualityFormat, connectionMetered)
+//            else getInnerTubeStream(videoId, audioQualityFormat, connectionMetered)
+                // Play always without login because login break song
+                val format = getInnerTubeStream(videoId, audioQualityFormat, connectionMetered)
 
                 println("PlayerServiceModern DataSpecProcess Playing song ${videoId} from url=${format?.url}")
 
@@ -230,12 +233,12 @@ suspend fun getInnerTubeStream(
             println("PlayerServiceModern MyDownloadHelper DataSpecProcess getInnerTubeStream playabilityStatus ${playerResponse.second?.playabilityStatus?.status} for song $videoId from adaptiveFormats itag ${playerResponse.second?.streamingData?.adaptiveFormats?.map { it.itag }}")
             //println("PlayerServiceModern MyDownloadHelper DataSpecProcess getInnerTubeStream playabilityStatus ${playerResponse.second?.playabilityStatus?.status} for song $videoId from formats itag ${playerResponse.second?.streamingData?.formats?.map { it.itag }}")
 
-            if ( playerResponse.second?.streamingData?.expiresInSeconds?.let {
-                println("PlayerServiceModern getInnerTubeStream expiresInSeconds ${it}")
-                    println("PlayerServiceModern getInnerTubeStream currentTimeMillis+expireinsecond ${System.currentTimeMillis().plus (it)}")
-                    println("PlayerServiceModern getInnerTubeStream currentTimeMillis ${System.currentTimeMillis()}")
-                    System.currentTimeMillis().plus (it)
-                }!! < System.currentTimeMillis() ) return null
+//            if ( playerResponse.second?.streamingData?.expiresInSeconds?.let {
+//                println("PlayerServiceModern getInnerTubeStream expiresInSeconds ${it}")
+//                    println("PlayerServiceModern getInnerTubeStream currentTimeMillis+expireinsecond ${System.currentTimeMillis().plus (it)}")
+//                    println("PlayerServiceModern getInnerTubeStream currentTimeMillis ${System.currentTimeMillis()}")
+//                    System.currentTimeMillis().plus (it)
+//                }!! < System.currentTimeMillis() ) return null
 
             when(playerResponse.second?.playabilityStatus?.status) {
                 "OK" -> {
