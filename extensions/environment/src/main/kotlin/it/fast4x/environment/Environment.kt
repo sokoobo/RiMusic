@@ -65,7 +65,7 @@ import it.fast4x.environment.utils.EnvironmentPreferences
 import it.fast4x.environment.utils.NewPipeUtils
 import it.fast4x.environment.utils.NewPipeUtils.decodeSignatureCipher
 import it.fast4x.environment.utils.ProxyPreferences
-import it.fast4x.environment.utils.YoutubePreferences
+//import it.fast4x.environment.utils.YoutubePreferences
 import it.fast4x.environment.utils.getProxy
 import it.fast4x.environment.utils.parseCookieString
 import it.fast4x.environment.utils.sha1
@@ -113,7 +113,11 @@ object Environment {
     val _XsHo8IdebO = EnvironmentPreferences.preference?.p36 ?: ""
     val _1Vv31MecRl = EnvironmentPreferences.preference?.p0 ?: ""
 
-    var dnsToUse: String? = YoutubePreferences.preference?.dnsOverHttps.toString()
+    val getEnvironment = {
+        println("EnvironmentPreferences: ${EnvironmentPreferences}")
+    }
+
+    var dnsToUse: String? = EnvironmentPreferences.dnsOverHttps.toString()  //YoutubePreferences.preference?.dnsOverHttps.toString()
 
     @OptIn(ExperimentalSerializationApi::class)
     val client = HttpClient(OkHttp) {
@@ -205,16 +209,16 @@ object Environment {
         //gl = LocalePreferences.preference?.gl ?: "US",
         //hl = LocalePreferences.preference?.hl ?: "en"
     )
-    var visitorData: String = YoutubePreferences.preference?.visitordata.toString()
-    var dataSyncId: String? = YoutubePreferences.preference?.dataSyncId.toString()
+    //var visitorData: String = YoutubePreferences.preference?.visitordata.toString()
+    var visitorData: String = EnvironmentPreferences.visitordata.toString()
+    var dataSyncId: String = EnvironmentPreferences.dataSyncId.toString()
 
-    var cookieMap = emptyMap<String, String>()
-    //var cookie: String? = YoutubePreferences.preference?.cookie
-    var cookie: String? = YoutubePreferences.preference?.cookie
+    var cookie: String? = null
         set(value) {
             field = value
             cookieMap = if (value == null) emptyMap() else parseCookieString(value)
         }
+    private var cookieMap = emptyMap<String, String>()
 
     private var poTokenChallengeRequestKey = "O43z0dpjhgX20SCx4KAo"
 
@@ -510,11 +514,15 @@ object Environment {
 
 
     suspend fun accountInfo(): Result<AccountInfo?> = runCatching {
+        println("YoutubeLogin accountInfo() response ${accountMenu().body<AccountMenuResponse>()
+            .actions} ")
         accountMenu()
             .body<AccountMenuResponse>()
             .actions?.get(0)?.openPopupAction?.popup?.multiPageMenuRenderer
             ?.header?.activeAccountHeaderRenderer
             ?.toAccountInfo()
+    }.onFailure {
+        println("Error YoutubeLogin accountInfo(): ${it.stackTraceToString()}")
     }
 
     suspend fun accountInfoList(): Result<List<AccountInfo?>?> = runCatching {
@@ -549,6 +557,7 @@ object Environment {
     }
 
     fun HttpRequestBuilder.setLogin(clientType: Client = DefaultWeb.client, setLogin: Boolean = false) {
+        println("HttpRequestBuilder.setLogin CALLED")
         contentType(ContentType.Application.Json)
         headers {
             append("X-YouTube-Client-Name", "${clientType.xClientName ?: 1}")
@@ -558,15 +567,27 @@ object Environment {
                 append("Referer", clientType.referer)
             }
             if (setLogin) {
-                cookie?.let { cookie ->
-                    cookieMap = parseCookieString(cookie)
+                println("HttpRequestBuilder.setLogin $setLogin")
+                println("HttpRequestBuilder.setLogin beforeCreateHeaders cookie: $cookie")
+                cookie?.let { cookieData ->
+                    println("HttpRequestBuilder.setLogin cookie: $cookieData")
+                    println("HttpRequestBuilder.setLogin xclientName ${clientType.xClientName ?: 1}")
+                    println("HttpRequestBuilder.setLogin clientVerson ${clientType.clientVersion}")
+                    println("HttpRequestBuilder.setLogin referer ${clientType.referer}")
+                    println("HttpRequestBuilder.setLogin userAgent ${clientType.userAgent}")
+                    println("HttpRequestBuilder.setLogin x-origin ${_XsHo8IdebO}")
+                    println("HttpRequestBuilder.setLogin visitorData ${visitorData}")
+                    cookieMap = parseCookieString(cookieData)
                     append("X-Goog-Authuser", "0")
                     append("X-Goog-Visitor-Id", visitorData)
-                    append("Cookie", cookie)
+                    append("Cookie", cookieData)
                     if ("SAPISID" !in cookieMap || "__Secure-3PAPISID" !in cookieMap) return@let
                     val currentTime = System.currentTimeMillis() / 1000
                     val sapisidCookie = cookieMap["SAPISID"] ?: cookieMap["__Secure-3PAPISID"]
                     val sapisidHash = sha1("$currentTime $sapisidCookie $_XsHo8IdebO")
+                    println("HttpRequestBuilder.setLogin currentTime ${currentTime}")
+                    println("HttpRequestBuilder.setLogin sapisidCookie ${sapisidCookie}")
+                    println("HttpRequestBuilder.setLogin sapisidHash ${sapisidHash}")
                     append("Authorization", "SAPISIDHASH ${currentTime}_$sapisidHash")
                 }
             }

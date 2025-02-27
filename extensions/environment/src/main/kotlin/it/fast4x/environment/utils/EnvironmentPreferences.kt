@@ -2,6 +2,10 @@ package it.fast4x.environment.utils
 
 object EnvironmentPreferences {
     var preference: EnvironmentPreferenceItem? = null
+    var cookie: String? = null
+    var visitordata: String? = null
+    var dataSyncId: String? = null
+    var dnsOverHttps: String? = null
 }
 
 data class EnvironmentPreferenceItem(
