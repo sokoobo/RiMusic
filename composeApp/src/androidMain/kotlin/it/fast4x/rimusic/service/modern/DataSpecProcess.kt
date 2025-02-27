@@ -60,9 +60,9 @@ internal suspend fun PlayerServiceModern.dataSpecProcess(
         println("PlayerServiceModern DataSpecProcess Playing song start timeout ${videoId}")
             val dataSpecWithTimeout = withTimeout(5000){
                 //if loggedin use advanced player with webPotoken and new newpipe extractor
-            val format = if (!useYtLoginOnlyForBrowse() && isYouTubeLoginEnabled() && isYouTubeLoggedIn())
-                getAvancedInnerTubeStream(videoId, audioQualityFormat, connectionMetered)
-            else getInnerTubeStream(videoId, audioQualityFormat, connectionMetered)
+                val format = if (!useYtLoginOnlyForBrowse() && isYouTubeLoginEnabled() && isYouTubeLoggedIn())
+                    getAvancedInnerTubeStream(videoId, audioQualityFormat, connectionMetered)
+                else getInnerTubeStream(videoId, audioQualityFormat, connectionMetered)
                 // Play always without login because login break song
                 //val format = getInnerTubeStream(videoId, audioQualityFormat, connectionMetered)
 
