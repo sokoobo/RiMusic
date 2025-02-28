@@ -489,6 +489,7 @@ class PlayerServiceModern : MediaLibraryService(),
                 finalException: Exception?
             ) = run {
                 if (download.request.id != currentMediaItem.value?.mediaId) return@run
+                Timber.d("PlayerServiceModern onDownloadChanged current song ${currentMediaItem.value?.mediaId} state ${download.state} key ${download.request.id}")
                 println("PlayerServiceModern onDownloadChanged current song ${currentMediaItem.value?.mediaId} state ${download.state} key ${download.request.id}")
                 updateDownloadedState()
             }
@@ -520,8 +521,10 @@ class PlayerServiceModern : MediaLibraryService(),
 
         // Ensure that song is updated
         currentSong.debounce(1000).collect(coroutineScope) { song ->
+            Timber.d("PlayerServiceModern onCreate currentSong $song")
             println("PlayerServiceModern onCreate currentSong $song")
             updateDownloadedState()
+            Timber.d("PlayerServiceModern onCreate currentSongIsDownloaded ${currentSongStateDownload.value}")
             println("PlayerServiceModern onCreate currentSongIsDownloaded ${currentSongStateDownload.value}")
 
             updateDefaultNotification()
@@ -548,6 +551,7 @@ class PlayerServiceModern : MediaLibraryService(),
 
             val scheduler = Executors.newScheduledThreadPool(1)
             scheduler.scheduleWithFixedDelay({
+                Timber.d("PlayerServiceModern onCreate savePersistentQueue")
                 println("PlayerServiceModern onCreate savePersistentQueue")
                 maybeSavePlayerQueue()
             }, 0, 30, TimeUnit.SECONDS)
@@ -722,7 +726,7 @@ class PlayerServiceModern : MediaLibraryService(),
     }
 
     override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-
+        Timber.d("PlayerServiceModern onMediaItemTransition mediaItem $mediaItem reason $reason")
         println("PlayerServiceModern onMediaItemTransition mediaItem $mediaItem reason $reason")
 
         currentMediaItem.update { mediaItem }
@@ -788,7 +792,7 @@ class PlayerServiceModern : MediaLibraryService(),
 
     override fun onPlayerError(error: PlaybackException) {
         super.onPlayerError(error)
-        Timber.e("PlayerServiceModern onPlayerError ${error.stackTraceToString()}")
+        Timber.e("PlayerServiceModern onPlayerError errorCode ${error.errorCode} errorCodeName ${error.errorCodeName}")
         println("PlayerServiceModern onPlayerError errorCode ${error.errorCode} errorCodeName ${error.errorCodeName}")
         if (error.errorCode in PlayerErrorsToReload) {
             Timber.e("PlayerServiceModern onPlayerError recovered occurred errorCodeName ${error.errorCodeName}")
@@ -929,6 +933,7 @@ class PlayerServiceModern : MediaLibraryService(),
             if (bassBoost == null) bassBoost = BassBoost(0, player.audioSessionId)
             val bassboostLevel =
                 (preferences.getFloat(bassboostLevelKey, 0.5f) * 1000f).toInt().toShort()
+            Timber.d("PlayerServiceModern maybeBassBoost bassboostLevel $bassboostLevel")
             println("PlayerServiceModern maybeBassBoost bassboostLevel $bassboostLevel")
             bassBoost?.enabled = false
             bassBoost?.setStrength(bassboostLevel)
@@ -943,6 +948,7 @@ class PlayerServiceModern : MediaLibraryService(),
 
     private fun maybeReverb() {
         val presetType = preferences.getEnum(audioReverbPresetKey, PresetsReverb.NONE)
+        Timber.d("PlayerServiceModern maybeReverb presetType $presetType")
         println("PlayerServiceModern maybeReverb presetType $presetType")
         if (presetType == PresetsReverb.NONE) {
             runCatching {
@@ -979,8 +985,8 @@ class PlayerServiceModern : MediaLibraryService(),
                 loudnessEnhancer = LoudnessEnhancer(player.audioSessionId)
             }
         }.onFailure {
-            Timber.e("PlayerService maybeNormalizeVolume load loudnessEnhancer ${it.stackTraceToString()}")
-            println("PlayerService maybeNormalizeVolume load loudnessEnhancer ${it.stackTraceToString()}")
+            Timber.e("PlayerServiceModern maybeNormalizeVolume load loudnessEnhancer ${it.stackTraceToString()}")
+            println("PlayerServiceModern maybeNormalizeVolume load loudnessEnhancer ${it.stackTraceToString()}")
             return
         }
 
@@ -1007,8 +1013,8 @@ class PlayerServiceModern : MediaLibraryService(),
                         loudnessEnhancer?.setTargetGain(baseGain.toMb() + volumeBoostLevel.toMb() - loudnessMb)
                         loudnessEnhancer?.enabled = true
                     } catch (e: Exception) {
-                        Timber.e("PlayerService maybeNormalizeVolume apply targetGain ${e.stackTraceToString()}")
-                        println("PlayerService maybeNormalizeVolume apply targetGain ${e.stackTraceToString()}")
+                        Timber.e("PlayerServiceModern maybeNormalizeVolume apply targetGain ${e.stackTraceToString()}")
+                        println("PlayerServiceModern maybeNormalizeVolume apply targetGain ${e.stackTraceToString()}")
                     }
                 }
             }
@@ -1434,9 +1440,11 @@ class PlayerServiceModern : MediaLibraryService(),
     }
 
     private fun maybeSavePlayerQueue() {
+        Timber.d("PlayerServiceModern onCreate savePersistentQueue")
         println("PlayerServiceModern onCreate savePersistentQueue")
         if (!isPersistentQueueEnabled) return
-        println("PlayerServiceModern onCreate savePersistentQueue is enabled")
+        Timber.d("PlayerServiceModern onCreate savePersistentQueue is enabled, processing")
+        println("PlayerServiceModern onCreate savePersistentQueue is enabled, processing")
 
         CoroutineScope(Dispatchers.Main).launch {
             val mediaItems = player.currentTimeline.mediaItems
@@ -1595,6 +1603,7 @@ class PlayerServiceModern : MediaLibraryService(),
             currentSongIsDownloaded.value = false
         }
         */
+        Timber.d("PlayerServiceModern updateDownloadedState downloads count ${downloads.size} currentSongIsDownloaded ${currentSong.value?.id}")
         println("PlayerServiceModern updateDownloadedState downloads count ${downloads.size} currentSongIsDownloaded ${currentSong.value?.id}")
         updateDefaultNotification()
 
@@ -1854,6 +1863,7 @@ class PlayerServiceModern : MediaLibraryService(),
         }
 
         fun toggleDownload() {
+            Timber.d("PlayerServiceModern toggleDownload currentMediaItem ${currentMediaItem.value} currentSongIsDownloaded ${currentSongStateDownload.value}")
             println("PlayerServiceModern toggleDownload currentMediaItem ${currentMediaItem.value} currentSongIsDownloaded ${currentSongStateDownload.value}")
             manageDownload(
                 context = this@PlayerServiceModern,
@@ -1881,7 +1891,6 @@ class PlayerServiceModern : MediaLibraryService(),
             startActivity(Intent(applicationContext, MainActivity::class.java)
                 .setAction(MainActivity.action_search)
                 .setFlags(FLAG_ACTIVITY_NEW_TASK + FLAG_ACTIVITY_CLEAR_TASK))
-            println("PlayerServiceModern actionSearch")
         }
 
     }

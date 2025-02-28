@@ -121,7 +121,7 @@ class RetryingDataSourceFactory(
             var lastException: Throwable? = null
             var retries = 0
             while (retries < maxRetries) {
-                if (retries > 0) Timber.d("Retry $retries of $maxRetries fetching datasource")
+                if (retries > 0) Timber.d("RetryingDataSourceFactory Retry $retries of $maxRetries fetching datasource")
 
                 @Suppress("TooGenericExceptionCaught")
                 return try {
@@ -129,24 +129,24 @@ class RetryingDataSourceFactory(
                 } catch (ex: Throwable) {
                     lastException = ex
                     if (printStackTrace) Timber.e(
-                        /* msg = */ "Exception caught by retry mechanism",
+                        /* msg = */ " RetryingDataSourceFactory Exception caught by retry mechanism",
                         /* tr = */ ex
                     )
                     if (predicate(ex)) {
                         val time = if (exponential) 1000L * 2.0.pow(retries).toLong() else 2500L
-                        Timber.d("Retry policy accepted retry, sleeping for $time milliseconds")
+                        Timber.d("RetryingDataSourceFactory Retry policy accepted retry, sleeping for $time milliseconds")
                         Thread.sleep(time)
                         retries++
                         continue
                     }
                     Timber.e(
-                        "Retry policy declined retry, throwing the last exception..."
+                        "RetryingDataSourceFactory Retry policy declined retry, throwing the last exception..."
                     )
                     throw ex
                 }
             }
             Timber.e(
-                "Max retries $maxRetries exceeded, throwing the last exception..."
+                "RetryingDataSourceFactory Max retries $maxRetries exceeded, throwing the last exception..."
             )
             throw lastException!!
         }

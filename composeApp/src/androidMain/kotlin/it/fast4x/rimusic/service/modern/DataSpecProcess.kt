@@ -29,6 +29,7 @@ import it.fast4x.rimusic.useYtLoginOnlyForBrowse
 import it.fast4x.rimusic.utils.getSignatureTimestampOrNull
 import it.fast4x.rimusic.utils.getStreamUrl
 import kotlinx.coroutines.withTimeout
+import timber.log.Timber
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -78,6 +79,7 @@ internal suspend fun PlayerServiceModern.dataSpecProcess(
 
 
     } catch ( e: Exception ) {
+        Timber.e("PlayerServiceModern DataSpecProcess Error: ${e.stackTraceToString()}")
         println("PlayerServiceModern DataSpecProcess Error: ${e.stackTraceToString()}")
         val format = getInnerTubeStream(videoId, audioQualityFormat, connectionMetered)
         return dataSpec.withUri(Uri.parse(format?.url)).subrange(dataSpec.uriPositionOffset, chunkLength)
@@ -118,6 +120,7 @@ suspend fun getAvancedInnerTubeStream(
         body = PlayerBody(videoId = videoId),
     ).fold(
         { playerResponse ->
+            Timber.d("PlayerServiceModern MyDownloadHelper DataSpecProcess getAvancedInnerTubeStream playabilityStatus ${playerResponse.second?.playabilityStatus?.status} for song $videoId from adaptiveFormats itag ${playerResponse.second?.streamingData?.adaptiveFormats?.map { it.itag }}")
             println("PlayerServiceModern MyDownloadHelper DataSpecProcess getAvancedInnerTubeStream playabilityStatus ${playerResponse.second?.playabilityStatus?.status} for song $videoId from adaptiveFormats itag ${playerResponse.second?.streamingData?.adaptiveFormats?.map { it.itag }}")
             //println("PlayerServiceModern MyDownloadHelper DataSpecProcess getInnerTubeStream playabilityStatus ${playerResponse.second?.playabilityStatus?.status} for song $videoId from formats itag ${playerResponse.second?.streamingData?.formats?.map { it.itag }}")
 
@@ -176,6 +179,7 @@ suspend fun getAvancedInnerTubeStream(
                         .also {
                             println("PlayerServiceModern MyDownloadHelper DataSpecProcess getAdvancedInnerTubeStream url ${it?.url}")
 
+                            Timber.d("PlayerServiceModern MyDownloadHelper DataSpecProcess getAvancedInnerTubeStream song $videoId itag selected ${it}")
                             println("PlayerServiceModern MyDownloadHelper DataSpecProcess getAvancedInnerTubeStream song $videoId itag selected ${it}")
                             //println("PlayerServiceModern MyDownloadHelper DataSpecProcess getMediaFormat before upsert format $it")
                             Database.asyncTransaction {
@@ -211,6 +215,7 @@ suspend fun getAvancedInnerTubeStream(
                 }
 
                 else -> {
+                    Timber.d("PlayerServiceModern MyDownloadHelper DataSpecProcess Error: ${throwable.stackTraceToString()}")
                     println("PlayerServiceModern MyDownloadHelper DataSpecProcess Error: ${throwable.stackTraceToString()}")
                     throw throwable
                 }
@@ -230,6 +235,7 @@ suspend fun getInnerTubeStream(
         body = PlayerBody(videoId = videoId)
     ).fold(
         { playerResponse ->
+            Timber.d("PlayerServiceModern MyDownloadHelper DataSpecProcess getInnerTubeStream playabilityStatus ${playerResponse.second?.playabilityStatus?.status} for song $videoId from adaptiveFormats itag ${playerResponse.second?.streamingData?.adaptiveFormats?.map { it.itag }}")
             println("PlayerServiceModern MyDownloadHelper DataSpecProcess getInnerTubeStream playabilityStatus ${playerResponse.second?.playabilityStatus?.status} for song $videoId from adaptiveFormats itag ${playerResponse.second?.streamingData?.adaptiveFormats?.map { it.itag }}")
             //println("PlayerServiceModern MyDownloadHelper DataSpecProcess getInnerTubeStream playabilityStatus ${playerResponse.second?.playabilityStatus?.status} for song $videoId from formats itag ${playerResponse.second?.streamingData?.formats?.map { it.itag }}")
 
@@ -277,6 +283,7 @@ suspend fun getInnerTubeStream(
                             }
                         }
                         .also {
+                            Timber.d("PlayerServiceModern MyDownloadHelper DataSpecProcess getInnerTubeStream song $videoId itag selected ${it}")
                             println("PlayerServiceModern MyDownloadHelper DataSpecProcess getInnerTubeStream song $videoId itag selected ${it}")
                             //println("PlayerServiceModern MyDownloadHelper DataSpecProcess getMediaFormat before upsert format $it")
                             Database.asyncTransaction {
@@ -312,6 +319,7 @@ suspend fun getInnerTubeStream(
                 }
 
                 else -> {
+                    Timber.d("PlayerServiceModern MyDownloadHelper DataSpecProcess Error: ${throwable.stackTraceToString()}")
                     println("PlayerServiceModern MyDownloadHelper DataSpecProcess Error: ${throwable.stackTraceToString()}")
                     throw throwable
                 }
