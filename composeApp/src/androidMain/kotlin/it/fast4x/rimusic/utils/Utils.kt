@@ -1200,3 +1200,15 @@ fun numberFormatter(n: Int) =
     DecimalFormat("#,###")
         .format(n)
         .replace(",", ".")
+
+inline fun <reified T : Throwable> Throwable.findCause(): T? {
+    if (this is T) return this
+
+    var th = cause
+    while (th != null) {
+        if (th is T) return th
+        th = th.cause
+    }
+
+    return null
+}

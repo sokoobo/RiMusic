@@ -290,11 +290,11 @@ fun HomeQuickPicks(
                 homePageResult = EnvironmentExt.getHomePage()
 
         }.onFailure {
-            Timber.e("Failed loadData in QuickPicsModern ${it.stackTraceToString()}")
+            //Timber.e("Failed loadData in QuickPicsModern ${it.stackTraceToString()}")
             println("Failed loadData in QuickPicsModern ${it.stackTraceToString()}")
             loadedData = false
         }.onSuccess {
-            Timber.d("Success loadData in QuickPicsModern")
+            //Timber.d("Success loadData in QuickPicsModern")
             println("Success loadData in QuickPicsModern")
             loadedData = true
         }

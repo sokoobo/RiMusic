@@ -31,3 +31,6 @@ fun getStreamUrl(
     return streamUrl
 }
 
+data class InvalidHttpCodeException(val code: Int) :
+    IllegalStateException("Invalid http code received: $code")
+
