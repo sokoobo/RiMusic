@@ -25,18 +25,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.util.UnstableApi
+import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
+import it.fast4x.rimusic.Database
 
 import it.fast4x.rimusic.R
 import it.fast4x.rimusic.enums.CheckUpdateState
 import it.fast4x.rimusic.enums.NavigationBarPosition
 import it.fast4x.rimusic.enums.PopupType
 import it.fast4x.rimusic.ui.components.themed.HeaderWithIcon
+import it.fast4x.rimusic.ui.components.themed.InputTextDialog
 import it.fast4x.rimusic.ui.components.themed.SecondaryTextButton
 import it.fast4x.rimusic.ui.components.themed.SmartMessage
 import it.fast4x.rimusic.ui.styling.Dimensions
@@ -57,6 +61,9 @@ import it.fast4x.rimusic.utils.parentalControlEnabledKey
 import it.fast4x.rimusic.utils.rememberPreference
 import it.fast4x.rimusic.utils.showFoldersOnDeviceKey
 import java.io.File
+import java.io.FileInputStream
+import java.text.SimpleDateFormat
+import java.util.Date
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -128,6 +135,69 @@ fun OtherSettings() {
     var logDebugEnabled by rememberPreference(logDebugEnabledKey, false)
 
     var extraspace by rememberPreference(extraspaceKey, false)
+
+    var fileName by remember {
+        mutableStateOf("")
+    }
+
+    var text by remember { mutableStateOf(null as String?) }
+
+    val noLogAvailable = stringResource(R.string.no_log_available)
+    var exportCrashlog by remember{ mutableStateOf(false) }
+
+    val exportLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("text/plain")) { uri ->
+            if (uri == null) return@rememberLauncherForActivityResult
+
+            val file =
+                File(context.filesDir.resolve("logs"),
+                    if (exportCrashlog) "RiMusic_crash_log.txt" else  "RiMusic_log.txt"
+                )
+            if (file.exists()) {
+                text = file.readText()
+            } else {
+                SmartMessage(noLogAvailable, type = PopupType.Info, context = context)
+                return@rememberLauncherForActivityResult
+            }
+
+            context.applicationContext.contentResolver.openOutputStream(uri)
+                ?.use { outputStream ->
+                    FileInputStream( file ).use { inputStream ->
+                        inputStream.copyTo(outputStream)
+                    }
+                }
+
+        }
+
+    var isExporting by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+
+    if (isExporting) {
+        InputTextDialog(
+            onDismiss = {
+                isExporting = false
+            },
+            title = "Enter the name of log export",
+            value = "",
+            placeholder = "Enter the name of log export",
+            setValue = { txt ->
+                fileName = txt
+                try {
+                    @SuppressLint("SimpleDateFormat")
+                    val dateFormat = SimpleDateFormat("yyyyMMddHHmmss")
+                    exportLauncher.launch("RMLog_${txt.take(20)}_${dateFormat.format(
+                        Date()
+                    )}")
+                } catch (e: ActivityNotFoundException) {
+                    SmartMessage("Couldn't find an application to create documents",
+                        type = PopupType.Warning, context = context)
+                }
+            }
+        )
+    }
+
 
     Column(
         modifier = Modifier
@@ -382,9 +452,7 @@ fun OtherSettings() {
 
         SettingsGroupSpacer()
 
-        var text by remember { mutableStateOf(null as String?) }
 
-        val noLogAvailable = stringResource(R.string.no_log_available)
 
         SettingsEntryGroupText(title = stringResource(R.string.debug))
         SwitchSettingEntry(
@@ -413,34 +481,39 @@ fun OtherSettings() {
         ImportantSettingsDescription(text = stringResource(R.string.restarting_rimusic_is_required))
         ButtonBarSettingEntry(
             isEnabled = logDebugEnabled,
-            title = stringResource(R.string.copy_log_to_clipboard),
+            title = stringResource(R.string.export_log),
             text = "",
-            icon = R.drawable.copy,
+            icon = R.drawable.export,
             onClick = {
-                val file = File(context.filesDir.resolve("logs"), "RiMusic_log.txt")
-                if (file.exists()) {
-                    text = file.readText()
-                    text?.let {
-                        textCopyToClipboard(it, context)
-                    }
-                } else
-                    SmartMessage(noLogAvailable, type = PopupType.Info, context = context)
+                exportCrashlog = false
+                isExporting = true
+
+//                val file = File(context.filesDir.resolve("logs"), "RiMusic_log.txt")
+//                if (file.exists()) {
+//                    text = file.readText()
+//                    text?.let {
+//                        textCopyToClipboard(it, context)
+//                    }
+//                } else
+//                    SmartMessage(noLogAvailable, type = PopupType.Info, context = context)
             }
         )
         ButtonBarSettingEntry(
             isEnabled = logDebugEnabled,
-            title = stringResource(R.string.copy_crash_log_to_clipboard),
+            title = stringResource(R.string.export_crash_log),
             text = "",
-            icon = R.drawable.copy,
+            icon = R.drawable.export,
             onClick = {
-                val file = File(context.filesDir.resolve("logs"), "RiMusic_crash_log.txt")
-                if (file.exists()) {
-                    text = file.readText()
-                    text?.let {
-                        textCopyToClipboard(it, context)
-                    }
-                } else
-                    SmartMessage(noLogAvailable, type = PopupType.Info, context = context)
+                exportCrashlog = true
+                isExporting = true
+//                val file = File(context.filesDir.resolve("logs"), "RiMusic_crash_log.txt")
+//                if (file.exists()) {
+//                    text = file.readText()
+//                    text?.let {
+//                        textCopyToClipboard(it, context)
+//                    }
+//                } else
+//                    SmartMessage(noLogAvailable, type = PopupType.Info, context = context)
             }
         )
 
