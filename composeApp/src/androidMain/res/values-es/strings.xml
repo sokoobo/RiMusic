@@ -935,4 +935,6 @@
     <string name="dislikes">No me gustan</string>
     <string name="loudness_boost_level">Nivel de amplificación del volumen</string>
     <string name="loudness_boost_level_info">Nivel de volumen adicional (si se aumenta en exceso, puede dañar el dispositivo)</string>
+    <string name="export_crash_log">Export crash log</string>
+    <string name="export_log">Export log</string>
 </resources>
