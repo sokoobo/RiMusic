@@ -44,6 +44,13 @@ class MainApplication : Application(), ImageLoaderFactory {
 
     override fun newImageLoader(): ImageLoader {
         val coilCustomDiskCache = preferences.getInt(coilCustomDiskCacheKey, 128) * 1000 * 1000L
+        val coilDiskCacheMaxSize = preferences.getEnum(coilDiskCacheMaxSizeKey,CoilDiskCacheMaxSize.`128MB`)
+        val coilCacheSize = when (coilDiskCacheMaxSize) {
+            CoilDiskCacheMaxSize.Custom -> coilCustomDiskCache
+            else -> coilDiskCacheMaxSize.bytes
+        }
+
+
         return ImageLoader.Builder(this)
             .crossfade(true)
             .networkCachePolicy(CachePolicy.ENABLED)
@@ -64,14 +71,8 @@ class MainApplication : Application(), ImageLoaderFactory {
                 DiskCache.Builder()
                     .directory(filesDir.resolve("coil"))
                     .maxSizeBytes(
-                        when (val size =
-                            preferences.getEnum(
-                                coilDiskCacheMaxSizeKey,
-                                CoilDiskCacheMaxSize.`128MB`
-                            )) {
-                            CoilDiskCacheMaxSize.Custom -> coilCustomDiskCache
-                            else -> size.bytes
-                        }
+                        if (coilCacheSize == 0L) CoilDiskCacheMaxSize.`128MB`.bytes
+                        else coilCacheSize
                     )
                     .build()
             )
