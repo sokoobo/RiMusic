@@ -320,7 +320,7 @@ object Environment {
         val durationText: String?,
         override val thumbnail: Thumbnail?
     ) : Item() {
-        override val key get() = info!!.endpoint!!.videoId!!
+        override val key get() = info?.endpoint?.videoId ?: ""
         override val title get() = info?.name
 
         val isOfficialMusicVideo: Boolean
@@ -348,7 +348,7 @@ object Environment {
         val playlistId: String? = null,
         override val thumbnail: Thumbnail?
     ) : Item() {
-        override val key get() = info!!.endpoint!!.browseId!!
+        override val key get() = info?.endpoint?.browseId ?: ""
         override val title get() = info?.name
 
         companion object
@@ -361,7 +361,7 @@ object Environment {
         val channelId: String? = null,
         override val thumbnail: Thumbnail?
     ) : Item() {
-        override val key get() = info!!.endpoint!!.browseId!!
+        override val key get() = info?.endpoint?.browseId ?: ""
         override val title get() = info?.name
 
         companion object
@@ -375,7 +375,7 @@ object Environment {
         val isEditable: Boolean?,
         override val thumbnail: Thumbnail?
     ) : Item() {
-        override val key get() = info!!.endpoint!!.browseId!!
+        override val key get() = info?.endpoint?.browseId ?: ""
         override val title get() = info?.name
 
         companion object
