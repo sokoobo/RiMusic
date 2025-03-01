@@ -30,7 +30,7 @@
     <string name="enqueue">Adaugă în coadă</string>
     <string name="shuffle">Amestecă</string>
     <string name="view_all">Vezi tot</string>
-    <string name="from_wikipedia_cca">De pe Wikipedia sub licența Creative Commons Attribution CC-BY-SA 3.0</string>
+    <string name="from_wikipedia_cca">De la Wikipedia sub licența Creative Commons Attribution CC-BY-SA 3.0</string>
     <string name="overview">Prezentare generală</string>
     <string name="singles">Single-uri</string>
     <string name="library">Bibliotecă</string>
@@ -78,7 +78,7 @@
     <string name="reset_quick_picks">Resetează selecțiile rapide</string>
     <string name="quick_picks_are_cleared">Selecțiile rapide au fost șterse</string>
     <string name="backup">COPIE DE SIGURANȚĂ</string>
-    <string name="personal_preference">Preferințele personale (de exemplu, modul tematic) și memoria cache sunt excluse.</string>
+    <string name="personal_preference">Preferințele personale (de exemplu: „modul tematic\") și memoria cache sunt excluse.</string>
     <string name="backup_1">Copie de siguranță</string>
     <string name="export_the_database">Exportă baza de date pe stocarea externă</string>
     <string name="restore">RESTABILIRE</string>
@@ -87,7 +87,7 @@
     <string name="android_auto">ANDROID AUTO</string>
     <string name="enable_unknown_sources">Amintește-ți să activezi „Surse necunoscute” în Setările pentru dezvoltatori ale Android Auto.</string>
     <string name="android_auto_1">Android auto</string>
-    <string name="enable_android_auto_support">Activează suportul pentru Android Auto</string>
+    <string name="enable_android_auto_support">Activează suportul pentru „Android Auto\"</string>
     <string name="search_history">ISTORICUL CĂUTĂRILOR</string>
     <string name="pause_search_history">Întrerupe istoricul căutărilor</string>
     <string name="neither_save_new_searched_query">Nu salva noile căutări și nu afișa istoricul</string>
@@ -740,11 +740,11 @@
     <string name="social_reddit_info">Alătură-te comunității Reddit</string>
     <string name="sleep_timer_ended">Temporizatorul de somn s-a încheiat</string>
     <string name="social_discord">Discord</string>
-    <string name="social_discord_info">Alăturate comunității pe Discord</string>
-    <string name="discord_enable_rich_presence">Activează Rich Presence</string>
-    <string name="discord_disconnect">Deconectează</string>
-    <string name="discord_connect">Conectează</string>
-    <string name="discord_connected_to_discord_account">Conectat la contul Discord</string>
+    <string name="social_discord_info">Alătură-te comunității Discord</string>
+    <string name="discord_enable_rich_presence">Activează „Rich Presence\"</string>
+    <string name="discord_disconnect">Deconectează-te</string>
+    <string name="discord_connect">Conectează-te</string>
+    <string name="discord_connected_to_discord_account">Conectat la Discord</string>
     <string name="settings_reset">Resetează</string>
     <string name="settings_restore_default_settings">Restabilește setările implicite</string>
     <string name="piped_custom_instance">Instanță personalizată Piped</string>
