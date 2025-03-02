@@ -831,11 +831,11 @@
     <string name="notification_type_info">Начин на који се рукује плејером у пољу за обавештења и на закључаном екрану.</string>
     <string name="action_bar_show_start_radio_button">Дугме за покрени радио</string>
     <string name="tab_accounts">Налози</string>
-    <string name="blankspace">Blank Space at Top</string>
-    <string name="settings_enable_autodownload_song">Enable auto download song</string>
-    <string name="settings_enable_autodownload_song_when_liked">Auto download song when liked</string>
-    <string name="settings_enable_autodownload_song_when_album_bookmarked">Auto download song when album bookmarked</string>
-    <string name="tab_general">General</string>
+    <string name="blankspace">Празан Простор на Врху</string>
+    <string name="settings_enable_autodownload_song">Омогући аутоматско преузимање песме</string>
+    <string name="settings_enable_autodownload_song_when_liked">Аутоматско преузимање песме када се лајкује</string>
+    <string name="settings_enable_autodownload_song_when_album_bookmarked">Аутоматско преузимање песме када је албум обележен</string>
+    <string name="tab_general">Опште</string>
     <string name="queue_and_local_playlists_left_swipe">Queue and Local Playlists Left Swipe</string>
     <string name="queue_and_local_playlists_right_swipe">Queue and Local Playlists Right Swipe</string>
     <string name="playlist_left_swipe">Playlist Left Swipe</string>
