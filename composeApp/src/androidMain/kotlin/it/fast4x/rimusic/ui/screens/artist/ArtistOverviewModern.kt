@@ -690,7 +690,9 @@ fun ArtistOverviewModern(
                                                                 ?.items
                                                                 ?.map{ it as Environment.SongItem }
                                                                 ?.map { it.asMediaItem }
-                                                            val filteredArtistSongs = artistSongs?.filter {Database.getLikedAt(it.mediaId) != -1L}
+                                                            val filteredArtistSongs = artistSongs?.filter {
+                                                                        Database.songDisliked(it.mediaId) > 0
+                                                            }
                                                             if (filteredArtistSongs != null) {
                                                                 if (item.asMediaItem in filteredArtistSongs){
                                                                     withContext(Dispatchers.Main) {

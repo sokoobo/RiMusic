@@ -199,7 +199,7 @@ import it.fast4x.rimusic.appContext
 import it.fast4x.rimusic.enums.PresetsReverb
 import it.fast4x.rimusic.extensions.webpotoken.advancedWebPoTokenPlayer
 import it.fast4x.rimusic.isHandleAudioFocusEnabled
-import it.fast4x.rimusic.isYouTubeHistorySyncEnabled
+import it.fast4x.rimusic.ui.screens.settings.isYouTubeSyncEnabled
 import it.fast4x.rimusic.utils.asMediaItem
 import it.fast4x.rimusic.utils.audioReverbPresetKey
 import it.fast4x.rimusic.utils.bassboostEnabledKey
@@ -624,7 +624,7 @@ class PlayerServiceModern : MediaLibraryService(),
         }
 
 
-        if (!mediaItem.isLocal && isYouTubeHistorySyncEnabled()) {
+        if (!mediaItem.isLocal && isYouTubeSyncEnabled()) {
             CoroutineScope(Dispatchers.IO).launch {
                 advancedWebPoTokenPlayer(PlayerBody(videoId = mediaItem.mediaId, playlistId = null))
                     .getOrNull()?.second?.playbackTracking?.videostatsPlaybackUrl?.baseUrl

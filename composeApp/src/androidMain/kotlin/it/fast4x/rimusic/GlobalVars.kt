@@ -15,7 +15,6 @@ import it.fast4x.rimusic.utils.autosyncKey
 import it.fast4x.rimusic.utils.bassboostEnabledKey
 import it.fast4x.rimusic.utils.bassboostLevelKey
 import it.fast4x.rimusic.utils.dnsOverHttpsTypeKey
-import it.fast4x.rimusic.utils.enableYouTubeHistorySyncKey
 import it.fast4x.rimusic.utils.getEnum
 import it.fast4x.rimusic.utils.handleAudioFocusEnabledKey
 import it.fast4x.rimusic.utils.isConnectionMetered
@@ -60,7 +59,6 @@ fun ytAccountName() = appContext().preferences.getString(ytAccountNameKey, "")
 fun ytAccountThumbnail() = appContext().preferences.getString(ytAccountThumbnailKey, "")
 fun useYtLoginOnlyForBrowse() = appContext().preferences.getBoolean(useYtLoginOnlyForBrowseKey, true)
 fun isVideoEnabled() = appContext().preferences.getBoolean(showButtonPlayerVideoKey, false)
-fun isYouTubeHistorySyncEnabled() = appContext().preferences.getBoolean(enableYouTubeHistorySyncKey, false)
 
 fun isConnectionMetered() = appContext().isConnectionMetered()
 fun isConnectionMeteredEnabled() = appContext().preferences.getBoolean(isConnectionMeteredEnabledKey, true)
