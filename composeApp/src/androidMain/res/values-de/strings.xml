@@ -579,7 +579,7 @@
     <string name="info_prevent_play_songs_with_age_limitation">Verhindere die Wiedergabe von Liedern mit Altersbegrenzung</string>
     <string name="cache_location_private">Privat</string>
     <string name="cache_location_system">System</string>
-    <string name="info_cannot_rename_a_monthly_or_piped_playlist">Das Umbenennen einer monatlichen, online oder piped Playlist ist nicht möglich</string>
+    <string name="info_cannot_rename_a_monthly_or_piped_playlist">Das Umbenennen einer monatlichen, online oder piped Wiedergabeliste ist nicht möglich</string>
     <string name="debug">DEBUG</string>
     <string name="enable_log_debug">Fehlerprotokoll aktivieren</string>
     <string name="if_enabled_create_a_log_file_to_highlight_errors">Wenn aktiviert, erzeuge eine Protokolldatei für auftretende Fehler</string>
@@ -893,7 +893,7 @@
     <string name="explicit">Explicit</string>
     <string name="filter_by">Filtern nach</string>
     <string name="updating_playlist">Wiedergabeliste wird aktualisiert. Bitte warten. App nicht minimieren oder schließen</string>
-    <string name="updating_playlist_message">Aktualisieren Sie die Titel mit der fehlenden Album-ID</string>
+    <string name="updating_playlist_message">Titel mit fehlender Album-ID aktualisieren</string>
     <string name="syncing">Synchronisiere...</string>
     <string name="autosync_channels">Abonnierte Kanäle automatisch synchronisieren</string>
     <string name="autosync_albums">Gespeicherte Alben automatisch synchronisieren</string>
@@ -906,16 +906,16 @@
     <string name="unlink_from_ytm">Von der YouTube Bibliothek entkoppeln</string>
     <string name="unlink_from_yt">Von YouTube entkoppeln</string>
     <string name="yt_playlist_limited">YouTube Wiedergabelisten sind auf 5000 Titel begrenzt</string>
-    <string name="songs_added_in_yt">Titel werden in die YouTube Playlist hinzugefügt. Wiederhole den Prozess, falls Titel fehlen</string>
+    <string name="songs_added_in_yt">Titel werden zur YouTube Wiedergabeliste hinzugefügt. Wiederhole den Prozess, falls Titel fehlen</string>
     <string name="songs_adding_in_yt">Titel werden der YTM Wiedergabeliste hinzugefügt</string>
     <string name="settings_audio_bass_boost">Bassverstärkung</string>
     <string name="settings_bass_boost_level">Bassverstärkungspegel</string>
     <string name="settings_audio_reverb">Audio reverb</string>
     <string name="settings_audio_reverb_info_apply_a_depth_effect_to_the_audio">Tiefeneffekt auf Audio anwenden</string>
     <string name="settings_audio_focus">Audio focus</string>
-    <string name="settings_audio_focus_info">Ermöglicht das automatische pausieren oder fortsetzen nach zum Beispiel einem Anruf</string>
+    <string name="settings_audio_focus_info">Ermöglicht das automatische Pausieren und Fortsetzen der Wiedergabe zum Beispiel nach einem Anruf</string>
     <string name="please_wait">Bitte warten</string>
-    <string name="songs_liked_yt">Titel sind auf YouTube mit \"Gefällt mir\" markiert</string>
+    <string name="songs_liked_yt">Titel die auf YouTube mit \"Gefällt mir\" markiert sind</string>
     <string name="song_unliked_yt">Der Titel ist auf YouTube nicht mit \"Gefällt mir\" markiert</string>
     <string name="add_rimusic_to_ytm_favorites">Die auf RiMusic mit \"Gefällt mir\" markierten Titel ebenfalls auf YouTube markieren</string>
     <string name="do_you_really_want_to_like_all_rimusictoytmusic">(estimated time) is required to like all the songs. This action cannot be resumed if cancelled in between. You need to close the app to cancel this process. Do you want to continue?</string>
