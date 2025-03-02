@@ -81,8 +81,11 @@ import androidx.media3.session.MediaStyleNotificationHelper
 import androidx.media3.session.SessionToken
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.MoreExecutors
+import io.ktor.client.call.body
 import it.fast4x.environment.Environment
+import it.fast4x.environment.EnvironmentExt
 import it.fast4x.environment.models.NavigationEndpoint
+import it.fast4x.environment.models.bodies.PlayerBody
 import it.fast4x.environment.models.bodies.SearchBody
 import it.fast4x.environment.requests.searchPage
 import it.fast4x.environment.utils.from
@@ -194,7 +197,9 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import it.fast4x.rimusic.appContext
 import it.fast4x.rimusic.enums.PresetsReverb
+import it.fast4x.rimusic.extensions.webpotoken.advancedWebPoTokenPlayer
 import it.fast4x.rimusic.isHandleAudioFocusEnabled
+import it.fast4x.rimusic.isYouTubeHistorySyncEnabled
 import it.fast4x.rimusic.utils.asMediaItem
 import it.fast4x.rimusic.utils.audioReverbPresetKey
 import it.fast4x.rimusic.utils.bassboostEnabledKey
@@ -612,10 +617,26 @@ class PlayerServiceModern : MediaLibraryService(),
                         )
                     )
                 } catch (e: SQLException) {
-                    Timber.e("PlayerService onPlaybackStatsReady SQLException ${e.stackTraceToString()}")
+                    Timber.e("PlayerServiceModern onPlaybackStatsReady SQLException ${e.stackTraceToString()}")
                 }
             }
 
+        }
+
+
+        if (!mediaItem.isLocal && isYouTubeHistorySyncEnabled()) {
+            CoroutineScope(Dispatchers.IO).launch {
+                advancedWebPoTokenPlayer(PlayerBody(videoId = mediaItem.mediaId, playlistId = null))
+                    .getOrNull()?.second?.playbackTracking?.videostatsPlaybackUrl?.baseUrl
+                    ?.let { playbackUrl ->
+                        println("PlayerServiceModern onPlaybackStatsReady addPlaybackToHistory playbackUrl $playbackUrl")
+                        EnvironmentExt.addPlaybackToHistory(null, playbackUrl)
+                            .onFailure {
+                                Timber.e("PlayerService onPlaybackStatsReady addPlaybackToHistory ${it.stackTraceToString()}")
+                                println("PlayerService onPlaybackStatsReady addPlaybackToHistory ${it.stackTraceToString()}")
+                            }
+                    }
+            }
         }
     }
 

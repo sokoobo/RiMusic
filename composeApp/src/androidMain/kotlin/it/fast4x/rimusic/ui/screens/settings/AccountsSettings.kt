@@ -363,15 +363,15 @@ fun AccountsSettings() {
                 //RestartActivity(restartActivity, onRestart = { restartActivity = false })
 
                 // TODO MANAGE SYNC HISTORY
-//                SwitchSettingEntry(
-//                    //isEnabled = false,
-//                    title = "Sync playback history with YTM account",
-//                    text = "",
-//                    isChecked = isYouTubeHistorySyncEnabled,
-//                    onCheckedChange = {
-//                        isYouTubeHistorySyncEnabled = it
-//                    }
-//                )
+                SwitchSettingEntry(
+                    //isEnabled = false,
+                    title = "Sync playback history with YTM account",
+                    text = "",
+                    isChecked = isYouTubeHistorySyncEnabled,
+                    onCheckedChange = {
+                        isYouTubeHistorySyncEnabled = it
+                    }
+                )
 
             }
         }

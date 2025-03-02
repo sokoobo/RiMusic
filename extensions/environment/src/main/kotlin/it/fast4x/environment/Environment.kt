@@ -1025,6 +1025,23 @@ object Environment {
             }
         }
 
+    suspend fun addPlaybackToHistory(
+        url: String,
+        cpn: String,
+        playlistId: String?,
+        clientType: Client = DefaultWeb.client
+    ) = client.get(url) {
+        setLogin(clientType, true)
+        parameter("ver", "2")
+        parameter("c", clientType.clientName)
+        parameter("cpn", cpn)
+
+        if (playlistId != null) {
+            parameter("list", playlistId)
+            parameter("referrer", "$_XsHo8IdebO/playlist?list=$playlistId")
+        }
+    }
+
     private fun HttpRequestBuilder.poHeader() {
         headers {
             header("accept", "*/*")
