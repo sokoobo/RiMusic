@@ -621,23 +621,25 @@ class PlayerServiceModern : MediaLibraryService(),
                 }
             }
 
-        }
-
-
-        if (!mediaItem.isLocal && isYouTubeSyncEnabled()) {
-            CoroutineScope(Dispatchers.IO).launch {
-                advancedWebPoTokenPlayer(PlayerBody(videoId = mediaItem.mediaId, playlistId = null))
-                    .getOrNull()?.second?.playbackTracking?.videostatsPlaybackUrl?.baseUrl
-                    ?.let { playbackUrl ->
-                        println("PlayerServiceModern onPlaybackStatsReady addPlaybackToHistory playbackUrl $playbackUrl")
-                        EnvironmentExt.addPlaybackToHistory(null, playbackUrl)
-                            .onFailure {
-                                Timber.e("PlayerService onPlaybackStatsReady addPlaybackToHistory ${it.stackTraceToString()}")
-                                println("PlayerService onPlaybackStatsReady addPlaybackToHistory ${it.stackTraceToString()}")
-                            }
-                    }
+            if (!mediaItem.isLocal && isYouTubeSyncEnabled()) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    advancedWebPoTokenPlayer(PlayerBody(videoId = mediaItem.mediaId, playlistId = null))
+                        .getOrNull()?.second?.playbackTracking?.videostatsPlaybackUrl?.baseUrl
+                        ?.let { playbackUrl ->
+                            println("PlayerServiceModern onPlaybackStatsReady addPlaybackToHistory playbackUrl $playbackUrl")
+                            EnvironmentExt.addPlaybackToHistory(null, playbackUrl)
+                                .onFailure {
+                                    Timber.e("PlayerService onPlaybackStatsReady addPlaybackToHistory ${it.stackTraceToString()}")
+                                    println("PlayerService onPlaybackStatsReady addPlaybackToHistory ${it.stackTraceToString()}")
+                                }
+                        }
+                }
             }
+
         }
+
+
+
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
