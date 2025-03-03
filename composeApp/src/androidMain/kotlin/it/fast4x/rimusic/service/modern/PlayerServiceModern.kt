@@ -813,7 +813,7 @@ class PlayerServiceModern : MediaLibraryService(),
         if (error.errorCode in PlayerErrorsToReload) {
             Timber.e("PlayerServiceModern onPlayerError recovered occurred errorCodeName ${error.errorCodeName}")
             println("PlayerServiceModern onPlayerError recovered occurred errorCodeName ${error.errorCodeName}")
-            player.stop()
+            player.pause()
             player.prepare()
             player.playWhenReady = true
             //player.play()
@@ -856,7 +856,7 @@ class PlayerServiceModern : MediaLibraryService(),
             return
 
         val prev = player.currentMediaItem ?: return
-        //player.seekToNextMediaItem()
+
         player.playNext()
 
         showSmartMessage(
@@ -867,13 +867,6 @@ class PlayerServiceModern : MediaLibraryService(),
         )
 
     }
-
-//    override fun onPlaybackStateChanged(playbackState: Int) {
-//        if (playbackState == STATE_IDLE) {
-//            player.shuffleModeEnabled = false
-//            //player.clearMediaItems()
-//        }
-//    }
 
     override fun onEvents(player: Player, events: Player.Events) {
         if (events.containsAny(Player.EVENT_PLAYBACK_STATE_CHANGED, Player.EVENT_PLAY_WHEN_READY_CHANGED)) {
@@ -1966,15 +1959,14 @@ class PlayerServiceModern : MediaLibraryService(),
 
         val PlayerErrorsToReload = arrayOf(
             416,
-            //4003
-        )
-        val PlayerErrorsWithCachePurge = arrayOf(
+            4003, // ERROR_CODE_DECODING_FAILED
             2000, // ERROR_CODE_IO_UNSPECIFIED
             2003, // ERROR_CODE_IO_INVALID_HTTP_CONTENT_TYPE
             2004, // ERROR_CODE_IO_BAD_HTTP_STATUS
             2005, // ERROR_CODE_IO_FILE_NOT_FOUND
             2008 // ERROR_CODE_IO_READ_POSITION_OUT_OF_RANGE
         )
+
 
         const val ROOT = "root"
         const val SONG = "song"
