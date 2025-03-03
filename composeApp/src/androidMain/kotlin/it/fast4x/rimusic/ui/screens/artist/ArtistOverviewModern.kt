@@ -695,16 +695,16 @@ fun ArtistOverviewModern(
                                                                 val filteredArtistSongs = artistSongs
                                                                 ?.filter { it.mediaId != Database.songDisliked(it.mediaId) }
 
-                                                                if (artistSongs?.contains(item.asMediaItem) == false){
+                                                                //if (artistSongs?.contains(item.asMediaItem) == false){
                                                                     withContext(Dispatchers.Main) {
                                                                         binder?.player?.forcePlay(item.asMediaItem)
                                                                         if (filteredArtistSongs != null) {
                                                                             binder?.player?.addMediaItems(filteredArtistSongs.filterNot { it.mediaId == item.key })
                                                                         }
                                                                     }
-                                                                } else {
-                                                                    SmartMessage(context.resources.getString(R.string.disliked_this_song),type = PopupType.Error, context = context)
-                                                                }
+//                                                                } else {
+//                                                                    SmartMessage(context.resources.getString(R.string.disliked_this_song),type = PopupType.Error, context = context)
+//                                                                }
 
                                                         }
                                                     }
