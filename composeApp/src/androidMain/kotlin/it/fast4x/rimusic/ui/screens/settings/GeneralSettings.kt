@@ -472,16 +472,28 @@ fun GeneralSettings(
                 },
                 valueText = { it.textName }
             )
-            SettingsDescription(text = "If you have loading problems, you can use an alternative dns server")
-            RestartActivity(restartActivity, onRestart = { restartActivity = false })
 
-            if (useDnsOverHttpsType == DnsOverHttpsType.Custom)
-                TextDialogSettingEntry(
-                    title = "Custom dns over https server",
-                    text = customDnsOverHttpsServer,
-                    currentText = customDnsOverHttpsServer,
-                    onTextSave = { customDnsOverHttpsServer = it }
-                )
+            AnimatedVisibility(visible = useDnsOverHttpsType == DnsOverHttpsType.Custom) {
+                Column(modifier = Modifier.padding(start = 16.dp)) {
+                    TextDialogSettingEntry(
+                        title = "Custom dns over https server",
+                        text = customDnsOverHttpsServer,
+                        currentText = customDnsOverHttpsServer,
+                        onTextSave = {
+                            customDnsOverHttpsServer = it
+                            restartActivity = true
+                        },
+                        validationType = ValidationType.Url
+                    )
+                }
+                RestartActivity(restartActivity, onRestart = { restartActivity = false })
+            }
+
+            SettingsDescription(text = "If you have loading problems, you can use an alternative dns server")
+            if (useDnsOverHttpsType != DnsOverHttpsType.Custom)
+                RestartActivity(restartActivity, onRestart = { restartActivity = false })
+
+
         }
 
         //SettingsEntryGroupText(title = stringResource(R.string.proxy))

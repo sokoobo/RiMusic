@@ -162,10 +162,8 @@ object Environment {
                     .url("https://doh.opendns.com/dns-query".toHttpUrl())
                     .bootstrapDnsHosts(InetAddress.getByName("208.67.222.222"), InetAddress.getByName("208.67.220.220")).build()
                 val customDns = this@Environment.customDnsToUse?.let {
-                    if (it.startsWith("http") || it.startsWith("https")) {
-                        DnsOverHttps.Builder().client(bootstrapClient)
-                            .url(it.toHttpUrl()).build()
-                    } else null
+                    DnsOverHttps.Builder().client(bootstrapClient)
+                        .url(it.toHttpUrl()).build()
                 } ?: googleDns
                 val dns: DnsOverHttps = when (this@Environment.dnsToUse) {
                     "google" -> googleDns
@@ -223,7 +221,7 @@ object Environment {
         //gl = LocalePreferences.preference?.gl ?: "US",
         //hl = LocalePreferences.preference?.hl ?: "en"
     )
-    //var visitorData: String = YoutubePreferences.preference?.visitordata.toString()
+
     var visitorData: String? = null
     var dataSyncId: String? = null
 

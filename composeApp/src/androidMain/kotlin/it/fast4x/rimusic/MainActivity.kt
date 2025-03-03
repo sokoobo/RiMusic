@@ -114,6 +114,7 @@ import it.fast4x.rimusic.enums.AudioQualityFormat
 import it.fast4x.rimusic.enums.CheckUpdateState
 import it.fast4x.rimusic.enums.ColorPaletteMode
 import it.fast4x.rimusic.enums.ColorPaletteName
+import it.fast4x.rimusic.enums.DnsOverHttpsType
 import it.fast4x.rimusic.enums.FontType
 import it.fast4x.rimusic.enums.HomeScreenTabs
 import it.fast4x.rimusic.enums.Languages
@@ -195,6 +196,7 @@ import it.fast4x.rimusic.utils.isAtLeastAndroid8
 import it.fast4x.rimusic.utils.isKeepScreenOnEnabledKey
 import it.fast4x.rimusic.utils.isProxyEnabledKey
 import it.fast4x.rimusic.utils.isValidIP
+import it.fast4x.rimusic.utils.isValidUrl
 import it.fast4x.rimusic.utils.isVideo
 import it.fast4x.rimusic.utils.keepPlayerMinimizedKey
 import it.fast4x.rimusic.utils.languageAppKey
@@ -551,15 +553,20 @@ class MainActivity :
 
                     val cookie = preferences.getString(ytCookieKey, "")
                     println("MainActivity.onCreate cookie: $cookie")
+                    val customDnsOverHttpsServer = preferences.getString(customDnsOverHttpsServerKey, "")
 
                     Environment.cookie = cookie
                     Environment.visitorData = visitorData.takeIf { it != "null" }
                         ?: Environment._uMYwa66ycM
                     Environment.dataSyncId = preferences.getString(ytDataSyncIdKey, "").toString()
+                    Environment.customDnsToUse = if (customDnsOverHttpsServer?.let { isValidUrl(it) } == true) customDnsOverHttpsServer else null
                     Environment.dnsToUse = getDnsOverHttpsType().type
-                    Environment.customDnsToUse = preferences.getString(customDnsOverHttpsServerKey, "")
-                    EnvironmentPreferences.dnsOverHttps = getDnsOverHttpsType().type
-                    EnvironmentPreferences.customDnsOverHttps = preferences.getString(customDnsOverHttpsServerKey, "")
+
+//                    EnvironmentPreferences.dnsOverHttps =
+//                        if (getDnsOverHttpsType().type == DnsOverHttpsType.Custom.type && customDnsOverHttpsServer?.let {
+//                                isValidUrl(it)} == true)
+//                            customDnsOverHttpsServer else DnsOverHttpsType.Google.type
+//                    EnvironmentPreferences.customDnsOverHttps = customDnsOverHttpsServer
 
                     println("MainActivity.onCreate Environment cookie: ${Environment.cookie}")
                     println("MainActivity.onCreate Environment visitorData: ${Environment.visitorData}")
