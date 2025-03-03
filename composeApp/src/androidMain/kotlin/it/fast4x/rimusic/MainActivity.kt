@@ -160,6 +160,7 @@ import it.fast4x.rimusic.utils.closeWithBackButtonKey
 import it.fast4x.rimusic.utils.colorPaletteModeKey
 import it.fast4x.rimusic.utils.colorPaletteNameKey
 import it.fast4x.rimusic.utils.customColorKey
+import it.fast4x.rimusic.utils.customDnsOverHttpsServerKey
 import it.fast4x.rimusic.utils.customThemeDark_Background0Key
 import it.fast4x.rimusic.utils.customThemeDark_Background1Key
 import it.fast4x.rimusic.utils.customThemeDark_Background2Key
@@ -512,49 +513,6 @@ class MainActivity :
 
             runBlocking {
                 InitializeEnvironment()
-//                EnvironmentPreferences.preference = EnvironmentPreferenceItem(
-//                    p0 = getConfiguration("CrQ0JjAXgv"),
-//                    p1 = getConfiguration("hNpBzzAn7i"),
-//                    p2 = getConfiguration("lEi9YM74OL"),
-//                    p3 = getConfiguration("C0ZR993zmk"),
-//                    p4 = getConfiguration("w3TFBFL74Y"),
-//                    p5 = getConfiguration("mcchaHCWyK"),
-//                    p6 = getConfiguration("L2u4JNdp7L"),
-//                    p7 = getConfiguration("sqDlfmV4Mt"),
-//                    p8 = getConfiguration("WpLlatkrVv"),
-//                    p9 = getConfiguration("1zNshDpFoh"),
-//                    p10 = getConfiguration("mPVWVuCxJz"),
-//                    p11 = getConfiguration("auDsjnylCZ"),
-//                    p12 = getConfiguration("AW52cvJIJx"),
-//                    p13 = getConfiguration("0RGAyC1Zqu"),
-//                    p14 = getConfiguration("4Fdmu9Jkax"),
-//                    p15 = getConfiguration("kuSdQLhP8I"),
-//                    p16 = getConfiguration("QrgDKwvam1"),
-//                    p17 = getConfiguration("wLwNESpPtV"),
-//                    p18 = getConfiguration("JJUQaehRFg"),
-//                    p19 = getConfiguration("i7WX2bHV6R"),
-//                    p20 = getConfiguration("XpiuASubrV"),
-//                    p21 = getConfiguration("lOlIIVw38L"),
-//                    p22 = getConfiguration("mtcR0FhFEl"),
-//                    p23 = getConfiguration("DTihHAFaBR"),
-//                    p24 = getConfiguration("a4AcHS8CSg"),
-//                    p25 = getConfiguration("krdLqpYLxM"),
-//                    p26 = getConfiguration("ye6KGLZL7n"),
-//                    p27 = getConfiguration("ec09m20YH5"),
-//                    p28 = getConfiguration("LDRlbOvbF1"),
-//                    p29 = getConfiguration("EEqX0yizf2"),
-//                    p30 = getConfiguration("i3BRhLrV1v"),
-//                    p31 = getConfiguration("MApdyHLMyJ"),
-//                    p32 = getConfiguration("hizI7yLjL4"),
-//                    p33 = getConfiguration("rLoZP7BF4c"),
-//                    p34 = getConfiguration("nza34sU88C"),
-//                    p35 = getConfiguration("dwbUvjWUl3"),
-//                    p36 = getConfiguration("fqqhBZd0cf"),
-//                    p37 = getConfiguration("9sZKrkMg8p"),
-//                    p38 = getConfiguration("aQpNCVOe2i"),
-//                )
-                //println("MainActivity.onCreate EnvironmentPreferences.preference: ${EnvironmentPreferences.preference}")
-                println("MainActivity.onCreate Environment.getEnvironment() ${Environment.getEnvironment()}")
             }
 
             val coroutineScope = rememberCoroutineScope()
@@ -593,27 +551,21 @@ class MainActivity :
 
                     val cookie = preferences.getString(ytCookieKey, "")
                     println("MainActivity.onCreate cookie: $cookie")
-                    //EnvironmentPreferences.cookie = cookie
+
                     Environment.cookie = cookie
                     Environment.visitorData = visitorData.takeIf { it != "null" }
                         ?: Environment._uMYwa66ycM
                     Environment.dataSyncId = preferences.getString(ytDataSyncIdKey, "").toString()
                     Environment.dnsToUse = getDnsOverHttpsType().type
-//                    EnvironmentPreferences.visitordata = visitorData.takeIf { it != "null" }
-//                        ?: Environment._uMYwa66ycM
-                    //EnvironmentPreferences.dataSyncId = preferences.getString(ytDataSyncIdKey, "")
-                    //EnvironmentPreferences.dnsOverHttps = getDnsOverHttpsType().type
-//                        YoutubePreferenceItem(
-//                            cookie = preferences.getString(ytCookieKey, ""),
-//                            visitordata = visitorData
-//                                .takeIf { it != "null" }
-//                                ?: Environment._uMYwa66ycM,
-//                            dataSyncId = preferences.getString(ytDataSyncIdKey, ""),
-//                            dnsOverHttps = getDnsOverHttpsType().type
-//                        )
-            //}
+                    Environment.customDnsToUse = preferences.getString(customDnsOverHttpsServerKey, "")
+                    EnvironmentPreferences.dnsOverHttps = getDnsOverHttpsType().type
+                    EnvironmentPreferences.customDnsOverHttps = preferences.getString(customDnsOverHttpsServerKey, "")
 
-            //preferences.getEnum(audioQualityFormatKey, AudioQualityFormat.Auto)
+                    println("MainActivity.onCreate Environment cookie: ${Environment.cookie}")
+                    println("MainActivity.onCreate Environment visitorData: ${Environment.visitorData}")
+                    println("MainActivity.onCreate Environment dataSyncId: ${Environment.dataSyncId}")
+                    println("MainActivity.onCreate Environment dnsToUse: ${Environment.dnsToUse}")
+                    println("MainActivity.onCreate Environment customDnsToUse: ${Environment.customDnsToUse}")
 
             var appearance by rememberSaveable(
                 !lightTheme,

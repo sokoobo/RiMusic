@@ -368,6 +368,7 @@ const val discordPersonalAccessTokenKey = "DiscordPersonalAccessToken"
 const val viewTypeKey = "viewType"
 const val volumeBoostLevelKey = "volumeBoostLevel"
 const val dnsOverHttpsTypeKey = "dnsOverHttpsType"
+const val customDnsOverHttpsServerKey = "customDnsOverHttpsServer"
 
 /*
 @PublishedApi

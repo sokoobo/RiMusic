@@ -113,14 +113,8 @@ object Environment {
     val _XsHo8IdebO = EnvironmentPreferences.preference?.p36 ?: ""
     val _1Vv31MecRl = EnvironmentPreferences.preference?.p0 ?: ""
 
-    val getEnvironment = {
-        println("EnvironmentPreferences: ${EnvironmentPreferences}")
-    }
-
-    var dnsToUse: String? = EnvironmentPreferences.dnsOverHttps.toString()  //YoutubePreferences.preference?.dnsOverHttps.toString()
-
     @OptIn(ExperimentalSerializationApi::class)
-    val client = HttpClient(OkHttp) {
+    private fun buildClient() = HttpClient(OkHttp) {
         //BrowserUserAgent()
 
         expectSuccess = true
@@ -155,7 +149,7 @@ object Environment {
                 }
             )
 
-            if (dnsToUse != null) {
+            if (this@Environment.dnsToUse != null) {
                 val appCache = Cache(File("cacheDir", "okhttpcache"), 10 * 1024 * 1024)
                 val bootstrapClient = OkHttpClient.Builder().cache(appCache).build()
                 val googleDns = DnsOverHttps.Builder().client(bootstrapClient)
@@ -167,10 +161,17 @@ object Environment {
                 val openDns = DnsOverHttps.Builder().client(bootstrapClient)
                     .url("https://doh.opendns.com/dns-query".toHttpUrl())
                     .bootstrapDnsHosts(InetAddress.getByName("208.67.222.222"), InetAddress.getByName("208.67.220.220")).build()
-                val dns: DnsOverHttps = when (dnsToUse) {
+                val customDns = this@Environment.customDnsToUse?.let {
+                    if (it.startsWith("http") || it.startsWith("https")) {
+                        DnsOverHttps.Builder().client(bootstrapClient)
+                            .url(it.toHttpUrl()).build()
+                    } else null
+                } ?: googleDns
+                val dns: DnsOverHttps = when (this@Environment.dnsToUse) {
                     "google" -> googleDns
                     "cloudflare" -> cloudflareDns
                     "opendns" -> openDns
+                    "custom" -> customDns
                     else -> googleDns
                 }
 
@@ -194,13 +195,26 @@ object Environment {
         }
     }
 
+    var client = buildClient()
 
+    var dnsToUse: String? = null
+        set(value) {
+            field = value
+            client.close()
+            client = buildClient()
+        }
+    var customDnsToUse: String? = null
+        set(value) {
+            field = value
+            client.close()
+            client = buildClient()
+        }
 
     var proxy: Proxy? = null
         set(value) {
             field = value
             client.close()
-            client
+            client = buildClient()
         }
 
     var locale = YouTubeLocale(
@@ -210,8 +224,8 @@ object Environment {
         //hl = LocalePreferences.preference?.hl ?: "en"
     )
     //var visitorData: String = YoutubePreferences.preference?.visitordata.toString()
-    var visitorData: String = EnvironmentPreferences.visitordata.toString()
-    var dataSyncId: String = EnvironmentPreferences.dataSyncId.toString()
+    var visitorData: String? = null
+    var dataSyncId: String? = null
 
     var cookie: String? = null
         set(value) {
@@ -579,7 +593,7 @@ object Environment {
                     println("HttpRequestBuilder.setLogin visitorData ${visitorData}")
                     cookieMap = parseCookieString(cookieData)
                     append("X-Goog-Authuser", "0")
-                    append("X-Goog-Visitor-Id", visitorData)
+                    append("X-Goog-Visitor-Id", visitorData ?: "")
                     append("Cookie", cookieData)
                     if ("SAPISID" !in cookieMap || "__Secure-3PAPISID" !in cookieMap) return@let
                     val currentTime = System.currentTimeMillis() / 1000
@@ -612,7 +626,7 @@ object Environment {
                 cookie?.let { cookie ->
                     cookieMap = parseCookieString(cookie)
                     append("X-Goog-Authuser", "6")
-                    append("X-Goog-Visitor-Id", visitorData)
+                    append("X-Goog-Visitor-Id", visitorData ?: "")
                     append("cookie", cookie)
                     if ("SAPISID" !in cookieMap) return@let
                     val currentTime = System.currentTimeMillis() / 1000
@@ -1148,7 +1162,7 @@ object Environment {
             println("Innertube getVisitorData New Cookie $cookie")
             println("Innertube getVisitorData Playback Tracking $playbackTracking")
             if (!visitorData.isNullOrEmpty()) this@Environment.visitorData = visitorData
-            return Triple(cookie, visitorData ?: this@Environment.visitorData, playbackTracking)
+            return Triple(cookie, visitorData ?: this@Environment.visitorData ?: "", playbackTracking)
         } catch (e: Exception) {
             e.printStackTrace()
             return Triple("", "", null)

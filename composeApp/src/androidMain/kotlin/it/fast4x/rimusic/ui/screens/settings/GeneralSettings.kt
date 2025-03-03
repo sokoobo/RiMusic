@@ -234,6 +234,7 @@ import it.fast4x.rimusic.utils.autoDownloadSongWhenAlbumBookmarkedKey
 import it.fast4x.rimusic.utils.autoDownloadSongWhenLikedKey
 import it.fast4x.rimusic.utils.bassboostEnabledKey
 import it.fast4x.rimusic.utils.bassboostLevelKey
+import it.fast4x.rimusic.utils.customDnsOverHttpsServerKey
 import it.fast4x.rimusic.utils.dnsOverHttpsTypeKey
 import it.fast4x.rimusic.utils.getSystemlanguage
 import it.fast4x.rimusic.utils.handleAudioFocusEnabledKey
@@ -356,6 +357,7 @@ fun GeneralSettings(
     var proxyHost by rememberPreference(proxyHostnameKey, "")
     var proxyPort by rememberPreference(proxyPortKey, 1080)
     var proxyMode by rememberPreference(proxyModeKey, Proxy.Type.HTTP)
+    var customDnsOverHttpsServer by rememberPreference(customDnsOverHttpsServerKey, "")
 
     Column(
         modifier = Modifier
@@ -472,6 +474,14 @@ fun GeneralSettings(
             )
             SettingsDescription(text = "If you have loading problems, you can use an alternative dns server")
             RestartActivity(restartActivity, onRestart = { restartActivity = false })
+
+            if (useDnsOverHttpsType == DnsOverHttpsType.Custom)
+                TextDialogSettingEntry(
+                    title = "Custom dns over https server",
+                    text = customDnsOverHttpsServer,
+                    currentText = customDnsOverHttpsServer,
+                    onTextSave = { customDnsOverHttpsServer = it }
+                )
         }
 
         //SettingsEntryGroupText(title = stringResource(R.string.proxy))
