@@ -1654,7 +1654,7 @@ fun AppearancePresetDialog(
                     Image(
                         painter = painterResource(images[index]),
                         contentDescription = null,
-                        contentScale = ContentScale.FillHeight,
+                        contentScale = ContentScale.FillBounds,
                         colorFilter = null,
                         modifier = Modifier
                             .align(Alignment.Center)
