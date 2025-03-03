@@ -485,8 +485,9 @@ fun GeneralSettings(
                         },
                         validationType = ValidationType.Url
                     )
+                    RestartActivity(restartActivity, onRestart = { restartActivity = false })
                 }
-                RestartActivity(restartActivity, onRestart = { restartActivity = false })
+
             }
 
             SettingsDescription(text = "If you have loading problems, you can use an alternative dns server")
