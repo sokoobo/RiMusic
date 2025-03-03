@@ -562,18 +562,6 @@ class MainActivity :
                     Environment.customDnsToUse = if (customDnsOverHttpsServer?.let { isValidUrl(it) } == true) customDnsOverHttpsServer else null
                     Environment.dnsToUse = getDnsOverHttpsType().type
 
-//                    EnvironmentPreferences.dnsOverHttps =
-//                        if (getDnsOverHttpsType().type == DnsOverHttpsType.Custom.type && customDnsOverHttpsServer?.let {
-//                                isValidUrl(it)} == true)
-//                            customDnsOverHttpsServer else DnsOverHttpsType.Google.type
-//                    EnvironmentPreferences.customDnsOverHttps = customDnsOverHttpsServer
-
-                    println("MainActivity.onCreate Environment cookie: ${Environment.cookie}")
-                    println("MainActivity.onCreate Environment visitorData: ${Environment.visitorData}")
-                    println("MainActivity.onCreate Environment dataSyncId: ${Environment.dataSyncId}")
-                    println("MainActivity.onCreate Environment dnsToUse: ${Environment.dnsToUse}")
-                    println("MainActivity.onCreate Environment customDnsToUse: ${Environment.customDnsToUse}")
-
             var appearance by rememberSaveable(
                 !lightTheme,
                 stateSaver = Appearance
@@ -581,7 +569,7 @@ class MainActivity :
                 with(preferences) {
                     val colorPaletteName =
                         getEnum(colorPaletteNameKey, ColorPaletteName.Dynamic)
-                    val colorPaletteMode = getEnum(colorPaletteModeKey, ColorPaletteMode.Dark)
+                    //val colorPaletteMode = getEnum(colorPaletteModeKey, ColorPaletteMode.Dark)
                     val thumbnailRoundness =
                         getEnum(thumbnailRoundnessKey, ThumbnailRoundness.Heavy)
                     val useSystemFont = getBoolean(useSystemFontKey, false)
@@ -639,8 +627,8 @@ class MainActivity :
 
                 if (!isDynamicPalette) return
 
-                val colorPaletteMode =
-                    preferences.getEnum(colorPaletteModeKey, ColorPaletteMode.Dark)
+//                val colorPaletteMode =
+//                    preferences.getEnum(colorPaletteModeKey, ColorPaletteMode.Dark)
                 coroutineScope.launch(Dispatchers.Main) {
                     val result = imageLoader.execute(
                         ImageRequest.Builder(this@MainActivity)
@@ -797,11 +785,11 @@ class MainActivity :
                                         ColorPaletteName.Dynamic
                                     )
 
-                                val colorPaletteMode =
-                                    sharedPreferences.getEnum(
-                                        colorPaletteModeKey,
-                                        ColorPaletteMode.System
-                                    )
+//                                val colorPaletteMode =
+//                                    sharedPreferences.getEnum(
+//                                        colorPaletteModeKey,
+//                                        ColorPaletteMode.System
+//                                    )
 
                                 var colorPalette = colorPaletteOf(
                                     colorPaletteName,

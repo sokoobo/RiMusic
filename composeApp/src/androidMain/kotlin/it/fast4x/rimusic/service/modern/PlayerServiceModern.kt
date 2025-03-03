@@ -588,6 +588,7 @@ class PlayerServiceModern : MediaLibraryService(),
         eventTime: AnalyticsListener.EventTime,
         playbackStats: PlaybackStats
     ) {
+        println("PlayerServiceModern onPlaybackStatsReady called ")
         // if pause listen history is enabled, don't register statistic event
         if (preferences.getBoolean(pauseListenHistoryKey, false)) return
 
@@ -621,20 +622,7 @@ class PlayerServiceModern : MediaLibraryService(),
                 }
             }
 
-            if (!mediaItem.isLocal && isYouTubeSyncEnabled()) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    advancedWebPoTokenPlayer(PlayerBody(videoId = mediaItem.mediaId, playlistId = null))
-                        .getOrNull()?.second?.playbackTracking?.videostatsPlaybackUrl?.baseUrl
-                        ?.let { playbackUrl ->
-                            println("PlayerServiceModern onPlaybackStatsReady addPlaybackToHistory playbackUrl $playbackUrl")
-                            EnvironmentExt.addPlaybackToHistory(null, playbackUrl)
-                                .onFailure {
-                                    Timber.e("PlayerService onPlaybackStatsReady addPlaybackToHistory ${it.stackTraceToString()}")
-                                    println("PlayerService onPlaybackStatsReady addPlaybackToHistory ${it.stackTraceToString()}")
-                                }
-                        }
-                }
-            }
+            updateOnlineHistory(mediaItem)
 
         }
 
@@ -769,6 +757,11 @@ class PlayerServiceModern : MediaLibraryService(),
                 updateWidgets()
             })
         }
+
+        if (mediaItem != null) {
+            println("PlayerServiceModern onMediaItemTransition call updateOnlineHistory with mediaItem $mediaItem")
+            updateOnlineHistory(mediaItem)
+        }
     }
 
     override fun onTimelineChanged(timeline: Timeline, reason: Int) {
@@ -897,6 +890,26 @@ class PlayerServiceModern : MediaLibraryService(),
 //        }
     }
 
+    private fun updateOnlineHistory(mediaItem: MediaItem) {
+        if (preferences.getBoolean(pauseListenHistoryKey, false)) return
+
+        println("PlayerServiceModern updateOnlineHistory called with mediaItem $mediaItem")
+
+        if (!mediaItem.isLocal && isYouTubeSyncEnabled()) {
+            CoroutineScope(Dispatchers.IO).launch {
+                advancedWebPoTokenPlayer(PlayerBody(videoId = mediaItem.mediaId, playlistId = null))
+                    .getOrNull()?.second?.playbackTracking?.videostatsPlaybackUrl?.baseUrl
+                    ?.let { playbackUrl ->
+                        println("PlayerServiceModern updateOnlineHistory addPlaybackToHistory playbackUrl $playbackUrl")
+                        EnvironmentExt.addPlaybackToHistory(null, playbackUrl)
+                            .onFailure {
+                                Timber.e("PlayerServiceModern updateOnlineHistory addPlaybackToHistory ${it.stackTraceToString()}")
+                                println("PlayerServiceModern updateOnlineHistory addPlaybackToHistory ${it.stackTraceToString()}")
+                            }
+                    }
+            }
+        }
+    }
 
     private fun maybeRecoverPlaybackError() {
         if (player.playerError != null) {
