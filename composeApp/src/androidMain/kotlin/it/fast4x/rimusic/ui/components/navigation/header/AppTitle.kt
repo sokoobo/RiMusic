@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
@@ -32,6 +33,9 @@ import it.fast4x.rimusic.ui.styling.favoritesIcon
 import it.fast4x.rimusic.utils.semiBold
 import it.fast4x.rimusic.ui.components.themed.Button
 import it.fast4x.rimusic.colorPalette
+import it.fast4x.rimusic.getAudioQualityFormat
+import it.fast4x.rimusic.isDebugModeEnabled
+import it.fast4x.rimusic.isParentalControlEnabled
 import it.fast4x.rimusic.typography
 import it.fast4x.rimusic.utils.isAtLeastAndroid7
 import org.dailyislam.android.utilities.getNetworkType
@@ -136,14 +140,33 @@ fun AppTitle(
                     contentDescription = null,
                     colorFilter = ColorFilter.tint(colorPalette().text),
                     modifier = Modifier
-                        .size(10.dp)
+                        .size(12.dp)
                         .align(Alignment.TopEnd)
                 )
             }
+            Image(
+                painter = painterResource(R.drawable.points),
+                contentDescription = null,
+                colorFilter = ColorFilter.tint(getAudioQualityFormat().color),
+                modifier = Modifier
+                    .size(12.dp)
+                    .align(Alignment.TopEnd)
+                    .absoluteOffset(0.dp, 9.dp)
+            )
+
+            if (isDebugModeEnabled())
+                Image(
+                    painter = painterResource(R.drawable.maintenance),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(colorPalette().red),
+                    modifier = Modifier
+                        .size(12.dp)
+                        .align(Alignment.BottomEnd)
+                )
         }
 
 
-        if(Preference.parentalControl())
+        if(isParentalControlEnabled())
             Button(
                 iconId = R.drawable.shield_checkmark,
                 color = AppBar.contentColor(),
@@ -162,21 +185,21 @@ fun AppTitle(
 //                )
 //            )
 
-        if (Preference.debugLog())
-            BasicText(
-                text = stringResource(R.string.info_debug_mode_enabled),
-                style = TextStyle(
-                    fontSize = typography().xxs.semiBold.fontSize,
-                    fontWeight = typography().xxs.semiBold.fontWeight,
-                    fontFamily = typography().xxs.semiBold.fontFamily,
-                    color = colorPalette().red
-                ),
-                modifier = Modifier
-                    .clickable {
-                        SmartMessage(context.resources.getString(R.string.info_debug_mode_is_enabled), durationLong = true, context = context)
-                        navController.navigate(NavRoutes.settings.name)
-                    }
-            )
+//        if (Preference.debugLog())
+//            BasicText(
+//                text = stringResource(R.string.info_debug_mode_enabled),
+//                style = TextStyle(
+//                    fontSize = typography().xxs.semiBold.fontSize,
+//                    fontWeight = typography().xxs.semiBold.fontWeight,
+//                    fontFamily = typography().xxs.semiBold.fontFamily,
+//                    color = colorPalette().red
+//                ),
+//                modifier = Modifier
+//                    .clickable {
+//                        SmartMessage(context.resources.getString(R.string.info_debug_mode_is_enabled), durationLong = true, context = context)
+//                        navController.navigate(NavRoutes.settings.name)
+//                    }
+//            )
     }
 // END
 }
