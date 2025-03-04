@@ -55,11 +55,12 @@ fun getColorTheme() = appContext().preferences.getEnum(colorPaletteModeKey, Colo
 fun getAudioQualityFormat() = appContext().preferences.getEnum(audioQualityFormatKey, AudioQualityFormat.Auto)
 fun getViewType() = appContext().preferences.getEnum(viewTypeKey, ViewType.Grid)
 fun getDnsOverHttpsType() = appContext().preferences.getEnum(dnsOverHttpsTypeKey, DnsOverHttpsType.Google)
+
 fun ytAccountName() = appContext().preferences.getString(ytAccountNameKey, "")
 fun ytAccountThumbnail() = appContext().preferences.getString(ytAccountThumbnailKey, "")
 fun useYtLoginOnlyForBrowse() = appContext().preferences.getBoolean(useYtLoginOnlyForBrowseKey, true)
-fun isVideoEnabled() = appContext().preferences.getBoolean(showButtonPlayerVideoKey, false)
 
+fun isVideoEnabled() = appContext().preferences.getBoolean(showButtonPlayerVideoKey, false)
 fun isConnectionMetered() = appContext().isConnectionMetered()
 fun isConnectionMeteredEnabled() = appContext().preferences.getBoolean(isConnectionMeteredEnabledKey, true)
 fun isAutoSyncEnabled() = appContext().preferences.getBoolean(autosyncKey, false)

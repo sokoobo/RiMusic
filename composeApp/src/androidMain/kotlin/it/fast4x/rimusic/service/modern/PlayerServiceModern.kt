@@ -813,10 +813,10 @@ class PlayerServiceModern : MediaLibraryService(),
         if (error.errorCode in PlayerErrorsToReload) {
             Timber.e("PlayerServiceModern onPlayerError recovered occurred errorCodeName ${error.errorCodeName}")
             println("PlayerServiceModern onPlayerError recovered occurred errorCodeName ${error.errorCodeName}")
-            player.pause()
+            player.stop()
             player.prepare()
-            player.playWhenReady = true
-            //player.play()
+            //player.playWhenReady = true
+            player.play()
             return
         }
 

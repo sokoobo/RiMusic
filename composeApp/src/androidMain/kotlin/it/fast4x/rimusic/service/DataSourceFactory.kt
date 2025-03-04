@@ -101,7 +101,8 @@ internal fun MyDownloadHelper.createDataSourceFactory(): DataSource.Factory {
     }.retryIf<UnplayableException>(
         maxRetries = 3,
         printStackTrace = true
-    ).retryIf<InterruptedException>(
+    )
+    .retryIf<InterruptedException>(
         maxRetries = 3,
         printStackTrace = true
     ).retryIf<UnknownException>(
@@ -110,13 +111,14 @@ internal fun MyDownloadHelper.createDataSourceFactory(): DataSource.Factory {
     ).retryIf<IOException>(
         maxRetries = 3,
         printStackTrace = true
-    ).retryIf(
+    )
+    .retryIf(
         maxRetries = 1,
         printStackTrace = true
     ) { ex ->
         ex.findCause<InvalidResponseCodeException>()?.responseCode == 403 ||
                 ex.findCause<ClientRequestException>()?.response?.status?.value == 403 ||
-                ex.findCause<InvalidHttpCodeException>() != null ||
-                ex.findCause<InterruptedException>() != null
+                ex.findCause<InvalidHttpCodeException>() != null
+                || ex.findCause<InterruptedException>() != null
     }.handleRangeErrors()
 }

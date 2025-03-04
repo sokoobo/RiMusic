@@ -119,7 +119,7 @@ private fun AppLogoText( navController: NavController ) {
     ).Draw()
 }
 
-// START
+
 @Composable
 fun AppTitle(
     navController: NavController,
@@ -165,7 +165,6 @@ fun AppTitle(
                 )
         }
 
-
         if(isParentalControlEnabled())
             Button(
                 iconId = R.drawable.shield_checkmark,
@@ -173,33 +172,6 @@ fun AppTitle(
                 padding = 0.dp,
                 size = 20.dp
             ).Draw()
-
-
-//            BasicText(
-//                text = getNetworkType(context),
-//                style = TextStyle(
-//                    fontSize = typography().xxs.semiBold.fontSize,
-//                    fontWeight = typography().xxs.semiBold.fontWeight,
-//                    fontFamily = typography().xxs.semiBold.fontFamily,
-//                    color = colorPalette().red
-//                )
-//            )
-
-//        if (Preference.debugLog())
-//            BasicText(
-//                text = stringResource(R.string.info_debug_mode_enabled),
-//                style = TextStyle(
-//                    fontSize = typography().xxs.semiBold.fontSize,
-//                    fontWeight = typography().xxs.semiBold.fontWeight,
-//                    fontFamily = typography().xxs.semiBold.fontFamily,
-//                    color = colorPalette().red
-//                ),
-//                modifier = Modifier
-//                    .clickable {
-//                        SmartMessage(context.resources.getString(R.string.info_debug_mode_is_enabled), durationLong = true, context = context)
-//                        navController.navigate(NavRoutes.settings.name)
-//                    }
-//            )
     }
-// END
+
 }

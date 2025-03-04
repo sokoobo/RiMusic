@@ -28,7 +28,7 @@ import io.ktor.http.userAgent
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.serialization.kotlinx.protobuf.protobuf
 import io.ktor.serialization.kotlinx.xml.xml
-import it.fast4x.environment.utils.YouTubeLocale
+import it.fast4x.environment.utils.EnvironmentLocale
 import it.fast4x.environment.models.AccountInfo
 import it.fast4x.environment.models.AccountMenuResponse
 import it.fast4x.environment.models.BrowseResponse
@@ -215,7 +215,7 @@ object Environment {
             client = buildClient()
         }
 
-    var locale = YouTubeLocale(
+    var locale = EnvironmentLocale(
         gl = Locale.getDefault().country,
         hl = Locale.getDefault().toLanguageTag()
         //gl = LocalePreferences.preference?.gl ?: "US",
