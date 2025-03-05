@@ -369,6 +369,8 @@ const val viewTypeKey = "viewType"
 const val volumeBoostLevelKey = "volumeBoostLevel"
 const val dnsOverHttpsTypeKey = "dnsOverHttpsType"
 const val customDnsOverHttpsServerKey = "customDnsOverHttpsServer"
+const val enablePreCacheKey = "enablePreCache"
+
 
 /*
 @PublishedApi

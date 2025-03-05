@@ -145,13 +145,13 @@ fun AppTitle(
                 )
             }
             Image(
-                painter = painterResource(R.drawable.points),
+                painter = painterResource(R.drawable.dot),
                 contentDescription = null,
                 colorFilter = ColorFilter.tint(getAudioQualityFormat().color),
                 modifier = Modifier
                     .size(12.dp)
                     .align(Alignment.TopEnd)
-                    .absoluteOffset(0.dp, 9.dp)
+                    .absoluteOffset(-5.dp, -8.dp)
             )
 
             if (isDebugModeEnabled())

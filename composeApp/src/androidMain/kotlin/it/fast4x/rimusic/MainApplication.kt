@@ -23,16 +23,17 @@ class MainApplication : Application(), ImageLoaderFactory {
         //DatabaseInitializer()
         Dependencies.init(this)
 
+        /***** CRASH LOG ALWAYS ENABLED *****/
+        val dir = filesDir.resolve("logs").also {
+            if (it.exists()) return@also
+            it.mkdir()
+        }
+        Thread.setDefaultUncaughtExceptionHandler(CaptureCrash(dir.absolutePath))
+        /***** CRASH LOG ALWAYS ENABLED *****/
+
         /**** LOG *********/
         val logEnabled = preferences.getBoolean(logDebugEnabledKey, false)
         if (logEnabled) {
-            val dir = filesDir.resolve("logs").also {
-                if (it.exists()) return@also
-                it.mkdir()
-            }
-
-            Thread.setDefaultUncaughtExceptionHandler(CaptureCrash(dir.absolutePath))
-
             Timber.plant(FileLoggingTree(File(dir, "RiMusic_log.txt")))
             Timber.d("Log enabled at ${dir.absolutePath}")
         } else {
