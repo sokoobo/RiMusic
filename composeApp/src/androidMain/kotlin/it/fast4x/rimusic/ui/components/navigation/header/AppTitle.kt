@@ -151,7 +151,7 @@ fun AppTitle(
                 modifier = Modifier
                     .size(12.dp)
                     .align(Alignment.TopEnd)
-                    .absoluteOffset(-5.dp, -8.dp)
+                    .absoluteOffset(0.dp, (-10).dp)
             )
 
             if (isDebugModeEnabled())

@@ -236,6 +236,7 @@ import it.fast4x.rimusic.utils.bassboostEnabledKey
 import it.fast4x.rimusic.utils.bassboostLevelKey
 import it.fast4x.rimusic.utils.customDnsOverHttpsServerKey
 import it.fast4x.rimusic.utils.dnsOverHttpsTypeKey
+import it.fast4x.rimusic.utils.enablePreCacheKey
 import it.fast4x.rimusic.utils.getSystemlanguage
 import it.fast4x.rimusic.utils.handleAudioFocusEnabledKey
 import it.fast4x.rimusic.utils.isConnectionMeteredEnabledKey
@@ -277,6 +278,7 @@ fun GeneralSettings(
     var volumeNormalization by rememberPreference(volumeNormalizationKey, false)
     var audioQualityFormat by rememberPreference(audioQualityFormatKey, AudioQualityFormat.Auto)
     var isConnectionMeteredEnabled by rememberPreference(isConnectionMeteredEnabledKey, true)
+    var isPreCacheEnabled by rememberPreference(enablePreCacheKey, false)
 
     var useDnsOverHttpsType by rememberPreference(dnsOverHttpsTypeKey, DnsOverHttpsType.Google)
 
@@ -569,6 +571,21 @@ fun GeneralSettings(
             RestartPlayerService(restartService, onRestart = { restartService = false } )
 
         }
+
+        if (search.input.isBlank() || "Enable pre data caching".contains(search.input,true)) {
+            SwitchSettingEntry(
+                title = "Enable pre data caching",
+                text = "The player pre downloads the song to cache",
+                isChecked = isPreCacheEnabled,
+                onCheckedChange = {
+                    isPreCacheEnabled = it
+                    restartService = true
+                }
+            )
+            RestartPlayerService(restartService, onRestart = { restartService = false } )
+        }
+
+        SettingsGroupSpacer()
 
         if (search.input.isBlank() || stringResource(R.string.jump_previous).contains(search.input,true)) {
             BasicText(

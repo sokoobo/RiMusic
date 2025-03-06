@@ -13,6 +13,7 @@ import it.fast4x.rimusic.utils.autosyncKey
 import it.fast4x.rimusic.utils.bassboostEnabledKey
 import it.fast4x.rimusic.utils.colorPaletteModeKey
 import it.fast4x.rimusic.utils.dnsOverHttpsTypeKey
+import it.fast4x.rimusic.utils.enablePreCacheKey
 import it.fast4x.rimusic.utils.getEnum
 import it.fast4x.rimusic.utils.handleAudioFocusEnabledKey
 import it.fast4x.rimusic.utils.isConnectionMetered
@@ -68,3 +69,4 @@ fun isHandleAudioFocusEnabled() = appContext().preferences.getBoolean(handleAudi
 fun isBassBoostEnabled() = appContext().preferences.getBoolean(bassboostEnabledKey, false)
 fun isDebugModeEnabled() = appContext().preferences.getBoolean(logDebugEnabledKey, false)
 fun isParentalControlEnabled() = appContext().preferences.getBoolean(parentalControlEnabledKey, false)
+fun isPreCacheEnabled() = appContext().preferences.getBoolean(enablePreCacheKey, false)

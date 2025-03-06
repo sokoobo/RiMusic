@@ -258,9 +258,10 @@ suspend fun getInnerTubeStream(
                         ?.filter { it.isAudio }
                         ?.maxByOrNull {
                             it.bitrate * when (audioQualityFormat) {
-                                AudioQualityFormat.Auto -> if (isConnectionMeteredEnabled() && connectionMetered) -1 else 1
+                                AudioQualityFormat.Auto -> if (isConnectionMeteredEnabled() && connectionMetered) -1 else 2
                                 AudioQualityFormat.High -> 1
-                                AudioQualityFormat.Medium, AudioQualityFormat.Low -> -1
+                                AudioQualityFormat.Medium -> -1
+                                AudioQualityFormat.Low -> -2
                             } + (if (it.mimeType.startsWith("audio/webm")) 10240 else 0)
                         }
                         // *********************

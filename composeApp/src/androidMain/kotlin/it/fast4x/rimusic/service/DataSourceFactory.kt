@@ -20,6 +20,7 @@ import it.fast4x.rimusic.appContext
 import it.fast4x.rimusic.utils.InvalidHttpCodeException
 import it.fast4x.rimusic.utils.findCause
 import it.fast4x.rimusic.utils.handleRangeErrors
+import it.fast4x.rimusic.utils.principalCache
 import it.fast4x.rimusic.utils.retryIf
 import timber.log.Timber
 import java.io.IOException
@@ -108,10 +109,11 @@ internal fun MyDownloadHelper.createDataSourceFactory(): DataSource.Factory {
     ).retryIf<UnknownException>(
         maxRetries = 3,
         printStackTrace = true
-    ).retryIf<IOException>(
-        maxRetries = 3,
-        printStackTrace = true
     )
+//    .retryIf<IOException>(
+//        maxRetries = 3,
+//        printStackTrace = true
+//    )
     .retryIf(
         maxRetries = 1,
         printStackTrace = true
@@ -120,5 +122,57 @@ internal fun MyDownloadHelper.createDataSourceFactory(): DataSource.Factory {
                 ex.findCause<ClientRequestException>()?.response?.status?.value == 403 ||
                 ex.findCause<InvalidHttpCodeException>() != null
                 || ex.findCause<InterruptedException>() != null
+                || ex.findCause<UnknownException>() != null
+                || ex.findCause<IOException>() != null
     }.handleRangeErrors()
+}
+
+@OptIn(UnstableApi::class)
+internal fun MyPreCacheHelper.createDataSourceFactory(): DataSource.Factory {
+    return ResolvingDataSource.Factory(
+        CacheDataSource.Factory()
+            .setCache(principalCache.getInstance(appContext())).apply {
+                setUpstreamDataSourceFactory(
+                    appContext().okHttpDataSourceFactory
+                )
+                setCacheWriteDataSinkFactory(null)
+            }
+    ) { dataSpec: DataSpec ->
+        try {
+
+            return@Factory runBlocking {
+                dataSpecProcess(dataSpec, appContext(), appContext().isConnectionMetered())
+            }
+        }
+        catch (e: Throwable) {
+            Timber.e("MyDownloadHelper DataSourcefactory Error: ${e.stackTraceToString()}")
+            println("MyDownloadHelper DataSourcefactory Error: ${e.stackTraceToString()}")
+            throw IOException(e)
+        }
+    }.retryIf<UnplayableException>(
+        maxRetries = 3,
+        printStackTrace = true
+    )
+        .retryIf<InterruptedException>(
+            maxRetries = 3,
+            printStackTrace = true
+        ).retryIf<UnknownException>(
+            maxRetries = 3,
+            printStackTrace = true
+        )
+//    .retryIf<IOException>(
+//        maxRetries = 3,
+//        printStackTrace = true
+//    )
+        .retryIf(
+            maxRetries = 1,
+            printStackTrace = true
+        ) { ex ->
+            ex.findCause<InvalidResponseCodeException>()?.responseCode == 403 ||
+                    ex.findCause<ClientRequestException>()?.response?.status?.value == 403 ||
+                    ex.findCause<InvalidHttpCodeException>() != null
+                    || ex.findCause<InterruptedException>() != null
+                    || ex.findCause<UnknownException>() != null
+                    || ex.findCause<IOException>() != null
+        }.handleRangeErrors()
 }

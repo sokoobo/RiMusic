@@ -94,10 +94,11 @@ internal fun PlayerServiceModern.createDataSourceFactory(): DataSource.Factory {
     ).retryIf<UnknownException>(
         maxRetries = 3,
         printStackTrace = true
-    ).retryIf<IOException>(
-        maxRetries = 3,
-        printStackTrace = true
     )
+//    .retryIf<IOException>(
+//        maxRetries = 3,
+//        printStackTrace = true
+//    )
     .retryIf(
         maxRetries = 1,
         printStackTrace = true
@@ -106,6 +107,8 @@ internal fun PlayerServiceModern.createDataSourceFactory(): DataSource.Factory {
                 ex.findCause<ClientRequestException>()?.response?.status?.value == 403 ||
                 ex.findCause<InvalidHttpCodeException>() != null
                 || ex.findCause<InterruptedException>() != null
+                || ex.findCause<UnknownException>() != null
+                || ex.findCause<IOException>() != null
     }.handleRangeErrors()
 }
 
