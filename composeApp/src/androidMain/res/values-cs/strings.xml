@@ -937,4 +937,6 @@
     <string name="loudness_boost_level_info">Dodatečná úroveň hlasitosti, používat bez přehánění, může dojít k poškození zařízení</string>
     <string name="export_crash_log">Exportovat log pádu</string>
     <string name="export_log">Exportovat log</string>
+    <string name="value_must_be_valid_url">Value must be a valid url</string>
+    <string name="caching">Caching...</string>
 </resources>
