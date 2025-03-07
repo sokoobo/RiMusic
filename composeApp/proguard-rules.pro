@@ -1,7 +1,7 @@
 #-dontshrink
-#-dontobfuscate
+-dontobfuscate
 #-dontoptimize
--repackageclasses 'defpackage'
+#-repackageclasses 'defpackage'
 
 -keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
 
