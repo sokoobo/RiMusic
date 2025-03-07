@@ -12,6 +12,7 @@ import androidx.media3.exoplayer.offline.DownloadNotificationHelper
 import androidx.media3.exoplayer.offline.DownloadService
 import androidx.media3.exoplayer.scheduler.PlatformScheduler
 import it.fast4x.rimusic.R
+import it.fast4x.rimusic.appContext
 import it.fast4x.rimusic.service.MyPreCacheHelper.DOWNLOAD_NOTIFICATION_CHANNEL_ID
 
 private const val JOB_ID = 7777
@@ -22,7 +23,7 @@ class MyPreCacheService : DownloadService(
     FOREGROUND_NOTIFICATION_ID,
     DEFAULT_FOREGROUND_NOTIFICATION_UPDATE_INTERVAL,
     DOWNLOAD_NOTIFICATION_CHANNEL_ID,
-    R.string.download, 0
+    R.string.caching, 0
 ) {
 
     override fun getDownloadManager(): DownloadManager {
@@ -64,6 +65,7 @@ class MyPreCacheService : DownloadService(
                 /* notMetRequirements = */ notMetRequirements
             )
         )
+        .setContentTitle(appContext().resources.getString(R.string.caching))
         .setChannelId(DOWNLOAD_NOTIFICATION_CHANNEL_ID)
         /*
         // Add action in notification

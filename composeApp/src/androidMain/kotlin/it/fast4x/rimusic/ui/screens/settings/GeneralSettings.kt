@@ -572,10 +572,10 @@ fun GeneralSettings(
 
         }
 
-        if (search.input.isBlank() || "Enable pre data caching".contains(search.input,true)) {
+        if (search.input.isBlank() || "Pre Cache the whole song at once".contains(search.input,true)) {
             SwitchSettingEntry(
-                title = "Enable pre data caching",
-                text = "The player pre downloads the song to cache",
+                title = "Pre Cache the whole song at once",
+                text = "Songs will be cached in parts if this is disabled",
                 isChecked = isPreCacheEnabled,
                 onCheckedChange = {
                     isPreCacheEnabled = it

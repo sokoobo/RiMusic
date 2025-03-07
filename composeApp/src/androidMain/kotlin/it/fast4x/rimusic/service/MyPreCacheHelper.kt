@@ -26,6 +26,7 @@ import it.fast4x.rimusic.cleanPrefix
 import it.fast4x.rimusic.enums.AudioQualityFormat
 import it.fast4x.rimusic.models.SongEntity
 import it.fast4x.rimusic.utils.DownloadSyncedLyrics
+import it.fast4x.rimusic.utils.asDataSource
 import it.fast4x.rimusic.utils.asSong
 import it.fast4x.rimusic.utils.audioQualityFormatKey
 import it.fast4x.rimusic.utils.autoDownloadSongKey
@@ -68,7 +69,9 @@ object MyPreCacheHelper {
 
     const val DOWNLOAD_NOTIFICATION_CHANNEL_ID = "precache_channel"
 
-    private lateinit var databaseProvider: DatabaseProvider
+    val databaseProvider: DatabaseProvider by lazy {
+        principalCache.getDatabaseProvider(appContext())
+    }
 
     val cache: SimpleCache by lazy {
         principalCache.getInstance(appContext())
@@ -122,7 +125,7 @@ object MyPreCacheHelper {
         if (!MyPreCacheHelper::downloadManager.isInitialized) {
             downloadManager = DownloadManager(
                 context,
-                getDatabaseProvider(context),
+                databaseProvider,
                 cache,
                 createDataSourceFactory(),
                 //Executor(Runnable::run)
@@ -167,12 +170,12 @@ object MyPreCacheHelper {
         }
     }
 
-    @Synchronized
-    private fun getDatabaseProvider(context: Context): DatabaseProvider {
-        if (!MyPreCacheHelper::databaseProvider.isInitialized) databaseProvider =
-            StandaloneDatabaseProvider(context)
-        return databaseProvider
-    }
+//    @Synchronized
+//    private fun getDatabaseProvider(context: Context): DatabaseProvider {
+//        if (!MyPreCacheHelper::databaseProvider.isInitialized) databaseProvider =
+//            StandaloneDatabaseProvider(context)
+//        return databaseProvider
+//    }
 
     fun addDownload(context: Context, mediaItem: MediaItem) {
         if (mediaItem.isLocal) return

@@ -23,6 +23,7 @@ import java.io.File
 object principalCache {
     private val exoPlayerCustomCache = appContext().preferences.getInt(exoPlayerCustomCacheKey, 32) * 1000 * 1000L
     private var principalCache: SimpleCache? = null
+    private var databaseProvider: StandaloneDatabaseProvider? = null
     private val exoPlayerCacheLocation = appContext().preferences.getEnum(
         exoPlayerCacheLocationKey, ExoPlayerCacheLocation.System
     )
@@ -56,8 +57,13 @@ object principalCache {
         else -> LeastRecentlyUsedCacheEvictor(size.bytes)
     }
 
+    fun getDatabaseProvider(context: Context): StandaloneDatabaseProvider {
+        if (databaseProvider == null) databaseProvider = StandaloneDatabaseProvider(context)
+        return databaseProvider as StandaloneDatabaseProvider
+    }
+
     fun getInstance(context: Context): SimpleCache {
-        if (principalCache == null) principalCache = SimpleCache(directory, cacheEvictor, StandaloneDatabaseProvider(context))
+        if (principalCache == null) principalCache = SimpleCache(directory, cacheEvictor, getDatabaseProvider(context))
         return principalCache as SimpleCache
     }
 }

@@ -49,12 +49,8 @@ import androidx.media3.common.Timeline
 import androidx.media3.common.audio.SonicAudioProcessor
 import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.database.StandaloneDatabaseProvider
 import androidx.media3.datasource.DataSpec
 import androidx.media3.datasource.cache.Cache
-import androidx.media3.datasource.cache.CacheEvictor
-import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
-import androidx.media3.datasource.cache.NoOpCacheEvictor
 import androidx.media3.datasource.cache.SimpleCache
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.DefaultRenderersFactory
@@ -360,46 +356,6 @@ class PlayerServiceModern : MediaLibraryService(),
         showLikeButton = preferences.getBoolean(showLikeButtonBackgroundPlayerKey, true)
         showDownloadButton = preferences.getBoolean(showDownloadButtonBackgroundPlayerKey, true)
 
-//        val exoPlayerCustomCache = preferences.getInt(exoPlayerCustomCacheKey, 32) * 1000 * 1000L
-
-//        val cacheEvictor = when (val size =
-//            preferences.getEnum(exoPlayerDiskCacheMaxSizeKey, ExoPlayerDiskCacheMaxSize.`2GB`)) {
-//            ExoPlayerDiskCacheMaxSize.Unlimited -> NoOpCacheEvictor()
-//            ExoPlayerDiskCacheMaxSize.Custom -> LeastRecentlyUsedCacheEvictor(exoPlayerCustomCache)
-//            else -> LeastRecentlyUsedCacheEvictor(size.bytes)
-//        }
-
-//        //val cacheEvictor = NoOpCacheEvictor()
-//        val exoPlayerCacheLocation = preferences.getEnum(
-//            exoPlayerCacheLocationKey, ExoPlayerCacheLocation.System
-//        )
-//        val directoryLocation =
-//            if (exoPlayerCacheLocation == ExoPlayerCacheLocation.Private) filesDir else cacheDir
-
-//        var cacheDirName = "rimusic_cache"
-//
-//        val cacheSize =
-//            preferences.getEnum(exoPlayerDiskCacheMaxSizeKey, ExoPlayerDiskCacheMaxSize.`2GB`)
-//
-//        if (cacheSize == ExoPlayerDiskCacheMaxSize.Disabled) cacheDirName = "rimusic_no_cache"
-
-//        val directory = directoryLocation.resolve(cacheDirName).also { dir ->
-//            if (dir.exists()) return@also
-//
-//            dir.mkdir()
-//
-//            directoryLocation.listFiles()?.forEach { file ->
-//                if (file.isDirectory && file.name.length == 1 && file.name.isDigitsOnly() || file.extension == "uid") {
-//                    if (!file.renameTo(dir.resolve(file.name))) {
-//                        file.deleteRecursively()
-//                    }
-//                }
-//            }
-//
-//            filesDir.resolve("coil").deleteRecursively()
-//        }
-
-        //cache = SimpleCache(directory, cacheEvictor, StandaloneDatabaseProvider(this))
         downloadCache = MyDownloadHelper.getDownloadCache(applicationContext) as SimpleCache
 
 
