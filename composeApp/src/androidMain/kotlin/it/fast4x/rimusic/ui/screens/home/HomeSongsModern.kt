@@ -200,7 +200,7 @@ import it.fast4x.rimusic.utils.addToYtPlaylist
 import it.fast4x.rimusic.utils.asSong
 import it.fast4x.rimusic.utils.formatAsDuration
 import it.fast4x.rimusic.utils.isDownloadedSong
-import it.fast4x.rimusic.utils.isNetworkConnected
+import org.dailyislam.android.utilities.isNetworkConnected
 import it.fast4x.rimusic.utils.isNowPlaying
 import kotlinx.coroutines.withContext
 import kotlin.system.exitProcess

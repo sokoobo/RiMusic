@@ -28,11 +28,10 @@ import it.fast4x.rimusic.service.MyPreCacheHelper
 import it.fast4x.rimusic.service.isLocal
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import org.dailyislam.android.utilities.isNetworkConnected
 
 @UnstableApi
 @Composable

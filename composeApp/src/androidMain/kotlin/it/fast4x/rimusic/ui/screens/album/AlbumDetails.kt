@@ -122,7 +122,7 @@ import it.fast4x.rimusic.utils.forcePlayAtIndex
 import it.fast4x.rimusic.utils.forcePlayFromBeginning
 import it.fast4x.rimusic.utils.formatAsTime
 import it.fast4x.rimusic.utils.getDownloadState
-import it.fast4x.rimusic.utils.getHttpClient
+import org.dailyislam.android.utilities.getHttpClient
 import it.fast4x.rimusic.utils.isDownloadedSong
 import it.fast4x.rimusic.utils.isLandscape
 import it.fast4x.rimusic.utils.isNowPlaying
@@ -149,7 +149,7 @@ import it.fast4x.rimusic.typography
 import it.fast4x.rimusic.ui.screens.settings.isYouTubeSyncEnabled
 import it.fast4x.rimusic.utils.addToYtLikedSongs
 import it.fast4x.rimusic.utils.addToYtPlaylist
-import it.fast4x.rimusic.utils.isNetworkConnected
+import org.dailyislam.android.utilities.isNetworkConnected
 import it.fast4x.rimusic.utils.mediaItemToggleLike
 import timber.log.Timber
 

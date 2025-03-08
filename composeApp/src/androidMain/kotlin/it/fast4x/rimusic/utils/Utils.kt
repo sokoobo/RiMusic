@@ -3,10 +3,7 @@ package it.fast4x.rimusic.utils
 
 import android.annotation.SuppressLint
 import android.content.ContentUris
-import android.content.Context
 import android.content.pm.PackageManager
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
@@ -25,9 +22,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.util.UnstableApi
 import com.zionhuang.innertube.pages.LibraryPage
-import io.ktor.client.HttpClient
 import io.ktor.client.plugins.ClientRequestException
-import io.ktor.client.plugins.UserAgent
 import io.ktor.http.HttpStatusCode
 import it.fast4x.environment.Environment
 import it.fast4x.environment.EnvironmentExt
@@ -38,9 +33,7 @@ import it.fast4x.environment.models.bodies.ContinuationBody
 import it.fast4x.environment.models.bodies.SearchBody
 import it.fast4x.environment.requests.playlistPage
 import it.fast4x.environment.requests.searchPage
-import it.fast4x.environment.utils.ProxyPreferences
 import it.fast4x.environment.utils.from
-import it.fast4x.environment.utils.getProxy
 import it.fast4x.kugou.KuGou
 import it.fast4x.lrclib.LrcLib
 import it.fast4x.rimusic.Database
@@ -556,37 +549,6 @@ fun CheckAvailableNewVersion(
     } else {
         updateAvailable(false)
         onDismiss()
-    }
-}
-
-fun isNetworkConnected(context: Context): Boolean {
-    val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-    if (isAtLeastAndroid6) {
-        val networkInfo = cm.getNetworkCapabilities(cm.activeNetwork)
-        return networkInfo?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
-                && networkInfo.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
-    } else {
-        return try {
-            if (cm.activeNetworkInfo == null) {
-                false
-            } else {
-                cm.activeNetworkInfo?.isConnected!!
-            }
-        } catch (e: Exception) {
-            false
-        }
-    }
-}
-
-fun getHttpClient() = HttpClient() {
-    install(UserAgent) {
-        agent = "Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0"
-    }
-    engine {
-        ProxyPreferences.preference?.let{
-            proxy = getProxy(it)
-        }
-
     }
 }
 
