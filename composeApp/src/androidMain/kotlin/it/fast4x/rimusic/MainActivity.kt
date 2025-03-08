@@ -73,6 +73,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.coerceIn
@@ -561,7 +562,7 @@ class MainActivity :
                     Environment.dataSyncId = preferences.getString(ytDataSyncIdKey, "").toString()
                     val customDnsIsOk = customDnsOverHttpsServer?.let { isValidHttpUrl(it) }
                     if (customDnsIsOk == false && getDnsOverHttpsType() == DnsOverHttpsType.Custom)
-                        SmartMessage("Custom DNS is invalid", PopupType.Error, context = this@MainActivity)
+                        SmartMessage(stringResource(R.string.custom_dns_is_invalid), PopupType.Error, context = this@MainActivity)
 
                     val customDnsUrl = if (customDnsIsOk == true) customDnsOverHttpsServer else null
                     Environment.customDnsToUse = customDnsUrl
