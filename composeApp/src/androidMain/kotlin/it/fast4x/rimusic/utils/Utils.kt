@@ -578,52 +578,6 @@ fun isNetworkConnected(context: Context): Boolean {
     }
 }
 
-fun isNetworkAvailable(context: Context): Boolean {
-    val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        ?: return false
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        val networkInfo = cm.getNetworkCapabilities(cm.activeNetwork)
-        // if no network is available networkInfo will be null
-        // otherwise check if we are connected to internet
-        //return networkInfo != null
-        return networkInfo?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) ?: false
-    } else {
-        return try {
-            if (cm.activeNetworkInfo == null) {
-                false
-            } else {
-                cm.activeNetworkInfo?.isConnected!!
-            }
-        } catch (e: Exception) {
-            false
-        }
-    }
-
-}
-
-@Composable
-fun isNetworkAvailableComposable(): Boolean {
-    val context = LocalContext.current
-    val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        ?: return false
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        val networkInfo = cm.getNetworkCapabilities(cm.activeNetwork)
-        // if no network is available networkInfo will be null
-        // otherwise check if we are connected
-        return networkInfo?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) ?: false
-    } else {
-        return try {
-            if (cm.activeNetworkInfo == null) {
-                false
-            } else {
-                cm.activeNetworkInfo?.isConnected!!
-            }
-        } catch (e: Exception) {
-            false
-        }
-    }
-}
-
 fun getHttpClient() = HttpClient() {
     install(UserAgent) {
         agent = "Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0"
