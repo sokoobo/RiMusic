@@ -126,7 +126,7 @@ fun getNetworkType(context: Context): String {
     val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return "-"
     when {
         actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> return "WIFI"
-        actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> return "ETHERNET"
+        //actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> return "ETHERNET"
         actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
             return "CELLULAR"
             /* dataNetworkType require READ_PHONE_BASIC_STATE permission */
