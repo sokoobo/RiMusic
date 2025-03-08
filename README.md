@@ -45,6 +45,7 @@
 - **Azerbaijani** thanks to [Nizami Səmidov](https://crowdin.com/profile/nizamismidov4), [Notesuree](https://github.com/Notesuree)
 - **Bangla:** thanks to [Ann Naser Nabil](https://github.com/AnnNaserNabil)
 - **Bashkir:** thanks to [Shilave malay](https://crowdin.com/profile/Bash.boy)
+- **Basque:** thanks to [iazkue](https://github.com/iazkue)
 - **Catalan:** thanks to [Adrià Martínez](https://crowdin.com/profile/marxally), [Aniol](https://crowdin.com/profile/aniol), [EMC_Translator](https://crowdin.com/profile/EMC_Translator)
 - **Chinese Simplified:** thanks to [benhaotang](https://crowdin.com/profile/benhaotang), [SharkChan0622](https://github.com/SharkChan0622)
 - **Chinese Traditional:** thanks to [YeeTW](https://github.com/yjcTW), [SharkChan0622](https://github.com/SharkChan0622)
