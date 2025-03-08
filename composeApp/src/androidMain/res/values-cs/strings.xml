@@ -874,7 +874,7 @@
     <string name="use_ytm_login_only_for_browse">Použití přihlášení YTM pouze pro procházení</string>
     <string name="info_use_ytm_login_only_for_browse">Použije se, pokud se skladby po přihlášení nepřehrávají</string>
     <string name="disliked_this_song">Nelze provést tuto akci s neoblíbenými skladbami</string>
-    <string name="removed_from_disliked">Odstraněno z neblíbených</string>
+    <string name="removed_from_disliked">Odstraněno z Nelíbí se mi</string>
     <string name="disliked_this_collection">Cannot Perform this Action when all the Songs are Disliked</string>
     <string name="toggle_controls_landscape">Přepínání ovládacích prvků na obrazovce</string>
     <string name="delete_songs_not_in_library">Odstranění skladeb, které nejsou v knihovně</string>
