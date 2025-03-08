@@ -1365,9 +1365,11 @@ fun AlbumDetails(
                                                     songs.filter { it.likedAt != -1L }.map(Song::asMediaItem).indexOf(song.asMediaItem)
                                                 )
                                             } else {
-                                                CoroutineScope(Dispatchers.Main).launch {
-                                                    SmartMessage(context.resources.getString(R.string.disliked_this_song),type = PopupType.Error, context = context)
-                                                }
+                                                SmartMessage(
+                                                    context.resources.getString(R.string.disliked_this_song),
+                                                    type = PopupType.Error,
+                                                    context = context
+                                                )
                                             }
                                         } else checkedState.value = !checkedState.value
                                     }
