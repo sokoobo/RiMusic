@@ -108,6 +108,9 @@ fun preCacheMedia(
     val cache: SimpleCache by lazy {
         principalCache.getInstance(context)
     }
+    val downloadCache: SimpleCache by lazy {
+        MyDownloadHelper.getDownloadCache(context) as SimpleCache
+    }
     var contentLength = 0L
     CoroutineScope(Dispatchers.IO).launch {
          contentLength = Database.formatContentLength(mediaItem.mediaId).also {
@@ -120,10 +123,15 @@ fun preCacheMedia(
     } catch (e: Exception) {
         false
     }
-    if (!isCached) {
-        println("preCacheMedia: mediaId ${mediaItem.mediaId} not cached")
+    val isDownloaded = try {
+        downloadCache.isCached(mediaItem.mediaId,0L, contentLength)
+    } catch (e: Exception) {
+        false
+    }
+    if (!isCached && !isDownloaded) {
+        println("preCacheMedia: mediaId ${mediaItem.mediaId} not cached or downloaded")
         MyPreCacheHelper.addDownload(context = context, mediaItem = mediaItem)
-    } else println("preCacheMedia: mediaId ${mediaItem.mediaId} is cached")
+    } else println("preCacheMedia: mediaId ${mediaItem.mediaId} is cached $isCached or downloaded $isDownloaded ")
 
 
 }
