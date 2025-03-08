@@ -799,8 +799,16 @@ class PlayerServiceModern : MediaLibraryService(),
             Timber.e("PlayerServiceModern onPlayerError delete corrupted resource ${currentMediaItem.value?.mediaId} errorCodeName ${error.errorCodeName}")
             println("PlayerServiceModern onPlayerError delete corrupted resource ${currentMediaItem.value?.mediaId} errorCodeName ${error.errorCodeName}")
             currentMediaItem.value?.mediaId?.let {
-                cache.removeResource(it) //try to remove from cache if exists
-                downloadCache.removeResource(it) //try to remove from download cache if exists
+                try {
+                    cache.removeResource(it) //try to remove from cache if exists
+                } catch (e: Exception) {
+                    Timber.e("PlayerServiceModern onPlayerError delete corrupted cache resource removeResource ${e.stackTraceToString()}")
+                }
+                try {
+                    downloadCache.removeResource(it) //try to remove from download cache if exists
+                } catch (e: Exception) {
+                    Timber.e("PlayerServiceModern onPlayerError delete corrupted downloadCache resource removeResource ${e.stackTraceToString()}")
+                }
             }
             player.stop()
             player.prepare()
