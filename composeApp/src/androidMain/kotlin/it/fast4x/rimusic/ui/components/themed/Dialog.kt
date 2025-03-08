@@ -161,6 +161,7 @@ import it.fast4x.rimusic.utils.asSong
 import it.fast4x.rimusic.utils.bassboostLevelKey
 import it.fast4x.rimusic.utils.getLikeState
 import it.fast4x.rimusic.utils.isExplicit
+import it.fast4x.rimusic.utils.isValidHttpUrl
 import it.fast4x.rimusic.utils.isValidUrl
 import it.fast4x.rimusic.utils.lyricsSizeKey
 import it.fast4x.rimusic.utils.lyricsSizeLKey
@@ -948,7 +949,7 @@ inline fun InputTextDialog(
                             }
                         }
                         if (txtField.value.isNotEmpty() && validationType == ValidationType.Url) {
-                            if (!isValidUrl(txtField.value)) {
+                            if (!isValidHttpUrl(txtField.value)) {
                                 txtFieldError.value = value_must_be_valid_url
                                 inError.value = true
                                 return@DialogTextButton

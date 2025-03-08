@@ -194,6 +194,7 @@ import it.fast4x.rimusic.utils.isAtLeastAndroid6
 import it.fast4x.rimusic.utils.isAtLeastAndroid8
 import it.fast4x.rimusic.utils.isKeepScreenOnEnabledKey
 import it.fast4x.rimusic.utils.isProxyEnabledKey
+import it.fast4x.rimusic.utils.isValidHttpUrl
 import it.fast4x.rimusic.utils.isValidIP
 import it.fast4x.rimusic.utils.isValidUrl
 import it.fast4x.rimusic.utils.isVideo
@@ -558,7 +559,12 @@ class MainActivity :
                     Environment.visitorData = visitorData.takeIf { it != "null" }
                         ?: Environment._uMYwa66ycM
                     Environment.dataSyncId = preferences.getString(ytDataSyncIdKey, "").toString()
-                    Environment.customDnsToUse = if (customDnsOverHttpsServer?.let { isValidUrl(it) } == true) customDnsOverHttpsServer else null
+                    val customDnsIsOk = customDnsOverHttpsServer?.let { isValidHttpUrl(it) }
+                    if (customDnsIsOk == false && getDnsOverHttpsType() == DnsOverHttpsType.Custom)
+                        SmartMessage("Custom DNS is invalid", PopupType.Error, context = this@MainActivity)
+
+                    val customDnsUrl = if (customDnsIsOk == true) customDnsOverHttpsServer else null
+                    Environment.customDnsToUse = customDnsUrl
                     Environment.dnsToUse = getDnsOverHttpsType().type
 
             var appearance by rememberSaveable(
