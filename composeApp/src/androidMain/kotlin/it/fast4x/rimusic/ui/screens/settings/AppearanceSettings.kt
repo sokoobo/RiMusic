@@ -152,6 +152,8 @@ import it.fast4x.rimusic.enums.ColorPaletteMode
 import it.fast4x.rimusic.enums.ColorPaletteName
 import it.fast4x.rimusic.enums.PopupType
 import it.fast4x.rimusic.enums.SwipeAnimationNoThumbnail
+import it.fast4x.rimusic.enums.UiType
+import it.fast4x.rimusic.getUiType
 import it.fast4x.rimusic.models.Song
 import it.fast4x.rimusic.typography
 import it.fast4x.rimusic.ui.components.themed.Search
@@ -265,7 +267,11 @@ fun DefaultAppearanceSettings() {
         navigationBarPositionKey,
         NavigationBarPosition.Bottom
     )
-    navigationBarPosition = NavigationBarPosition.Bottom
+    if (getUiType()==UiType.RiMusic)
+        navigationBarPosition = NavigationBarPosition.Bottom
+    else
+        navigationBarPosition = NavigationBarPosition.Left
+
     var showTotalTimeQueue by rememberPreference(showTotalTimeQueueKey, true)
     showTotalTimeQueue = true
     var backgroundProgress by rememberPreference(

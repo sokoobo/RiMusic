@@ -468,7 +468,8 @@ fun HomeQuickPicks(
                         enabled = true,
                         showIcon = !showSearchTab,
                         modifier = Modifier,
-                        onClick = onSearchClick
+                        onClick = onSearchClick,
+                        navController = navController
                     )
 
                 WelcomeMessage()
