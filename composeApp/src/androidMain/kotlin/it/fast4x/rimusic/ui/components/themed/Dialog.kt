@@ -287,13 +287,19 @@ fun ConfirmationDialog(
     text: String,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
+    onCheckBox: (Boolean) -> Unit = {},
     modifier: Modifier = Modifier,
     cancelText: String = stringResource(R.string.cancel),
     confirmText: String = stringResource(R.string.confirm),
+    checkBoxText: String = "",
     onCancel: () -> Unit = onDismiss,
     cancelBackgroundPrimary: Boolean = false,
     confirmBackgroundPrimary: Boolean = true
 ) {
+    val checkedState = remember{
+        mutableStateOf(false)
+    }
+
     DefaultDialog(
         onDismiss = onDismiss,
         modifier = modifier
@@ -304,6 +310,36 @@ fun ConfirmationDialog(
             modifier = Modifier
                 .padding(all = 16.dp)
         )
+
+        if (checkBoxText != "") {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(5.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Checkbox(
+                    checked = checkedState.value,
+                    onCheckedChange = {
+                        checkedState.value = it
+                        onCheckBox(it)
+                    },
+                    colors = CheckboxDefaults.colors(
+                        checkedColor = colorPalette().accent,
+                        uncheckedColor = colorPalette().text
+                    ),
+                    modifier = Modifier
+                        .scale(0.7f)
+                )
+                BasicText(
+                    text = checkBoxText, //stringResource(R.string.set_custom_value),
+                    style = typography().xs.medium,
+                    maxLines = 2,
+                    modifier = Modifier
+                )
+
+            }
+        }
 
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,

@@ -1803,8 +1803,8 @@ fun HomeSongsModern(
                                                     navController = navController,
                                                     song = song.song,
                                                     onDismiss = {
-                                                        menuState.hide()
                                                         forceRecompose = true
+                                                        menuState.hide()
                                                     },
                                                     onInfo = {
                                                         navController.navigate("${NavRoutes.videoOrSongInfo.name}/${song.song.id}")
@@ -1853,20 +1853,39 @@ fun HomeSongsModern(
                         mutableStateOf(false)
                     }
 
+                    var deleteAlsoPlayTimes by remember {
+                        mutableStateOf(false)
+                    }
+
                     if (isHiding) {
                         ConfirmationDialog(
                             text = stringResource(R.string.update_song),
                             onDismiss = { isHiding = false },
+                            checkBoxText = stringResource(R.string.also_delete_playback_data),
+                            onCheckBox = {
+                                deleteAlsoPlayTimes = it
+                            },
                             onConfirm = {
-                                Database.asyncTransaction {
-                                    menuState.hide()
-                                    binder?.cache?.removeResource(song.song.id)
-                                    binder?.downloadCache?.removeResource(song.song.id)
-                                    Database.incrementTotalPlayTimeMs(
-                                        song.song.id,
-                                        -song.song.totalPlayTimeMs
-                                    )
+                                song.song.id.let {
+                                    try {
+                                        binder?.cache?.removeResource(it) //try to remove from cache if exists
+                                    } catch (e: Exception) {
+                                        Timber.e("HomeSongsModern cache resource removeResource ${e.stackTraceToString()}")
+                                    }
+                                    try {
+                                        binder?.downloadCache?.removeResource(it) //try to remove from download cache if exists
+                                    } catch (e: Exception) {
+                                        Timber.e("HomeSongsModern downloadCache resource removeResource ${e.stackTraceToString()}")
+                                    }
                                 }
+
+                                if (deleteAlsoPlayTimes)
+                                    Database.asyncTransaction {
+                                        println("HomeSongsModern deleteAlsoPlayTimes")
+                                        resetTotalPlayTimeMs(song.song.id)
+                                    }
+
+                                menuState.hide()
                             }
                         )
                     }
@@ -1877,12 +1896,13 @@ fun HomeSongsModern(
                             onDismiss = { isDeleting = false },
                             onConfirm = {
                                 Database.asyncTransaction {
-                                    menuState.hide()
+
                                     binder?.cache?.removeResource(song.song.id)
                                     binder?.downloadCache?.removeResource(song.song.id)
                                     Database.delete(song.song)
                                     Database.deleteSongFromPlaylists(song.song.id)
                                 }
+                                menuState.hide()
                                 SmartMessage(context.resources.getString(R.string.deleted), context = context)
                             }
                         )
@@ -2018,8 +2038,8 @@ fun HomeSongsModern(
                                                 navController = navController,
                                                 song = song.song,
                                                 onDismiss = {
-                                                    menuState.hide()
                                                     forceRecompose = true
+                                                    menuState.hide()
                                                 },
                                                 onInfo = {
                                                     navController.navigate("${NavRoutes.videoOrSongInfo.name}/${song.song.id}")
