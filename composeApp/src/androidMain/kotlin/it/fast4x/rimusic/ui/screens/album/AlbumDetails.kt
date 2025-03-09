@@ -146,6 +146,7 @@ import it.fast4x.rimusic.enums.PopupType
 import it.fast4x.rimusic.models.SongAlbumMap
 import it.fast4x.rimusic.service.MyDownloadHelper
 import it.fast4x.rimusic.typography
+import it.fast4x.rimusic.ui.components.themed.Title
 import it.fast4x.rimusic.ui.screens.settings.isYouTubeSyncEnabled
 import it.fast4x.rimusic.utils.addToYtLikedSongs
 import it.fast4x.rimusic.utils.addToYtPlaylist
@@ -554,6 +555,8 @@ fun AlbumDetails(
 
     val translator = Translator(getHttpClient())
     val languageDestination = languageDestination()
+
+    var readMore by remember { mutableStateOf(false) }
 
     LayoutWithAdaptiveThumbnail(thumbnailContent = thumbnailContent) {
         Box(
@@ -1142,12 +1145,20 @@ fun AlbumDetails(
 
                         val attributionsIndex = description.lastIndexOf("\n\nFrom Wikipedia")
 
-                        BasicText(
-                            text = stringResource(R.string.information),
-                            style = typography().m.semiBold.align(TextAlign.Start),
-                            modifier = sectionTextModifier
-                                .fillMaxWidth()
+                        Title(
+                            title = stringResource(R.string.information),
+                            icon = if (readMore) R.drawable.chevron_up else R.drawable.chevron_down,
+                            onClick = {
+                                readMore = !readMore
+                            }
                         )
+
+//                        BasicText(
+//                            text = stringResource(R.string.information),
+//                            style = typography().m.semiBold.align(TextAlign.Start),
+//                            modifier = sectionTextModifier
+//                                .fillMaxWidth()
+//                        )
 
                         Row(
                             modifier = Modifier
@@ -1156,28 +1167,28 @@ fun AlbumDetails(
                             //.padding(endPaddingValues)
                             //.padding(end = Dimensions.bottomSpacer)
                         ) {
-                            IconButton(
-                                icon = R.drawable.translate,
-                                color = if (translateEnabled == true) colorPalette()
-                                    .text else colorPalette()
-                                    .textDisabled,
-                                enabled = true,
-                                onClick = {},
-                                modifier = Modifier
-                                    .padding(all = 8.dp)
-                                    .size(18.dp)
-                                    .combinedClickable(
-                                        onClick = {
-                                            translateEnabled = !translateEnabled
-                                        },
-                                        onLongClick = {
-                                            SmartMessage(
-                                                context.resources.getString(R.string.info_translation),
-                                                context = context
-                                            )
-                                        }
-                                    )
-                            )
+//                            IconButton(
+//                                icon = R.drawable.translate,
+//                                color = if (translateEnabled == true) colorPalette()
+//                                    .text else colorPalette()
+//                                    .textDisabled,
+//                                enabled = true,
+//                                onClick = {},
+//                                modifier = Modifier
+//                                    .padding(all = 8.dp)
+//                                    .size(18.dp)
+//                                    .combinedClickable(
+//                                        onClick = {
+//                                            translateEnabled = !translateEnabled
+//                                        },
+//                                        onLongClick = {
+//                                            SmartMessage(
+//                                                context.resources.getString(R.string.info_translation),
+//                                                context = context
+//                                            )
+//                                        }
+//                                    )
+//                            )
                             BasicText(
                                 text = "“",
                                 style = typography().xxl.semiBold,
@@ -1216,13 +1227,29 @@ fun AlbumDetails(
                                 }
                             } else translatedText = nonTranslatedText
 
-                            BasicText(
-                                text = translatedText,
-                                style = typography().xxs.secondary.align(TextAlign.Justify),
-                                modifier = Modifier
-                                    .padding(horizontal = 8.dp)
-                                    .weight(1f)
-                            )
+                            if (!readMore)
+                                BasicText(
+                                    text = translatedText.substring(0,100).plus("..."),
+                                    style = typography().xxs.secondary.align(TextAlign.Justify),
+                                    modifier = Modifier
+                                        .padding(horizontal = 8.dp)
+                                        .weight(1f)
+                                        .clickable {
+                                            readMore = !readMore
+                                        }
+                                )
+
+                            if (readMore)
+                                BasicText(
+                                    text = translatedText,
+                                    style = typography().xxs.secondary.align(TextAlign.Justify),
+                                    modifier = Modifier
+                                        .padding(horizontal = 8.dp)
+                                        .weight(1f)
+                                        .clickable {
+                                            readMore = !readMore
+                                        }
+                                )
 
                             BasicText(
                                 text = "„",

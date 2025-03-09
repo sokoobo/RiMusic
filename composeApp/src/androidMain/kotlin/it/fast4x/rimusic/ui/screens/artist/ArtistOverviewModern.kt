@@ -2,6 +2,7 @@ package it.fast4x.rimusic.ui.screens.artist
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -199,6 +200,8 @@ fun ArtistOverviewModern(
     val hapticFeedback = LocalHapticFeedback.current
     val parentalControlEnabled by rememberPreference(parentalControlEnabledKey, false)
     val menuState = LocalMenuState.current
+
+    var readMore by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         Database.artist(browseId).collect { artist = it }
@@ -513,11 +516,12 @@ fun ArtistOverviewModern(
                 artistPage.description?.let { description ->
                     val attributionsIndex = description.lastIndexOf("\n\nFrom Wikipedia")
 
-                    BasicText(
-                        text = stringResource(R.string.information),
-                        style = typography().m.semiBold.align(TextAlign.Start),
-                        modifier = sectionTextModifier
-                            .fillMaxWidth()
+                    Title(
+                        title = stringResource(R.string.information),
+                        icon = if (readMore) R.drawable.chevron_up else R.drawable.chevron_down,
+                        onClick = {
+                            readMore = !readMore
+                        }
                     )
 
                     Row(
@@ -532,17 +536,34 @@ fun ArtistOverviewModern(
                                 .align(Alignment.Top)
                         )
 
-                        BasicText(
-                            text = if (attributionsIndex == -1) {
-                                description
-                            } else {
-                                description.substring(0, attributionsIndex)
-                            },
-                            style = typography().xxs.secondary.align(TextAlign.Justify),
-                            modifier = Modifier
-                                .padding(horizontal = 8.dp)
-                                .weight(1f)
-                        )
+                        if (!readMore)
+                            BasicText(
+                                text = description.substring(0,100).plus("..."),
+                                style = typography().xxs.secondary.align(TextAlign.Justify),
+                                modifier = Modifier
+                                    .padding(horizontal = 8.dp)
+                                    .weight(1f)
+                                    .clickable {
+                                        readMore = !readMore
+                                    }
+                            )
+
+                        if (readMore)
+                            BasicText(
+                                text = if (attributionsIndex == -1) {
+                                    description
+                                } else {
+                                    description.substring(0, attributionsIndex)
+                                },
+                                style = typography().xxs.secondary.align(TextAlign.Justify),
+                                modifier = Modifier
+                                    .padding(horizontal = 8.dp)
+                                    .weight(1f)
+                                    .clickable {
+                                        readMore = !readMore
+                                    }
+                            )
+
 
                         BasicText(
                             text = "„",
