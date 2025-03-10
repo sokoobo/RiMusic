@@ -689,7 +689,7 @@
     <string name="carousel">Carousel View</string>
     <string name="carouselsize">Thumbnail Size in Expanded Mode</string>
     <string name="addednext">Added to play next</string>
-    <string name="info_paused_with_volume_zero">Paused with volume zero</string>
+    <string name="info_paused_with_volume_zero">Pauzirano sa nultom jačinom zvuka</string>
     <string name="effect_fade_audio">Fade audio</string>
     <string name="effect_fade_audio_description">Fade audio when song is paused or played</string>
     <string name="autosync">Auto Sync Imported Playlists</string>
