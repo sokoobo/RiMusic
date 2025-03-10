@@ -370,7 +370,7 @@ inline fun DefaultDialog(
     noinline onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
-    crossinline content: @Composable ColumnScope.() -> Unit
+    crossinline content: @Composable ColumnScope.() -> Unit,
 ) {
     Dialog(
         onDismissRequest = onDismiss,

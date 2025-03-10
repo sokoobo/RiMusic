@@ -124,6 +124,7 @@ androidx-webkit = { group = "androidx.webkit", name = "webkit", version = "1.9.0
 
 okhttp-dnsoverhttps = { group = "com.squareup.okhttp3", name = "okhttp-dnsoverhttps", version.ref = "okhttpDnsOverHttps" }
 
+room-backup = { group = "de.raphaelebner", name = "roomdatabasebackup", version = "1.0.2" }
 
 
 [plugins]

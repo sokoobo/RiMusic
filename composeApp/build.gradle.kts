@@ -75,6 +75,7 @@ kotlin {
             implementation(libs.newpipe.extractor)
             implementation(libs.nanojson)
             implementation(libs.androidx.webkit)
+            implementation(libs.room.backup)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -102,6 +103,7 @@ kotlin {
             implementation(libs.coil.mp)
 
             implementation(libs.translator)
+
 
         }
     }
