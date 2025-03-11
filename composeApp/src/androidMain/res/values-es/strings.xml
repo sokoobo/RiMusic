@@ -931,7 +931,7 @@
     <string name="numbers">Números</string>
     <string name="subscribers">Suscriptores</string>
     <string name="views">Vistas</string>
-    <string name="likes">Me gustas</string>
+    <string name="likes">Me gustan</string>
     <string name="dislikes">No me gustan</string>
     <string name="loudness_boost_level">Nivel de amplificación del volumen</string>
     <string name="loudness_boost_level_info">Nivel de volumen adicional, usar sin excederse, ya que podría dañar el dispositivo</string>
