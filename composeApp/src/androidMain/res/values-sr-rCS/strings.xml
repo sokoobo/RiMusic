@@ -224,8 +224,8 @@
     <string name="listen_on_piped">Slušaj na Piped</string>
     <string name="listen_on_invidious">Slusaj na Invidious</string>
     <string name="disable_horizontal_swipe">Onemogući horizontalno prevlačenje</string>
-    <string name="disable_vertical_swipe">Disable song switching via Vertical swipe</string>
-    <string name="disable_vertical_swipe_secondary">It affects only when the Expanded Player is off</string>
+    <string name="disable_vertical_swipe">Onemogući prebacivanje pesama Vertikalnim prevlačenjem</string>
+    <string name="disable_vertical_swipe_secondary">To utiče samo kada je Prošireni Plejer isključen</string>
     <string name="disable_song_switching_via_swipe">Onemogući prebacivanje pesama prevlačenjem</string>
     <string name="interface_in_use">Interfejs u ​​upotrebi</string>
     <string name="user_interface">Korisnički interfejs</string>
@@ -354,7 +354,7 @@
     <string name="sort_year">Godina</string>
     <string name="sort_name">Ime</string>
     <string name="sort_songs_number">Brojevi Pesama</string>
-    <string name="sort_relative_listening_time">Relative Listening Time</string>
+    <string name="sort_relative_listening_time">Relativno vreme slušanja</string>
     <string name="follow">Prati</string>
     <string name="following">Pratim</string>
     <string name="artist_subscribers">%s pretplatnici</string>
@@ -579,7 +579,7 @@
     <string name="info_prevent_play_songs_with_age_limitation">Sprečite puštanje pesama sa starosnim ograničenjem</string>
     <string name="cache_location_private">Privatno</string>
     <string name="cache_location_system">Sistem</string>
-    <string name="info_cannot_rename_a_monthly_or_piped_playlist">Cannot rename a monthly or online or piped playlist</string>
+    <string name="info_cannot_rename_a_monthly_or_piped_playlist">Nije moguće preimenovati mesečnu, onlajn ili piped listu za reprodukciju</string>
     <string name="debug">Otklanjanje grešaka</string>
     <string name="enable_log_debug">Omogući zapis otklanjanja grešaka</string>
     <string name="if_enabled_create_a_log_file_to_highlight_errors">Ako je omogućeno, kreirajte datoteku zapisa da biste istakli greške</string>
@@ -670,10 +670,10 @@
     <string name="discoverinfo">Uklanja pesme koje vam se Sviđaju i pesme sa Plejliste iz reda</string>
     <string name="controls_header_customize">Prilagodi</string>
     <string name="controls_title_blur_effect">Efekat zamućenja</string>
-    <string name="controls_title_medley_duration">Medley duration</string>
-    <string name="controls_title_playback_speed">Playback speed</string>
-    <string name="controls_title_playback_pitch">Playback pitch</string>
-    <string name="controls_title_playback_volume">Playback Volume</string>
+    <string name="controls_title_medley_duration">Trajanje mešavine</string>
+    <string name="controls_title_playback_speed">Brzina reprodukcije</string>
+    <string name="controls_title_playback_pitch">Visina tona reprodukcije</string>
+    <string name="controls_title_playback_volume">Jačina Reprodukcije</string>
     <string name="controls_title_device_volume">Device volume</string>
     <string name="lang_malayalam">Malayalam</string>
     <string name="searches_suggestions">Suggestions</string>
