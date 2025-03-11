@@ -271,11 +271,13 @@ class MainActivity :
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             if (service is PlayerServiceModern.Binder) {
                 this@MainActivity.binder = service
+                println("MainActivity.onServiceConnected PlayerServiceModern is connected")
             }
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
             binder = null
+            println("MainActivity.onServiceDisconnected")
         }
 
     }
@@ -300,7 +302,9 @@ class MainActivity :
         super.onStart()
 
         runCatching {
-            bindService(intent<PlayerServiceModern>(), serviceConnection, BIND_AUTO_CREATE)
+            val intent = Intent(this, PlayerServiceModern::class.java)
+            startService(intent)
+            bindService(intent, serviceConnection, BIND_AUTO_CREATE)
         }.onFailure {
             Timber.e("MainActivity.onStart bindService ${it.stackTraceToString()}")
         }

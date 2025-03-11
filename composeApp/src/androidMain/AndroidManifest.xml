@@ -29,6 +29,7 @@
     <uses-feature    android:name="android.software.leanback" android:required="false" />
     <uses-feature    android:name="android.hardware.touchscreen" android:required="false" />
     <uses-feature    android:name="android.hardware.microphone" android:required="false" />
+    <uses-feature    android:name="android.hardware.type.automotive" android:required="false" />
 
     <queries>
         <intent>
@@ -36,6 +37,14 @@
         </intent>
         <intent>
             <action android:name="android.intent.action.WEB_SEARCH" />
+        </intent>
+    </queries>
+    <queries>
+        <package android:name="it.fast4x.rimusic" />
+    </queries>
+    <queries>
+        <intent>
+            <action android:name="androidx.media3.session.MediaSessionService" />
         </intent>
     </queries>
 
@@ -173,6 +182,7 @@
                 <action android:name="androidx.media3.session.MediaSessionService" />
                 <action android:name="androidx.media3.session.MediaLibraryService" />
                 <action android:name="android.media.browse.MediaBrowserService" />
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </service>
 

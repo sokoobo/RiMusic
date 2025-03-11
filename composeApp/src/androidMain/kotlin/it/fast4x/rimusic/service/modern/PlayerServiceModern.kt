@@ -78,6 +78,7 @@ import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaStyleNotificationHelper
 import androidx.media3.session.SessionToken
 import com.google.common.collect.ImmutableList
+import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
 import it.fast4x.environment.Environment
 import it.fast4x.environment.EnvironmentExt
@@ -205,6 +206,7 @@ import it.fast4x.rimusic.utils.bassboostLevelKey
 import it.fast4x.rimusic.utils.preCacheMedia
 import it.fast4x.rimusic.utils.principalCache
 import it.fast4x.rimusic.utils.volumeBoostLevelKey
+import kotlinx.coroutines.SupervisorJob
 import timber.log.Timber
 import java.io.IOException
 import java.io.ObjectInputStream
@@ -231,11 +233,12 @@ class PlayerServiceModern : MediaLibraryService(),
     SharedPreferences.OnSharedPreferenceChangeListener,
     OnAudioVolumeChangedListener {
 
-    private val coroutineScope = CoroutineScope(Dispatchers.IO) + Job()
+    private val coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var mediaSession: MediaLibrarySession
-    private var mediaLibrarySessionCallback: MediaLibrarySessionCallback =
-        MediaLibrarySessionCallback(this, Database, MyDownloadHelper)
+    private lateinit var mediaLibrarySessionCallback: MediaLibrarySessionCallback
+    private lateinit var sessionToken: SessionToken
+    private lateinit var controllerFuture: ListenableFuture<MediaController>
     lateinit var player: ExoPlayer
     val cache: SimpleCache by lazy {
         principalCache.getInstance(this)
@@ -404,16 +407,20 @@ class PlayerServiceModern : MediaLibraryService(),
                 }
             }
 
-        mediaLibrarySessionCallback.apply {
-            binder = this@PlayerServiceModern.binder
-            toggleLike = ::toggleLike
-            toggleDownload = ::toggleDownload
-            toggleRepeat = ::toggleRepeat
-            toggleShuffle = ::toggleShuffle
-            startRadio = ::startRadio
-            callPause = ::callActionPause
-            actionSearch = ::actionSearch
-        }
+        println("PlayerServiceModern.onCreate called")
+
+        mediaLibrarySessionCallback =
+            MediaLibrarySessionCallback(this, Database, MyDownloadHelper)
+            .apply {
+                binder = this@PlayerServiceModern.binder
+                toggleLike = ::toggleLike
+                toggleDownload = ::toggleDownload
+                toggleRepeat = ::toggleRepeat
+                toggleShuffle = ::toggleShuffle
+                startRadio = ::startRadio
+                callPause = ::callActionPause
+                actionSearch = ::actionSearch
+            }
 
         // Build the media library session
         mediaSession =
@@ -434,6 +441,11 @@ class PlayerServiceModern : MediaLibraryService(),
                 ))
                 .build()
 
+        // Keep a connected controller so that notification works
+        sessionToken = SessionToken(this, ComponentName(this, PlayerServiceModern::class.java))
+        controllerFuture = MediaController.Builder(this, sessionToken).buildAsync()
+        controllerFuture.addListener({ controllerFuture.get() }, ContextCompat.getMainExecutor(this))
+
         player.skipSilenceEnabled = preferences.getBoolean(skipSilenceKey, false)
         player.addListener(this@PlayerServiceModern)
         player.addAnalyticsListener(PlaybackStatsListener(false, this@PlayerServiceModern))
@@ -446,11 +458,6 @@ class PlayerServiceModern : MediaLibraryService(),
         )
         binder.player.volume = preferences.getFloat(playbackVolumeKey, 1f)
         binder.player.setGlobalVolume(binder.player.volume)
-
-        // Keep a connected controller so that notification works
-        val sessionToken = SessionToken(this, ComponentName(this, PlayerServiceModern::class.java))
-        val controllerFuture = MediaController.Builder(this, sessionToken).buildAsync()
-        controllerFuture.addListener({ controllerFuture.get() }, MoreExecutors.directExecutor())
 
         audioVolumeObserver = AudioVolumeObserver(this)
         audioVolumeObserver.register(AudioManager.STREAM_MUSIC, this)
@@ -541,6 +548,19 @@ class PlayerServiceModern : MediaLibraryService(),
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaLibrarySession =
         mediaSession
+
+    @UnstableApi
+    override fun onUpdateNotification(
+        session: MediaSession,
+        startInForegroundRequired: Boolean,
+    ) {
+        super.onUpdateNotification(session, startInForegroundRequired)
+    }
+
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        maybeSavePlayerQueue()
+    }
 
     override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
         maybeSavePlayerQueue()
@@ -634,6 +654,7 @@ class PlayerServiceModern : MediaLibraryService(),
 
 
             mediaSession.release()
+            MediaController.releaseFuture(controllerFuture)
             cache.release()
             //downloadCache.release()
             MyDownloadHelper.getDownloadManager(this).removeListener(downloadListener)
