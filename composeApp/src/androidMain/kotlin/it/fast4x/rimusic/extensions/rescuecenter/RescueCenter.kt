@@ -39,10 +39,15 @@ import it.fast4x.rimusic.ui.components.themed.InputTextDialog
 import it.fast4x.rimusic.ui.components.themed.SmartMessage
 import it.fast4x.rimusic.ui.components.themed.Title
 import it.fast4x.rimusic.utils.bold
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileInputStream
 import java.text.SimpleDateFormat
 import java.util.Date
+import kotlin.system.exitProcess
 
 
 @Composable
@@ -79,8 +84,6 @@ fun RescueScreen(
                         inputStream.copyTo(outputStream)
                     }
                 }
-
-
 
         }
 
@@ -170,6 +173,16 @@ fun RescueScreen(
                     isExportingCrashLog = true
                 }
             )
+            Spacer( modifier = Modifier.height(50.dp) )
+            Title(
+                title = stringResource(R.string.click_to_close),
+                icon = R.drawable.close,
+                modifier = Modifier.fillMaxWidth()
+                    .background(colorPalette().background1),
+                onClick = {
+                    exit()
+                }
+            )
 
         }
 
@@ -219,4 +232,14 @@ fun ImportRescueBackup(
             onConfirm =  onRestore
         )
 
+}
+
+fun exit(){
+    CoroutineScope(Dispatchers.IO).launch{
+        delay(2000)
+    }
+
+    // Terminate the app or perform any other necessary action
+    android.os.Process.killProcess(android.os.Process.myPid())
+    exitProcess(0)
 }
