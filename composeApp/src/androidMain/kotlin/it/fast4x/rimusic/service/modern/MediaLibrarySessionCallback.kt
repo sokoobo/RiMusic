@@ -59,7 +59,7 @@ import javax.inject.Inject
 
 @UnstableApi
 class MediaLibrarySessionCallback (
-    val context: Context = appContext(),
+    val context: Context,
     val database: Database,
     val downloadHelper: MyDownloadHelper
 ) : MediaLibrarySession.Callback {

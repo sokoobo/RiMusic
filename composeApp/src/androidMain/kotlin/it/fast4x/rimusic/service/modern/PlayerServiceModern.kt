@@ -291,12 +291,12 @@ class PlayerServiceModern : MediaLibraryService(),
         super.onCreate()
 
         // Enable Android Auto if disabled, REQUIRE ENABLING DEV MODE IN ANDROID AUTO
-        val component = ComponentName(this, PlayerServiceModern::class.java)
-        packageManager.setComponentEnabledSetting(
-            component,
-            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-            PackageManager.DONT_KILL_APP
-        )
+//        val component = ComponentName(this, PlayerServiceModern::class.java)
+//        packageManager.setComponentEnabledSetting(
+//            component,
+//            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+//            PackageManager.DONT_KILL_APP
+//        )
 
         val notificationType = preferences.getEnum(notificationTypeKey, NotificationType.Default)
         when(notificationType){
@@ -374,7 +374,7 @@ class PlayerServiceModern : MediaLibraryService(),
                     .build(),
                 isHandleAudioFocusEnabled()
             )
-            .setUsePlatformDiagnostics(false)
+            //.setUsePlatformDiagnostics(false)
             .setSeekBackIncrementMs(5000)
             .setSeekForwardIncrementMs(5000)
             .setLoadControl(
@@ -1026,12 +1026,12 @@ class PlayerServiceModern : MediaLibraryService(),
         val volumeBoostLevel = preferences.getFloat(volumeBoostLevelKey, 0f)
         player.currentMediaItem?.mediaId?.let { songId ->
             volumeNormalizationJob?.cancel()
-            volumeNormalizationJob = coroutineScope.launch(Dispatchers.Main) {
+            volumeNormalizationJob = coroutineScope.launch(Dispatchers.IO) {
                 fun Float?.toMb() = ((this ?: 0f) * 100).toInt()
                 Database.loudnessDb(songId).cancellable().collectLatest { loudnessDb ->
                     val loudnessMb = loudnessDb.toMb().let {
                         if (it !in -2000..2000) {
-                            withContext(Dispatchers.Main) {
+                            withContext(Dispatchers.IO) {
                                 SmartMessage(
                                     "Extreme loudness detected",
                                     context = this@PlayerServiceModern

@@ -648,7 +648,7 @@ class MainActivity :
 
 //                val colorPaletteMode =
 //                    preferences.getEnum(colorPaletteModeKey, ColorPaletteMode.Dark)
-                    coroutineScope.launch(Dispatchers.Main) {
+                    coroutineScope.launch(Dispatchers.IO) {
                         val result = imageLoader.execute(
                             ImageRequest.Builder(this@MainActivity)
                                 .data(url)
