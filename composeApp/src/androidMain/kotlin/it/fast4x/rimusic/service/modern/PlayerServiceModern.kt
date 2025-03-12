@@ -439,12 +439,15 @@ class PlayerServiceModern : MediaLibraryService(),
                     coroutineScope,
                     512 * resources.displayMetrics.density.toInt()
                 ))
+                // Temporary fix for bug in ExoPlayer media3 https://github.com/androidx/media/issues/2192
+                // Bug cause refresh ui in android auto when media is playing
+                .setPeriodicPositionUpdateEnabled(false)
                 .build()
 
         // Keep a connected controller so that notification works
         sessionToken = SessionToken(this, ComponentName(this, PlayerServiceModern::class.java))
         controllerFuture = MediaController.Builder(this, sessionToken).buildAsync()
-        controllerFuture.addListener({ controllerFuture.get() }, ContextCompat.getMainExecutor(this))
+        controllerFuture.addListener({ controllerFuture.let { if (it.isDone) it.get() }}, MoreExecutors.directExecutor())
 
         player.skipSilenceEnabled = preferences.getBoolean(skipSilenceKey, false)
         player.addListener(this@PlayerServiceModern)
