@@ -606,10 +606,12 @@ class MainActivity :
                             )
                         }
                         if (colorPaletteName == ColorPaletteName.CustomColor) {
+                            println("MainActivity.startApp SetContent with(preferences) customColor PRE colorPalette: $colorPalette")
                             colorPalette = dynamicColorPaletteOf(
                                 Color(customColor),
                                 !lightTheme
                             )
+                            println("MainActivity.startApp SetContent with(preferences) customColor POST colorPalette: $colorPalette")
                         }
 
                         setSystemBarAppearance(colorPalette.isDark)
@@ -797,6 +799,7 @@ class MainActivity :
                                 customThemeDark_textDisabledKey,
                                 customThemeDark_iconButtonPlayerKey,
                                 customThemeDark_accentKey,
+                                customColorKey
                                     -> {
                                     val colorPaletteName =
                                         sharedPreferences.getEnum(
@@ -864,10 +867,12 @@ class MainActivity :
                                             )
                                         }
                                         if (colorPaletteName == ColorPaletteName.CustomColor) {
+                                            println("MainActivity.startApp SetContent DisposableEffect customColor PRE colorPalette: $colorPalette")
                                             colorPalette = dynamicColorPaletteOf(
                                                 Color(customColor),
                                                 !lightTheme
                                             )
+                                            println("MainActivity.startApp SetContent DisposableEffect customColor POST colorPalette: $colorPalette")
                                         }
 
                                         setSystemBarAppearance(colorPalette.isDark)
@@ -980,9 +985,6 @@ class MainActivity :
                         colorPalette = appearance.colorPalette.applyPitchBlack,
                         typography = appearance.typography.copy(appearance.colorPalette.text)
                     )
-
-
-
 
                 BoxWithConstraints(
                     modifier = Modifier
