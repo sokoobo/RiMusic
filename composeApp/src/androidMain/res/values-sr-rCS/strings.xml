@@ -338,7 +338,7 @@
     <string name="you_can_still_turn_it_on_or_off_from_the_settings">I dalje možete da ga uključite, ili isključite, iz podešavanja.</string>
     <string name="enable">Omogući</string>
     <string name="don_t_enable">Ne omogućavaj</string>
-    <string name="lang_hindi">Hindu</string>
+    <string name="lang_hindi">Hindi</string>
     <string name="default_page">Podrazumevana stranica</string>
     <string name="keep_screen_on">Drži ekran uključen</string>
     <string name="prevents_screen_timeout">Sprečava vremensko ograničenje ekrana</string>
@@ -348,12 +348,12 @@
     <string name="sort_title">Naslov</string>
     <string name="sort_date_played">Datum Puštanja</string>
     <string name="sort_artist">Izvođač</string>
-    <string name="sort_listening_time">Vreme slušanja</string>
+    <string name="sort_listening_time">Vreme Slušanja</string>
     <string name="sort_date_added">Datum Dodavanja</string>
     <string name="sorting_order">Redosled sortiranja</string>
     <string name="sort_year">Godina</string>
     <string name="sort_name">Ime</string>
-    <string name="sort_songs_number">Brojevi Pesama</string>
+    <string name="sort_songs_number">Broj Pesama</string>
     <string name="sort_relative_listening_time">Relativno vreme slušanja</string>
     <string name="follow">Prati</string>
     <string name="following">Pratim</string>
@@ -366,7 +366,7 @@
     <string name="enabled">Omogućeno</string>
     <string name="ask">Pitaj</string>
     <string name="item_select">Izabеri</string>
-    <string name="blacklisted_folders">Fascikle na crnoj listi</string>
+    <string name="blacklisted_folders">Fascikle na Crnoj listi</string>
     <string name="edit_blacklist_for_on_device_songs">Uredite crnu listu za pesme na uređaju.</string>
     <string name="add_folder">Dodaj fasciklu</string>
     <string name="this_folder_already_exists">Ova fascikla već postoji.</string>
@@ -380,7 +380,7 @@
     <string name="save_to_backup">Sačuvaj u rezervnu kopiju</string>
     <string name="restore_from_backup">Vrati iz rezervne kopije</string>
     <string name="tab_miscellaneous">Razno</string>
-    <string name="swipe_to_action">Prevucite prstom do akcije</string>
+    <string name="swipe_to_action">Akcija prevlačenja</string>
     <string name="activate_the_action_menu_by_swiping_the_song_left_or_right">Aktivirajte meni radnji prevlačenjem pesme ulevo ili udesno</string>
     <string name="smart_recommendations">PAMETNE PREPORUKE</string>
     <string name="player_collapsed_disable_swiping_down">Onemogući prevlačenje nadole</string>
@@ -388,7 +388,7 @@
     <string name="sort_date_liked">Datum Sviđanja</string>
     <string name="export_playlist">Izvezi plejlistu</string>
     <string name="lang_afrikaans">Afrički</string>
-    <string name="playlist_top">Vrh Plejliste</string>
+    <string name="playlist_top">Najbolja Plejlista</string>
     <string name="my_playlist_top">Moja Najbolja %s</string>
     <string name="navigation_bar_position">Položaj trake za navigaciju</string>
     <string name="direction_left">Levo</string>
@@ -409,7 +409,7 @@
     <string name="sort_album">Album</string>
     <string name="use_gradient_background">Koristi prelaznu boju pozadine</string>
     <string name="show_total_time_of_queue">Prikaži ukupno vreme redosleda</string>
-    <string name="lang_telugu">Teluški</string>
+    <string name="lang_telugu">Telugu</string>
     <string name="media_permission_required_please_grant">Potrebna je medijska dozvola, molim vas odobrite.</string>
     <string name="open_permission_settings">Otvorite podešavanja dozvola</string>
     <string name="background_progress_bar">Pozadinska traka napretka</string>
