@@ -66,6 +66,7 @@ import it.fast4x.rimusic.ui.screens.newreleases.NewreleasesScreen
 import it.fast4x.rimusic.ui.screens.ondevice.DeviceListSongsScreen
 import it.fast4x.rimusic.ui.screens.player.Player
 import it.fast4x.rimusic.ui.screens.player.Queue
+import it.fast4x.rimusic.ui.screens.player.QueueModern
 import it.fast4x.rimusic.ui.screens.playlist.PlaylistScreen
 import it.fast4x.rimusic.ui.screens.podcast.PodcastScreen
 import it.fast4x.rimusic.ui.screens.search.SearchScreen
@@ -235,7 +236,7 @@ fun AppNavigation(
 
         composable(route = NavRoutes.queue.name) {
             modalBottomSheetPage {
-                Queue(
+                QueueModern(
                     navController = navController,
                     onDismiss = {},
                     onDiscoverClick = {}

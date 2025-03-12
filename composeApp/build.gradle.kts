@@ -103,7 +103,7 @@ kotlin {
             implementation(libs.coil.mp)
 
             implementation(libs.translator)
-
+            implementation(libs.reorderable)
 
         }
     }
