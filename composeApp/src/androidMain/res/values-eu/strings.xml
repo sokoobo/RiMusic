@@ -121,12 +121,12 @@
     <string name="synchronized_lyrics">Sinkronizatutako letrak</string>
     <string name="provided_by">Honek eskainia:</string>
     <string name="delete_playback_events">Ezabatu %1$s erreprodukzio-gertaera</string>
-    <string name="existing_data_will_be_overwritten">Existing data will be overwritten.%1$s will automatically close itself after restoring the database.</string>
+    <string name="existing_data_will_be_overwritten">Existitzen diren datuak gainidatziko dira. %1$s-k automatikoki itxiko du bere burua datu basea berrezartzean.</string>
     <string name="folder_cache">KARPETA CACHE</string>
-    <string name="cache_reset_by_clicking_button">Attention by clicking on the button below, the cache location folder will be reset to the default</string>
-    <string name="cache_location_folder">Location folder</string>
-    <string name="custom_cache_from_android_10_may_not_be_available">From Android 10, this feature may not be available</string>
-    <string name="reset_cache_location_folder">RESET CACHE LOCATION FOLDER</string>
+    <string name="cache_reset_by_clicking_button">Kontuz azpiko botoia klikatzen, chache-a kokatua dagoen karpeta berrezarriko da</string>
+    <string name="cache_location_folder">Kokapen karpeta</string>
+    <string name="custom_cache_from_android_10_may_not_be_available">Android 10-etik aurrera, ezaugarri hau ez dago erabilgarri</string>
+    <string name="reset_cache_location_folder">BERREZARRI CACHE KOKAPEN KARPETA</string>
     <string name="used">"erabilia"</string>
     <string name="close_background_player">Atzeko erreproduktorea itxi</string>
     <string name="when_app_swipe_out_from_task_manager">When app swipe out from task manager</string>
