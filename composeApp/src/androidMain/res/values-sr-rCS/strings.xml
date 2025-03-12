@@ -452,12 +452,12 @@
     <string name="info_show_hide_hidden_songs">Prikaži/sakrij skrivene pesme</string>
     <string name="info_shuffle">Nasumično</string>
     <string name="info_includes_excludes_songs_on_the_device">Uključuje/Isključuje pesme na uređaju</string>
-    <string name="info_enqueue_songs">Pesme u redu</string>
+    <string name="info_enqueue_songs">Pesme u redosledu</string>
     <string name="info_download_all_songs">Preuzmi sve pesme</string>
-    <string name="info_remove_all_downloaded_songs">Uklonite sve preuzete pesme</string>
+    <string name="info_remove_all_downloaded_songs">Ukloni sve preuzete pesme</string>
     <string name="info_start_radio">Pokreni radio</string>
     <string name="info_translation">Prevod</string>
-    <string name="info_find_the_song_that_is_playing">Pronađi pesmu koja svira</string>
+    <string name="info_find_the_song_that_is_playing">Pronađi pesmu koja se reprodukuje</string>
     <string name="info_smart_recommendation">Pametna preporuka</string>
     <string name="info_clean_cached_congs">Očisti keširane pesme</string>
     <string name="info_pin_unpin_playlist">Zakači/Otkači plejlistu</string>
