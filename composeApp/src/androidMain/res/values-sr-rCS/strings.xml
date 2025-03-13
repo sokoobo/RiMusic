@@ -704,7 +704,7 @@
     <string name="info_pauses_player_when_volume_zero">Pauzira plejer kada jačina zvuka dostigne 0 i nastavlja kada je jačina zvuka veća od 0</string>
     <string name="quality">Kvalitet</string>
     <string name="value_must_be_ip_address">Vrednost mora biti ip adresa</string>
-    <string name="swipe_up_to_open_the_queue">Swipe up to open the queue</string>
+    <string name="swipe_up_to_open_the_queue">Prevuci na gore da bi otvorili Redosled</string>
     <string name="pinfo_show_icons">Prikaži informacije sa ikonama</string>
     <string name="format_ms">%1$s ms</string>
     <string name="minimum_silence_length">Minimalno trajanje tišine</string>
@@ -719,7 +719,7 @@
     <string name="error_no_internet">Nema mrežne veze</string>
     <string name="error_timeout">Vremensko ograničenje veze</string>
     <string name="error_unknown">Nepoznata greška</string>
-    <string name="delete_song">Do you really want to delete this song? It will be deleted from database.\\nThis action is irreversible.</string>
+    <string name="delete_song">Da li zaista želite da izbrišete ovu pesmu? Biće izbrisana iz baze podataka. Ova akcija je nepovratna.</string>
     <string name="update_album">Ažurira Album</string>
     <string name="info_check_update_now">Proveri Odmah</string>
     <string name="info_no_update_available">Nema dostupnih ažuriranja</string>
