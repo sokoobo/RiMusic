@@ -16,6 +16,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -142,6 +143,8 @@ import it.fast4x.rimusic.utils.setQueueLoopState
 import it.fast4x.rimusic.utils.shouldBePlaying
 import it.fast4x.rimusic.utils.showButtonPlayerArrowKey
 import it.fast4x.rimusic.utils.showButtonPlayerDiscoverKey
+import it.fast4x.rimusic.utils.shuffleQueue
+import it.fast4x.rimusic.utils.smoothScrollToTop
 import it.fast4x.rimusic.utils.thumbnailRoundnessKey
 import it.fast4x.rimusic.utils.windows
 import kotlinx.coroutines.CoroutineScope
@@ -164,16 +167,7 @@ fun QueueModern(
     onDismiss: (QueueLoopType) -> Unit,
     onDiscoverClick: (Boolean) -> Unit,
 ) {
-    //val uiType  by rememberPreference(UiTypeKey, UiType.RiMusic)
     val windowInsets = WindowInsets.systemBars
-
-    /*
-    val horizontalBottomPaddingValues = windowInsets
-        .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom).asPaddingValues()
-
-     */
-    //val bottomPaddingValues = windowInsets
-    //    .only(WindowInsetsSides.Bottom).asPaddingValues()
 
     val context = LocalContext.current
     val showButtonPlayerArrow by rememberPreference(showButtonPlayerArrowKey, true)
@@ -181,10 +175,6 @@ fun QueueModern(
 
     val disableScrollingText by rememberPreference(disableScrollingTextKey, false)
 
-//    Box(
-//        modifier = Modifier
-//            .fillMaxSize()
-//    ) {
     val binder = LocalPlayerServiceBinder.current
 
     binder?.player ?: return
@@ -233,13 +223,6 @@ fun QueueModern(
             }
         }
     }
-
-//        val reorderingState = rememberReorderingState(
-//            lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = mediaItemIndex),
-//            key = windows,
-//            onDragEnd = player::moveMediaItem,
-//            extraItemCount = 0
-//        )
 
     val rippleIndication = ripple(bounded = false)
 
@@ -417,11 +400,7 @@ fun QueueModern(
                         ) ?: false
             }
 
-//        Column(
-//            modifier = Modifier
-//                .background(if (queueType == QueueType.Modern) Color.Transparent else colorPalette().background1)
-//                .fillMaxSize()
-//        ) {
+
 
     Box(
         modifier = Modifier
@@ -432,13 +411,13 @@ fun QueueModern(
             .fillMaxSize()
     ) {
 
-    val lazyListState = rememberLazyListState()
-    val reorderableLazyListState = rememberReorderableLazyListState(
-        lazyListState = lazyListState,
-        scrollThresholdPadding = WindowInsets.systemBars.asPaddingValues(),
-    ) { from, to ->
-        player.moveMediaItem(from.index, to.index)
-    }
+        val lazyListState = rememberLazyListState()
+        val reorderableLazyListState = rememberReorderableLazyListState(
+            lazyListState = lazyListState,
+            scrollThresholdPadding = WindowInsets.systemBars.asPaddingValues(),
+        ) { from, to ->
+            player.moveMediaItem(from.index, to.index)
+        }
 
     LazyColumn(
         state = lazyListState,
@@ -550,6 +529,9 @@ fun QueueModern(
                 reorderableLazyListState,
                 key = window.uid.hashCode()
             ) { isDragging ->
+
+                val interactionSource = remember { MutableInteractionSource() }
+
                 val currentItem by rememberUpdatedState(window)
                 val checkedState = rememberSaveable { mutableStateOf(false) }
 
@@ -566,16 +548,22 @@ fun QueueModern(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-//                                .draggedItem(
-//                                    reorderingState = reorderingState,
-//                                    index = window.firstPeriodIndex
-//                                )
-
+                        .animateItem()
+                        .draggableHandle(
+                            enabled = !isReorderDisabled,
+                            interactionSource = interactionSource,
+                            onDragStarted = {
+                                hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                            },
+                            onDragStopped = {
+                                hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                            }
+                        )
                 ) {
                     Box(
                         modifier = Modifier
                             .size(24.dp)
-                            .zIndex(5f)
+                            .zIndex(10f)
                             .align(Alignment.TopEnd)
                             .offset(x = -15.dp)
 
@@ -584,15 +572,11 @@ fun QueueModern(
                         if (!isReorderDisabled) {
                             IconButton(
                                 icon = R.drawable.reorder,
-                                color = colorPalette().textDisabled,
+                                color = colorPalette().accent,
                                 indication = rippleIndication,
                                 onClick = {},
-                                modifier = Modifier
-                                    .draggableHandle()
-//                                            .reorder(
-//                                                reorderingState = reorderingState,
-//                                                index = window.firstPeriodIndex
-//                                            )
+//                                modifier = Modifier
+//                                    .draggableHandle()
                             )
                         }
                     }
@@ -662,21 +646,6 @@ fun QueueModern(
                                             window.mediaItem.mediaId,
                                             binder?.player
                                         )
-//                                                if (shouldBePlaying) {
-//                                                    MusicAnimation(
-//                                                        color = colorPalette().onOverlay,
-//                                                        modifier = Modifier
-//                                                            .height(24.dp)
-//                                                    )
-//                                                } else {
-//                                                    Image(
-//                                                        painter = painterResource(R.drawable.play),
-//                                                        contentDescription = null,
-//                                                        colorFilter = ColorFilter.tint(colorPalette().onOverlay),
-//                                                        modifier = Modifier
-//                                                            .size(24.dp)
-//                                                    )
-//                                                }
                                     }
                                 }
                             },
@@ -706,6 +675,7 @@ fun QueueModern(
                             },
                             modifier = Modifier
                                 .combinedClickable(
+                                    enabled = isReorderDisabled,
                                     onLongClick = {
                                         menuState.display {
                                             QueuedMediaItemMenu(
@@ -783,28 +753,6 @@ fun QueueModern(
         }
     }
 
-    /*
-    if(uiType == UiType.ViMusic)
-    FloatingActionsContainerWithScrollToTop(
-        lazyListState = reorderingState.lazyListState,
-        iconId = R.drawable.shuffle,
-        visible = !reorderingState.isDragging,
-        windowInsets = windowInsets.only(WindowInsetsSides.Horizontal),
-        onClick = {
-            reorderingState.coroutineScope.launch {
-                reorderingState.lazyListState.smoothScrollToTop()
-            }.invokeOnCompletion {
-                player.shuffleQueue()
-            }
-        }
-    )
-    */
-
-    //FloatingActionsContainerWithScrollToTop(lazyListState = reorderingState.lazyListState)
-
-
-
-
     val backgroundProgress by rememberPreference(backgroundProgressKey, BackgroundProgress.MiniPlayer)
     val positionAndDuration by binder.player.positionAndDurationState()
             Box(
@@ -813,8 +761,6 @@ fun QueueModern(
                     .background(colorPalette().background1)
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter)
-                    //.padding(horizontal = 8.dp)
-                    //.padding(horizontalBottomPaddingValues)
                     .height(60.dp) //bottom bar queue
 //                    .drawBehind {
 //                        if (backgroundProgress == BackgroundProgress.Both || backgroundProgress == BackgroundProgress.MiniPlayer) {
@@ -868,7 +814,7 @@ fun QueueModern(
                 ) {
 
                     BasicText(
-                        text = "${binder.player.mediaItemCount} ", //+ stringResource(R.string.songs), //+ " " + stringResource(R.string.on_queue),
+                        text = "${binder.player.mediaItemCount} ",
                         style = typography().xxs.medium,
                     )
                     Image(
@@ -888,7 +834,6 @@ fun QueueModern(
                     modifier = Modifier
                         .align(Alignment.CenterEnd)
                         .padding(horizontal = 4.dp)
-                    // .fillMaxHeight()
 
                 ) {
                     IconButton(
@@ -936,7 +881,7 @@ fun QueueModern(
 
                     IconButton(
                         icon = if (isReorderDisabled) R.drawable.locked else R.drawable.unlocked,
-                        color = colorPalette().text,
+                        color = if (isReorderDisabled) colorPalette().text else colorPalette().accent,
                         onClick = { isReorderDisabled = !isReorderDisabled },
                         modifier = Modifier
                             .padding(horizontal = 4.dp)
@@ -963,21 +908,21 @@ fun QueueModern(
                             .width(12.dp)
                     )
 
-//                    IconButton(
-//                        icon = R.drawable.shuffle,
-//                        color = colorPalette().text,
-//                        enabled = !reorderingState.isDragging,
-//                        modifier = Modifier
-//                            .padding(horizontal = 4.dp)
-//                            .size(24.dp),
-//                        onClick = {
-//                            reorderingState.coroutineScope.launch {
-//                                reorderingState.lazyListState.smoothScrollToTop()
-//                            }.invokeOnCompletion {
-//                                player.shuffleQueue()
-//                            }
-//                        }
-//                    )
+                    IconButton(
+                        icon = R.drawable.shuffle,
+                        color = colorPalette().text,
+                        enabled = !reorderableLazyListState.isAnyItemDragging,
+                        modifier = Modifier
+                            .padding(horizontal = 4.dp)
+                            .size(24.dp),
+                        onClick = {
+                            coroutineScope.launch {
+                                lazyListState.smoothScrollToTop()
+                            }.invokeOnCompletion {
+                                player.shuffleQueue()
+                            }
+                        }
+                    )
 
                     Spacer(
                         modifier = Modifier
@@ -1122,9 +1067,4 @@ fun QueueModern(
             }
     }
 
-//        FloatingActionsContainerWithScrollToTop(
-//            lazyListState = reorderingState.lazyListState,
-//            modifier = Modifier.padding(bottom = Dimensions.miniPlayerHeight)
-//        )
-    //}
 }

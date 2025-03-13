@@ -79,6 +79,11 @@ import kotlin.time.Duration.Companion.minutes
 
 const val EXPLICIT_BUNDLE_TAG = "is_explicit"
 
+fun <T> MutableList<T>.move(fromIndex: Int, toIndex: Int): MutableList<T> {
+    add(toIndex, removeAt(fromIndex))
+    return this
+}
+
 fun getDateTimeAsFormattedString(dateAsLongInMs: Long): String? {
     try {
         return SimpleDateFormat("dd/MM/yyyy").format(Date(dateAsLongInMs))
@@ -92,24 +97,6 @@ fun getTimestampFromDate(date: String): Long {
         SimpleDateFormat("dd-MM-yyyy").parse(date).time
     } catch (e: Exception) {
         return 0
-    }
-}
-
-fun songToggleLike( song: Song ) {
-    Database.asyncTransaction {
-        if (songExist(song.asMediaItem.mediaId) == 0)
-            insert(song.asMediaItem, Song::toggleLike)
-        //else {
-            if (songliked(song.asMediaItem.mediaId) == 0)
-                like(
-                    song.asMediaItem.mediaId,
-                    System.currentTimeMillis()
-                )
-            else like(
-                song.asMediaItem.mediaId,
-                null
-            )
-        //}
     }
 }
 
@@ -133,24 +120,6 @@ fun mediaItemToggleLike( mediaItem: MediaItem) {
             context(),
             mediaItem
         )
-    }
-}
-
-fun albumItemToggleBookmarked( albumItem: Environment.AlbumItem ) {
-    Database.asyncTransaction {
-        //if (Database.albumExist(albumItem.key) == 0)
-        //    Database.insert(albumItem.asAlbum, Album::toggleLike)
-        //else {
-        if (albumBookmarked(albumItem.key) == 0)
-            bookmarkAlbum(
-                albumItem.key,
-                System.currentTimeMillis()
-            )
-        else bookmarkAlbum(
-            albumItem.key,
-            null
-        )
-        //}
     }
 }
 
@@ -417,24 +386,6 @@ fun formatAsTime(millis: Long): String {
 
 fun formatTimelineSongDurationToTime(millis: Long) =
     Duration.ofMillis(millis*1000).toMinutes().minutes.toString()
-
-/*
-fun TimeToString(timeMs: Int): String {
-    val mFormatBuilder = StringBuilder()
-    val mFormatter = Formatter(mFormatBuilder, Locale.getDefault())
-    val totalSeconds = timeMs / 1000
-    //  videoDurationInSeconds = totalSeconds % 60;
-    val seconds = totalSeconds % 60
-    val minutes = totalSeconds / 60 % 60
-    val hours = totalSeconds / 3600
-    mFormatBuilder.setLength(0)
-    return if (hours > 0) {
-        mFormatter.format("%d:%02d:%02d", hours, minutes, seconds).toString()
-    } else {
-        mFormatter.format("%02d:%02d", minutes, seconds).toString()
-    }
-}
-*/
 
 @SuppressLint("SimpleDateFormat")
 fun getCalculatedMonths( month: Int): String? {
