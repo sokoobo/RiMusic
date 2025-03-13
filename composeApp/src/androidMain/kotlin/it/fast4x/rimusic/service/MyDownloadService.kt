@@ -58,7 +58,8 @@ class MyDownloadService : DownloadService(
                 /* context            = */ this,
                 /* smallIcon          = */ R.drawable.download_progress,
                 /* contentIntent      = */ null,
-                /* message            = */ "${downloads.size} in progress",
+                /* message            = */ downloadManager.currentDownloads.map { it.request.data }.firstOrNull()
+                        ?.let { Util.fromUtf8Bytes(it) } ?: "${downloads.size} in progress",
                 /* downloads          = */ downloads,
                 /* notMetRequirements = */ notMetRequirements
             )

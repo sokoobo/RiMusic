@@ -14,6 +14,7 @@ import androidx.media3.exoplayer.scheduler.PlatformScheduler
 import it.fast4x.rimusic.R
 import it.fast4x.rimusic.appContext
 import it.fast4x.rimusic.service.MyPreCacheHelper.DOWNLOAD_NOTIFICATION_CHANNEL_ID
+import it.fast4x.rimusic.service.MyPreCacheHelper.downloads
 
 private const val JOB_ID = 7777
 private const val FOREGROUND_NOTIFICATION_ID = 7878
@@ -31,7 +32,7 @@ class MyPreCacheService : DownloadService(
         // This will only happen once, because getDownloadManager is guaranteed to be called only once
         // in the life cycle of the process.
         val downloadManager: DownloadManager = MyPreCacheHelper.getDownloadManager(this)
-        // Notification for pre cache not necessary
+        //not required for caching
 //        val downloadNotificationHelper: DownloadNotificationHelper =
 //            MyPreCacheHelper.getDownloadNotificationHelper(this)
 //        downloadManager.addListener(
@@ -60,7 +61,9 @@ class MyPreCacheService : DownloadService(
                 /* context            = */ this,
                 /* smallIcon          = */ R.drawable.download,
                 /* contentIntent      = */ null,
-                /* message            = */ "${downloads.size} in progress",
+                /* message            = */
+                    downloadManager.currentDownloads.map { it.request.data }.firstOrNull()
+                        ?.let { Util.fromUtf8Bytes(it) } ?: "${downloads.size} in progress",
                 /* downloads          = */ downloads,
                 /* notMetRequirements = */ notMetRequirements
             )
@@ -99,14 +102,24 @@ class MyPreCacheService : DownloadService(
             finalException: Exception?
         ) {
             val notification: Notification = when (download.state) {
-                Download.STATE_COMPLETED -> {
-                    notificationHelper.buildDownloadCompletedNotification(
-                        context,
-                        R.drawable.downloaded,
-                        null,
-                        Util.fromUtf8Bytes(download.request.data)
-                    )
-                }
+//                Download.STATE_DOWNLOADING -> {
+//                    notificationHelper.buildProgressNotification(
+//                        context,
+//                        R.drawable.download_progress,
+//                        null,
+//                        Util.fromUtf8Bytes(download.request.data),
+//                        downloadManager.currentDownloads,
+//                        0
+//                    )
+//                }
+//                Download.STATE_COMPLETED -> {
+//                    notificationHelper.buildDownloadCompletedNotification(
+//                        context,
+//                        R.drawable.downloaded,
+//                        null,
+//                        Util.fromUtf8Bytes(download.request.data)
+//                    )
+//                }
                 Download.STATE_FAILED -> {
                     notificationHelper.buildDownloadFailedNotification(
                         context,
