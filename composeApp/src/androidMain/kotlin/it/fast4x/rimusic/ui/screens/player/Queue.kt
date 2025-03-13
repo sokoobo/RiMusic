@@ -549,23 +549,23 @@ fun Queue(
                     modifier = Modifier
                         .fillMaxWidth()
                         .animateItem()
-                        .draggableHandle(
-                            enabled = !isReorderDisabled,
-                            interactionSource = interactionSource,
-                            onDragStarted = {
-                                hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
-                            },
-                            onDragStopped = {
-                                hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
-                            }
-                        )
                 ) {
                     Box(
                         modifier = Modifier
                             .size(24.dp)
                             .zIndex(10f)
-                            .align(Alignment.TopEnd)
-                            .offset(x = -15.dp)
+                            .align(Alignment.TopCenter)
+                            .offset(y = (-5).dp)
+                            .draggableHandle(
+                                enabled = !isReorderDisabled,
+                                interactionSource = interactionSource,
+                                onDragStarted = {
+                                    hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                                },
+                                onDragStopped = {
+                                    hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                                }
+                            )
 
                     ) {
 
@@ -675,7 +675,7 @@ fun Queue(
                             },
                             modifier = Modifier
                                 .combinedClickable(
-                                    enabled = isReorderDisabled,
+                                    //enabled = isReorderDisabled,
                                     onLongClick = {
                                         menuState.display {
                                             QueuedMediaItemMenu(

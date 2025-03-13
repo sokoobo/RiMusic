@@ -2323,16 +2323,7 @@ fun LocalPlaylistSongs(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .animateItem()
-                                .draggableHandle(
-                                    enabled = !isReorderDisabled,
-                                    interactionSource = interactionSource,
-                                    onDragStarted = {
-                                        hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
-                                    },
-                                    onDragStopped = {
-                                        hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
-                                    }
-                                )
+
                         ) {
                             val isLocal by remember { derivedStateOf { song.asMediaItem.isLocal } }
                             downloadState = getDownloadState(song.asMediaItem.mediaId)
@@ -2344,8 +2335,18 @@ fun LocalPlaylistSongs(
                                 modifier = Modifier
                                     .size(24.dp)
                                     .zIndex(10f)
-                                    .align(Alignment.TopEnd)
-                                    .offset(x = -15.dp)
+                                    .align(Alignment.TopCenter)
+                                    .offset(y = (-5).dp)
+                                    .draggableHandle(
+                                        enabled = !isReorderDisabled,
+                                        interactionSource = interactionSource,
+                                        onDragStarted = {
+                                            hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                                        },
+                                        onDragStopped = {
+                                            hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                                        }
+                                    )
 
                             ) {
                                 if (!isReorderDisabled && sortBy == PlaylistSongSortBy.Position && sortOrder == SortOrder.Ascending) {
@@ -2551,7 +2552,7 @@ fun LocalPlaylistSongs(
                                     },
                                     modifier = Modifier
                                         .combinedClickable(
-                                            enabled = isReorderDisabled,
+                                            //enabled = isReorderDisabled,
                                             onLongClick = {
                                                 menuState.display {
                                                     InPlaylistMediaItemMenu(
