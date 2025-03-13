@@ -333,11 +333,15 @@ class MediaLibrarySessionCallback (
 
                                     ID_CACHED -> database.sortOfflineSongsByPlayTime().map { list ->
                                         list.filter { song ->
-                                            binder?.cache?.isCached(
-                                                song.song.id,
-                                                0L,
-                                                song.contentLength ?: 0L
-                                            ) ?: false
+                                            try {
+                                                binder.cache.isCached(
+                                                    song.song.id,
+                                                    0L,
+                                                    song.contentLength ?: 0L
+                                                )
+                                            } catch (e: Exception) {
+                                                false
+                                            }
                                         }.reversed()
                                             .map { it.song }
                                     }
@@ -470,8 +474,11 @@ class MediaLibrarySessionCallback (
                         ID_FAVORITES -> database.sortFavoriteSongsByRowId().map { it.reversed() }
                         ID_CACHED -> database.sortOfflineSongsByPlayTime().map {
                             it.filter { song ->
-                                binder?.cache?.isCached(song.song.id, 0L, song.contentLength ?: 0L)
-                                    ?: false
+                                try {
+                                    binder.cache.isCached(song.song.id, 0L, song.contentLength ?: 0L)
+                                } catch (e: Exception) {
+                                    false
+                                }
                             }.reversed()
                         }
 
@@ -618,7 +625,11 @@ class MediaLibrarySessionCallback (
 
     private fun getCountCachedSongs() = database.sortOfflineSongsByPlayTime().map {
         it.filter { song ->
-            binder.cache.isCached(song.song.id, 0L, song.contentLength ?: 0L)
+            try {
+                binder.cache.isCached(song.song.id, 0L, song.contentLength ?: 0L)
+            } catch (e: Exception) {
+                false
+            }
         }.size
     }
 

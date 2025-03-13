@@ -1,6 +1,7 @@
 package it.fast4x.rimusic.utils
 
 
+import android.content.Context
 import androidx.annotation.OptIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -154,4 +155,38 @@ fun isDownloadedSong(mediaId: String): Boolean {
         DownloadedStateMedia.CACHED_AND_DOWNLOADED, DownloadedStateMedia.DOWNLOADED -> true
         else -> false
     }
+}
+
+@UnstableApi
+fun isCachedOrDownloaded(
+    context: Context,
+    mediaId: String
+): Pair<Boolean, Boolean> {
+    //if (!isNetworkConnected(appContext())) return false to false
+    val cache: SimpleCache by lazy {
+        principalCache.getInstance(context)
+    }
+    val downloadCache: SimpleCache by lazy {
+        MyDownloadHelper.getDownloadCache(context) as SimpleCache
+    }
+    var contentLength = 0L
+    CoroutineScope(Dispatchers.IO).launch {
+        contentLength = Database.formatContentLength(mediaId).also {
+            println("isCachedOrDownloaded: contentLength inside is $it")
+        }
+    }
+    println("isCachedOrDownloaded: mediaId ${mediaId} $contentLength")
+    val isCached = try {
+        cache.isCached(mediaId,0L, contentLength)
+    } catch (e: Exception) {
+        false
+    }
+    val isDownloaded = try {
+        downloadCache.isCached(mediaId,0L, contentLength)
+    } catch (e: Exception) {
+        false
+    }
+
+    return isCached to isDownloaded
+
 }

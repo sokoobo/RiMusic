@@ -451,7 +451,11 @@ fun HomeSongs(
 
             BuiltInPlaylist.Offline -> { song ->
                 song.contentLength?.let {
-                    binder?.cache?.isCached(song.song.id, 0, song.contentLength)
+                    try {
+                        binder?.cache?.isCached(song.song.id, 0, song.contentLength)
+                    } catch (e: Exception) {
+                        false
+                    }
                 } ?: false
             }
 

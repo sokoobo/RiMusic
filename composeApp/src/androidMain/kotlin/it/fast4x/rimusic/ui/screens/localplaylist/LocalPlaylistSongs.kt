@@ -262,7 +262,13 @@ fun LocalPlaylistSongs(
         val downloads = MyDownloadHelper.downloads.value
         CoroutineScope(Dispatchers.IO).launch {
             downloadedPlaylistSongs = playlistAllSongs.filter { song -> downloads[song.song.id]?.state == Download.STATE_COMPLETED }
-            cachedPlaylistSongs = playlistAllSongs.filter { song -> song.contentLength?.let { binder?.cache?.isCached(song.song.id, 0, song.contentLength) } ?: false
+            cachedPlaylistSongs = playlistAllSongs.filter { song -> song.contentLength?.let {
+                try {
+                    binder?.cache?.isCached(song.song.id, 0, song.contentLength)
+                } catch (e: Exception) {
+                    false
+                }
+            } ?: false
             }
         }
     }

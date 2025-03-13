@@ -419,25 +419,6 @@ fun HomeSongsModern(
             LaunchedEffect(Unit, builtInPlaylist, sortBy, sortOrder, filter, topPlaylistPeriod) {
 
                 if (builtInPlaylist == BuiltInPlaylist.Downloaded) {
-                    /*
-                    val downloads = DownloadUtil.downloads.value
-                    Database.listAllSongsAsFlow()
-                        .combine(
-                            Database
-                                .songsOffline(sortBy, sortOrder)
-                        ){ a, b ->
-                            a.filter { song ->
-                                downloads[song.song.id]?.state == Download.STATE_COMPLETED
-                            }.union(
-                                b.filter { binder?.isCached(it) ?: false } //.map { it.song }
-                            )
-                        }
-                        .collect {
-                            items = it.toList()
-                        }
-
-                     */
-
 
                     val downloads = MyDownloadHelper.downloads.value
                     Database.listAllSongsAsFlow()
@@ -447,9 +428,6 @@ fun HomeSongsModern(
                                 binder?.downloadCache?.keys?.contains(song.song.id) == true
                                         && downloads[song.song.id]?.state == Download.STATE_COMPLETED
                             }
-//                            .filter { song ->
-//                                downloads[song.song.id]?.state == Download.STATE_COMPLETED
-//                            }
                         }
                         .collect {
                             items = it
@@ -474,7 +452,11 @@ fun HomeSongsModern(
                         .map { songs ->
                             songs.filter { song ->
                                 song.contentLength?.let {
-                                    binder?.cache?.isCached(song.song.id, 0, song.contentLength)
+                                    try {
+                                        binder?.cache?.isCached(song.song.id, 0, song.contentLength)
+                                    } catch (e: Exception) {
+                                        false
+                                    }
                                 } ?: false
                             }
                         }
