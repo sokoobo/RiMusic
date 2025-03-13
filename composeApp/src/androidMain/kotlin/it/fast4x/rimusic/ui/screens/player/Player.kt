@@ -3333,7 +3333,7 @@ fun Player(
             },
             shape = thumbnailRoundness.shape()
         ) {
-            QueueModern(
+            Queue(
                 navController = navController,
                 onDismiss = {
                     queueLoopType = it

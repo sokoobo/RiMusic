@@ -53,8 +53,6 @@ import it.fast4x.rimusic.models.Mood
 import it.fast4x.rimusic.models.SearchQuery
 import it.fast4x.rimusic.ui.components.CustomModalBottomSheet
 import it.fast4x.rimusic.ui.screens.album.AlbumScreen
-import it.fast4x.rimusic.ui.screens.artist.ArtistOverviewItems
-import it.fast4x.rimusic.ui.screens.artist.ArtistScreen
 import it.fast4x.rimusic.ui.screens.artist.ArtistScreenModern
 import it.fast4x.rimusic.ui.screens.builtinplaylist.BuiltInPlaylistScreen
 import it.fast4x.rimusic.ui.screens.history.HistoryScreen
@@ -66,7 +64,6 @@ import it.fast4x.rimusic.ui.screens.newreleases.NewreleasesScreen
 import it.fast4x.rimusic.ui.screens.ondevice.DeviceListSongsScreen
 import it.fast4x.rimusic.ui.screens.player.Player
 import it.fast4x.rimusic.ui.screens.player.Queue
-import it.fast4x.rimusic.ui.screens.player.QueueModern
 import it.fast4x.rimusic.ui.screens.playlist.PlaylistScreen
 import it.fast4x.rimusic.ui.screens.podcast.PodcastScreen
 import it.fast4x.rimusic.ui.screens.search.SearchScreen
@@ -236,7 +233,7 @@ fun AppNavigation(
 
         composable(route = NavRoutes.queue.name) {
             modalBottomSheetPage {
-                QueueModern(
+                Queue(
                     navController = navController,
                     onDismiss = {},
                     onDiscoverClick = {}
