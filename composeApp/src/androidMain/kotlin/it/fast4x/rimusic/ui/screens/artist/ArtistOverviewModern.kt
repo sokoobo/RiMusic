@@ -1,5 +1,6 @@
 package it.fast4x.rimusic.ui.screens.artist
 
+import VideoPlayer
 import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
@@ -538,7 +539,9 @@ fun ArtistOverviewModern(
 
                         if (!readMore)
                             BasicText(
-                                text = description.substring(0,100).plus("..."),
+                                text = description.substring(0,
+                                    if (description.length >= 100) 100 else description.length
+                                ).plus("..."),
                                 style = typography().xxs.secondary.align(TextAlign.Justify),
                                 modifier = Modifier
                                     .padding(horizontal = 8.dp)

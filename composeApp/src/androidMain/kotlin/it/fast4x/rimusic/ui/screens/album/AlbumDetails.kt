@@ -1229,7 +1229,9 @@ fun AlbumDetails(
 
                             if (!readMore)
                                 BasicText(
-                                    text = translatedText.substring(0,100).plus("..."),
+                                    text = translatedText.substring(0,
+                                        if (translatedText.length >= 100) 100 else translatedText.length
+                                    ).plus("..."),
                                     style = typography().xxs.secondary.align(TextAlign.Justify),
                                     modifier = Modifier
                                         .padding(horizontal = 8.dp)
