@@ -811,7 +811,7 @@
     <string name="colored_bar">Obojeni Bar</string>
     <string name="about_developers_designers">Programeri / Dizajneri</string>
     <string name="set_custom_value">Prilagođena vrednost</string>
-    <string name="title_youtube_music">JUTJUB MJUZIK</string>
+    <string name="title_youtube_music">YOUTUBE MUSIC</string>
     <string name="enable_youtube_music_login">Omogući Prijavu na YouTube Music</string>
     <string name="show_cover_thumbnail_animation">Prikaži animaciju sličice omota</string>
     <string name="cover_thumbnail_animation_type">Tip animacije Omota</string>
@@ -828,13 +828,13 @@
     <string name="notification_type">Tip obaveštenja</string>
     <string name="notification_type_default">Podrazumevano</string>
     <string name="notification_type_advanced">Napredno</string>
-    <string name="notification_type_info">Način na koji se plejerom rukuje u polju za obaveštenja i zaključanom ekranu.</string>
+    <string name="notification_type_info">Način na koji se rukuje plejerom u polju za obaveštenja i zaključanom ekranu.</string>
     <string name="action_bar_show_start_radio_button">Dugme za pokreni radio</string>
     <string name="tab_accounts">Nalozi</string>
     <string name="blankspace">Prazan Prostor na Vrhu</string>
     <string name="settings_enable_autodownload_song">Omogući automatsko preuzimanje pesme</string>
     <string name="settings_enable_autodownload_song_when_liked">Automatsko preuzimanje pesme kada se lajkuje</string>
-    <string name="settings_enable_autodownload_song_when_album_bookmarked">Automatsko preuzimanje pesme kada je album zabeležen</string>
+    <string name="settings_enable_autodownload_song_when_album_bookmarked">Automatsko preuzimanje pesme kada je album dodat u omiljeno</string>
     <string name="tab_general">Opšte</string>
     <string name="queue_and_local_playlists_left_swipe">Prevlačenje ulevo u redosledu i u lokalnim plejlistama</string>
     <string name="queue_and_local_playlists_right_swipe">Prevlačenje udesno u redosledu i u lokalnim plejlistama</string>
@@ -842,7 +842,7 @@
     <string name="playlist_right_swipe">Prevlačenje udesno u plejlisti</string>
     <string name="album_left_swipe">Prevlačenje ulevo u Albumu</string>
     <string name="album_right_swipe">Prevlačenje udesno u Albumu</string>
-    <string name="bookmark">Obеlеživač</string>
+    <string name="bookmark">Omiljeno</string>
     <string name="downloading_videos_not_supported">Preuzimanje video zapisa nije podržano</string>
     <string name="animatedgradient">Animirana prelazna boja</string>
     <string name="linear">Linearna prelazna boja</string>
@@ -875,7 +875,7 @@
     <string name="info_use_ytm_login_only_for_browse">Koristi se ako se pesme ne reprodukuju kada ste prijavljeni</string>
     <string name="disliked_this_song">Nije moguće izvršiti ovu radnju sa Dislajkovanim pesmama</string>
     <string name="removed_from_disliked">Uklonjeno iz Dislajkovanih</string>
-    <string name="disliked_this_collection">Cannot Perform this Action when all the Songs are Disliked</string>
+    <string name="disliked_this_collection">Ne može se izvršiti ova radnja kada su sve pesme ili Dislajkovane ili nemaju parove</string>
     <string name="toggle_controls_landscape">Uključi kontrole na ekranu</string>
     <string name="delete_songs_not_in_library">Izbriši pesme koje nisu u Biblioteci</string>
     <string name="delete_in_process">Brišu se pesme koje nisu u Biblioteci. Aplikacija će se zatvoriti nakon što se proces završi</string>
@@ -897,7 +897,7 @@
     <string name="syncing">Sinhronizovanje...</string>
     <string name="autosync_channels">Automatska sinhronizacija pretplaćenih kanala</string>
     <string name="autosync_albums">Automatska sinhronizacija sačuvanih Albuma</string>
-    <string name="save_youtube_library">Save in the Youtube Library</string>
+    <string name="save_youtube_library">Sačuvaj plejlistu u Youtube Biblioteci</string>
     <string name="cant_rename_Saved_albums">Nije moguće preimenovati albume sačuvane u YouTube muzičkoj biblioteci</string>
     <string name="ytm_library">YTM Biblioteka</string>
     <string name="cannot_delete_from_online_playlists">Nije moguće izbrisati pesme sa onlajn plejliste</string>
