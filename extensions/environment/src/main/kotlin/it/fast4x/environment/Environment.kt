@@ -161,6 +161,8 @@ object Environment {
                 val openDns = DnsOverHttps.Builder().client(bootstrapClient)
                     .url("https://doh.opendns.com/dns-query".toHttpUrl())
                     .bootstrapDnsHosts(InetAddress.getByName("208.67.222.222"), InetAddress.getByName("208.67.220.220")).build()
+                val adGuardDns = DnsOverHttps.Builder().client(bootstrapClient)
+                    .url("https://unfiltered.adguard-dns.com/dns-query".toHttpUrl()).build()
                 val customDns = this@Environment.customDnsToUse?.let {
                     DnsOverHttps.Builder().client(bootstrapClient)
                         .url(it.toHttpUrl()).build()
@@ -169,6 +171,7 @@ object Environment {
                     "google" -> googleDns
                     "cloudflare" -> cloudflareDns
                     "opendns" -> openDns
+                    "adguard" -> adGuardDns
                     "custom" -> customDns
                     else -> googleDns
                 }
