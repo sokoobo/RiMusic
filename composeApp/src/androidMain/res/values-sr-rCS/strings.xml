@@ -732,7 +732,7 @@
     <string name="social_telegram_info">Pridruži se grupi na Telegramu</string>
     <string name="social_github">GitHub</string>
     <string name="update">Ažuriraj</string>
-    <string name="update_song">Do you really want to refetch this song? Playback time and cached data will be wiped.\\nThis action is irreversible.</string>
+    <string name="update_song">Dali zaista želite da ponovo preuzmete ovu pesmu? Vreme puštanja i keš pesme će biti obrisani. Ova akcija je nepovratna.</string>
     <string name="player_pause_listen_history_info">Ne čuva događaje reprodukcije koji se koriste za statistiku, istoriju i predloge u brzim odabirima</string>
     <string name="vertical_widget">Vertikalni vidžet</string>
     <string name="horizontal_widget">Horizontalni vidžet</string>
