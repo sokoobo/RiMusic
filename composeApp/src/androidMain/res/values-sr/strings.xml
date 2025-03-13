@@ -748,7 +748,7 @@
     <string name="settings_reset">Ресетуј</string>
     <string name="settings_restore_default_settings">Врати на фабричка подешавања</string>
     <string name="piped_custom_instance">Пипед прилагођена инстанца</string>
-    <string name="create_new_playlist">Направи Нову Плејлисту</string>
+    <string name="create_new_playlist">Направи нову плејлисту</string>
     <string name="settings_loudness_base_gain">Појачање базе гласноће</string>
     <string name="settings_target_gain_loudness_info">Појачање циља за нормализацију гласноће</string>
     <string name="error_media_cannot_be_played">Медији се не могу репродуковати</string>
