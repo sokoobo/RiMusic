@@ -834,7 +834,7 @@
     <string name="blankspace">Празан Простор на Врху</string>
     <string name="settings_enable_autodownload_song">Омогући аутоматско преузимање песме</string>
     <string name="settings_enable_autodownload_song_when_liked">Аутоматско преузимање песме када се лајкује</string>
-    <string name="settings_enable_autodownload_song_when_album_bookmarked">Аутоматско преузимање песме када је албум забележен</string>
+    <string name="settings_enable_autodownload_song_when_album_bookmarked">Аутоматско преузимање песме када је албум додат у омиљено</string>
     <string name="tab_general">Опште</string>
     <string name="queue_and_local_playlists_left_swipe">Превлачење улево у редоследу и у локалним плејлистама</string>
     <string name="queue_and_local_playlists_right_swipe">Превлачење удесно у редоследу и у локалним плејлистама</string>
@@ -842,7 +842,7 @@
     <string name="playlist_right_swipe">Превлачење удесно у плејлисти</string>
     <string name="album_left_swipe">Превлачење улево у Албуму</string>
     <string name="album_right_swipe">Превлачење удесно у Албуму</string>
-    <string name="bookmark">Обележивач</string>
+    <string name="bookmark">Омиљено</string>
     <string name="downloading_videos_not_supported">Преузимање видео записа није подржано</string>
     <string name="animatedgradient">Анимирана прелазна боја</string>
     <string name="linear">Линеарна прелазна боја</string>
@@ -897,7 +897,7 @@
     <string name="syncing">Синхронизовање…</string>
     <string name="autosync_channels">Аутоматска синхронизација претплаћених канала</string>
     <string name="autosync_albums">Аутоматска синхронизација сачуваних Албума</string>
-    <string name="save_youtube_library">Сачувајте плејлисту у Јутјуб библиотеци</string>
+    <string name="save_youtube_library">Сачувај плејлисту у Јутјуб библиотеци</string>
     <string name="cant_rename_Saved_albums">Није могуће преименовати албуме сачуване у Јутјуб музичкој библиотеци</string>
     <string name="ytm_library">ЈТМ Библиотека</string>
     <string name="cannot_delete_from_online_playlists">Није могуће избрисати песме са онлајн плејлисте</string>
