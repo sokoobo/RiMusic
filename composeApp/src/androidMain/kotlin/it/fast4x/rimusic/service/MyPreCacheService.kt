@@ -15,6 +15,7 @@ import it.fast4x.rimusic.R
 import it.fast4x.rimusic.appContext
 import it.fast4x.rimusic.service.MyPreCacheHelper.DOWNLOAD_NOTIFICATION_CHANNEL_ID
 import it.fast4x.rimusic.service.MyPreCacheHelper.downloads
+import it.fast4x.rimusic.utils.ActionReceiver
 
 private const val JOB_ID = 7777
 private const val FOREGROUND_NOTIFICATION_ID = 7878
@@ -26,6 +27,17 @@ class MyPreCacheService : DownloadService(
     DOWNLOAD_NOTIFICATION_CHANNEL_ID,
     R.string.caching, 0
 ) {
+
+    private val notificationActionReceiver = NotificationActionReceiver()
+
+    override fun onCreate() {
+        super.onCreate()
+        notificationActionReceiver.register()
+    }
+    override fun onDestroy() {
+        unregisterReceiver(notificationActionReceiver)
+        super.onDestroy()
+    }
 
     override fun getDownloadManager(): DownloadManager {
 
@@ -70,17 +82,18 @@ class MyPreCacheService : DownloadService(
         )
         .setContentTitle(appContext().resources.getString(R.string.caching))
         .setChannelId(DOWNLOAD_NOTIFICATION_CHANNEL_ID)
-        /*
         // Add action in notification
         .addAction(
             NotificationCompat.Action.Builder(
                 /* icon = */ R.drawable.close,
                 /* title = */ getString(R.string.cancel),
-                /* intent = */ null //TODO notificationActionReceiver.cancel.pendingIntent
+                notificationActionReceiver.cancel.pendingIntent
+//                /* intent = */ Intent(this,MyDownloadService::class.java).also {
+//                    it.action = notificationActionReceiver.cancel.value
+//                    it.putExtra("id", FOREGROUND_NOTIFICATION_ID + 1)
+//                }
             ).build()
-        )
-        */
-        .build()
+        ).build()
 
     /**
      * Creates and displays notifications for downloads when they complete or fail.
@@ -135,6 +148,31 @@ class MyPreCacheService : DownloadService(
         }
 
 
+    }
+
+    inner class NotificationActionReceiver : ActionReceiver("it.fast4x.rimusic.precache_notification_action") {
+        val cancel by action { context, intent ->
+            runCatching {
+//                sendSetStopReason(
+//                     context,
+//                     MyDownloadService::class.java,
+//                     ACTION_SET_STOP_REASON,
+//                     intent.getIntExtra("id", 0),
+//                    true
+//                    )
+                sendPauseDownloads(
+                    /* context         = */ context,
+                    /* clazz           = */ MyPreCacheService::class.java,
+                    /* foreground      = */ true
+                )
+            }.recoverCatching {
+                sendPauseDownloads(
+                    /* context         = */ context,
+                    /* clazz           = */ MyPreCacheService::class.java,
+                    /* foreground      = */ false
+                )
+            }
+        }
     }
 
 }
