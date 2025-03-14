@@ -2004,6 +2004,8 @@ fun LocalPlaylistSongs(
                             color = colorPalette.text,
                             onClick = {
                                 sortOrder = !sortOrder
+                                if (sortBy == PlaylistSongSortBy.Position && sortOrder == SortOrder.Ascending)
+                                    isReorderDisabled = false else isReorderDisabled = true
                             },
                             modifier = Modifier
                                 .graphicsLayer { rotationZ = sortOrderIconRotation }
@@ -2038,24 +2040,25 @@ fun LocalPlaylistSongs(
                                         SortMenu(
                                             title = stringResource(R.string.sorting_order),
                                             onDismiss = menuState::hide,
-                                            onTitle = { sortBy = PlaylistSongSortBy.Title },
-                                            onAlbum = { sortBy = PlaylistSongSortBy.Album },
-                                            onAlbumYear = { sortBy = PlaylistSongSortBy.AlbumYear },
+                                            onTitle = { sortBy = PlaylistSongSortBy.Title; isReorderDisabled = true },
+                                            onAlbum = { sortBy = PlaylistSongSortBy.Album; isReorderDisabled = true },
+                                            onAlbumYear = { sortBy = PlaylistSongSortBy.AlbumYear; isReorderDisabled = true },
                                             onDatePlayed = {
-                                                sortBy = PlaylistSongSortBy.DatePlayed
+                                                sortBy = PlaylistSongSortBy.DatePlayed; isReorderDisabled = true
                                             },
-                                            onDateLiked = { sortBy = PlaylistSongSortBy.DateLiked },
-                                            onPosition = { sortBy = PlaylistSongSortBy.Position },
-                                            onArtist = { sortBy = PlaylistSongSortBy.Artist },
+                                            onDateLiked = { sortBy = PlaylistSongSortBy.DateLiked; isReorderDisabled = true },
+                                            onPosition = { sortBy = PlaylistSongSortBy.Position
+                                                if (sortOrder == SortOrder.Ascending) isReorderDisabled = false else isReorderDisabled = true },
+                                            onArtist = { sortBy = PlaylistSongSortBy.Artist; isReorderDisabled = true },
                                             onArtistAndAlbum = {
-                                                sortBy = PlaylistSongSortBy.ArtistAndAlbum
+                                                sortBy = PlaylistSongSortBy.ArtistAndAlbum; isReorderDisabled = true
                                             },
-                                            onPlayTime = { sortBy = PlaylistSongSortBy.PlayTime },
+                                            onPlayTime = { sortBy = PlaylistSongSortBy.PlayTime; isReorderDisabled = true },
                                             onRelativePlayTime = {
-                                                sortBy = PlaylistSongSortBy.RelativePlayTime
+                                                sortBy = PlaylistSongSortBy.RelativePlayTime; isReorderDisabled = true
                                             },
-                                            onDuration = { sortBy = PlaylistSongSortBy.Duration },
-                                            onDateAdded = { sortBy = PlaylistSongSortBy.DateAdded },
+                                            onDuration = { sortBy = PlaylistSongSortBy.Duration; isReorderDisabled = true },
+                                            onDateAdded = { sortBy = PlaylistSongSortBy.DateAdded; isReorderDisabled = true },
                                         )
                                     }
 
