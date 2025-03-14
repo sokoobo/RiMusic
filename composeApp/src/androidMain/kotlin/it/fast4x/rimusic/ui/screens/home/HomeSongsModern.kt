@@ -82,13 +82,11 @@ import androidx.navigation.NavController
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import it.fast4x.compose.persist.persistList
-import it.fast4x.innertube.YtMusic
 import it.fast4x.rimusic.Database
 import it.fast4x.rimusic.EXPLICIT_PREFIX
 import it.fast4x.rimusic.LocalPlayerServiceBinder
 import it.fast4x.rimusic.R
 import it.fast4x.rimusic.appContext
-import it.fast4x.rimusic.cleanPrefix
 import it.fast4x.rimusic.colorPalette
 import it.fast4x.rimusic.enums.BuiltInPlaylist
 import it.fast4x.rimusic.enums.CacheType
@@ -105,6 +103,7 @@ import it.fast4x.rimusic.enums.SortOrder
 import it.fast4x.rimusic.enums.ThumbnailRoundness
 import it.fast4x.rimusic.enums.TopPlaylistPeriod
 import it.fast4x.rimusic.enums.UiType
+import it.fast4x.rimusic.enums.NavRoutes
 import it.fast4x.rimusic.models.Folder
 import it.fast4x.rimusic.models.OnDeviceSong
 import it.fast4x.rimusic.models.Song
@@ -153,7 +152,6 @@ import it.fast4x.rimusic.utils.center
 import it.fast4x.rimusic.utils.color
 import it.fast4x.rimusic.utils.defaultFolderKey
 import it.fast4x.rimusic.utils.disableScrollingTextKey
-import it.fast4x.rimusic.utils.downloadedStateMedia
 import it.fast4x.rimusic.utils.durationTextToMillis
 import it.fast4x.rimusic.utils.enqueue
 import it.fast4x.rimusic.utils.excludeSongsWithDurationLimitKey
@@ -194,7 +192,6 @@ import java.util.Date
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.time.Duration
-import it.fast4x.rimusic.ui.components.SwipeablePlaylistItem
 import it.fast4x.rimusic.ui.components.themed.CacheSpaceIndicator
 import it.fast4x.rimusic.ui.components.themed.InProgressDialog
 import it.fast4x.rimusic.ui.screens.settings.isYouTubeSyncEnabled
@@ -205,8 +202,6 @@ import it.fast4x.rimusic.utils.formatAsDuration
 import it.fast4x.rimusic.utils.isDownloadedSong
 import it.fast4x.rimusic.utils.isNetworkConnected
 import it.fast4x.rimusic.utils.isNowPlaying
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import kotlin.system.exitProcess
 import it.fast4x.rimusic.utils.showDislikedPlaylistKey
@@ -286,6 +281,7 @@ fun HomeSongsModern(
     var nowPlayingItem by remember {
         mutableStateOf(-1)
     }
+
 
     /************ OnDeviceDev */
     val permission = if (Build.VERSION.SDK_INT >= 33) Manifest.permission.READ_MEDIA_AUDIO
@@ -453,8 +449,12 @@ fun HomeSongsModern(
                         .flowOn(Dispatchers.IO)
                         .map {
                             it.filter { song ->
-                                downloads[song.song.id]?.state == Download.STATE_COMPLETED
+                                binder?.downloadCache?.keys?.contains(song.song.id) == true
+                                        && downloads[song.song.id]?.state == Download.STATE_COMPLETED
                             }
+//                            .filter { song ->
+//                                downloads[song.song.id]?.state == Download.STATE_COMPLETED
+//                            }
                         }
                         .collect {
                             items = it
@@ -496,44 +496,6 @@ fun HomeSongsModern(
                         .collect {
                             items = it
                         }
-
-                    /*
-                    Database
-                        .songsOffline(sortBy, sortOrder)
-                        .map { songs ->
-                            songs.filter { binder?.isCached(it) ?: false }
-                        }
-                        .collect {
-                            items = it
-                        }
-
-                     */
-
-                    //println("mediaItem offline items: ${items.size} filter ${filter}")
-                    /*
-
-                                Database
-                                    .songsOffline(sortBy, sortOrder)
-                                    .map {
-                                        it.filter { song ->
-                                            song.contentLength?.let {
-                                                withContext(Dispatchers.Main) {
-                                                    binder?.cache?.isCached(
-                                                        song.song.id,
-                                                        0,
-                                                        song.contentLength
-                                                    )
-                                                }
-                                            } ?: false
-                                        }.map(SongWithContentLength::song)
-                                    }
-                                    //.flowOn(Dispatchers.IO)
-                                    .collect {
-                                        items = it
-                                    }
-                            }
-
-                    */
                 }
 
                 if (builtInPlaylist == BuiltInPlaylist.Top) {
@@ -569,24 +531,6 @@ fun HomeSongsModern(
                             }
                     }
                 }
-                /*
-                if (builtInPlaylist == BuiltInPlaylist.Top) {
-                    Database.trending(maxTopPlaylistItems.number.toInt())
-                        //.collect { items = it }
-                        .collect {
-                            items = it.filter {
-                                if (excludeSongWithDurationLimit == DurationInMinutes.Disabled)
-                                    true
-                                else
-                                it.durationText?.let { it1 ->
-                                    durationTextToMillis(it1)
-                                }!! < excludeSongWithDurationLimit.minutesInMilliSeconds
-                            }
-                        }
-
-                }
-                */
-
 
             }
         }
@@ -1878,6 +1822,9 @@ fun HomeSongsModern(
                                                         menuState.hide()
                                                         forceRecompose = true
                                                     },
+                                                    onInfo = {
+                                                        navController.navigate("${NavRoutes.videoOrSongInfo.name}/${song.song.id}")
+                                                    },
                                                     disableScrollingText = disableScrollingText
                                                 )
                                             }
@@ -2090,9 +2037,12 @@ fun HomeSongsModern(
                                                     menuState.hide()
                                                     forceRecompose = true
                                                 },
+                                                onInfo = {
+                                                    navController.navigate("${NavRoutes.videoOrSongInfo.name}/${song.song.id}")
+                                                },
                                                 onHideFromDatabase = { isHiding = true },
                                                 onDeleteFromDatabase = { isDeleting = true },
-                                                disableScrollingText = disableScrollingText
+                                                disableScrollingText = disableScrollingText,
                                             )
                                         }
                                         hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -2197,15 +2147,6 @@ fun HomeSongsModern(
                 onClickSettings = onSettingsClick,
                 onClickSearch = onSearchClick
             )
-
-        /*
-    FloatingActionsContainerWithScrollToTop(
-            lazyListState = lazyListState,
-            iconId = R.drawable.search,
-            onClick = onSearchClick
-        )
-
-         */
 
 
 

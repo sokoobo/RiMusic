@@ -50,12 +50,10 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -100,12 +98,11 @@ import androidx.media3.common.util.UnstableApi
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import it.fast4x.compose.persist.persist
-import it.fast4x.innertube.Innertube
-import it.fast4x.innertube.YtMusic
-import it.fast4x.innertube.models.bodies.SearchBody
-import it.fast4x.innertube.requests.ArtistPage
-import it.fast4x.innertube.requests.searchPage
-import it.fast4x.innertube.utils.from
+import it.fast4x.environment.Environment
+import it.fast4x.environment.EnvironmentExt
+import it.fast4x.environment.models.bodies.SearchBody
+import it.fast4x.environment.requests.searchPage
+import it.fast4x.environment.utils.from
 import it.fast4x.rimusic.Database
 import it.fast4x.rimusic.Database.Companion.update
 import it.fast4x.rimusic.LocalPlayerServiceBinder
@@ -158,18 +155,16 @@ import it.fast4x.rimusic.models.SongPlaylistMap
 import it.fast4x.rimusic.typography
 import it.fast4x.rimusic.ui.screens.settings.isYouTubeSyncEnabled
 import it.fast4x.rimusic.ui.styling.Dimensions
-import it.fast4x.rimusic.ui.styling.onOverlay
 import it.fast4x.rimusic.ui.styling.px
 import it.fast4x.rimusic.utils.asMediaItem
 import it.fast4x.rimusic.utils.asSong
 import it.fast4x.rimusic.utils.bassboostLevelKey
 import it.fast4x.rimusic.utils.getLikeState
 import it.fast4x.rimusic.utils.isExplicit
-import it.fast4x.rimusic.utils.left
+import it.fast4x.rimusic.utils.isValidUrl
 import it.fast4x.rimusic.utils.lyricsSizeKey
 import it.fast4x.rimusic.utils.lyricsSizeLKey
 import it.fast4x.rimusic.utils.removeYTSongFromPlaylist
-import it.fast4x.rimusic.utils.right
 import it.fast4x.rimusic.utils.thumbnail
 import it.fast4x.rimusic.utils.thumbnailFadeExKey
 import it.fast4x.rimusic.utils.thumbnailSpacingLKey
@@ -575,7 +570,7 @@ inline fun SelectorArtistsDialog(
                         LaunchedEffect(Unit) {
                             if (artist?.thumbnailUrl == null) {
                                 withContext(Dispatchers.IO) {
-                                    YtMusic.getArtistPage(browseId = browseId)
+                                    EnvironmentExt.getArtistPage(browseId = browseId)
                                         .onSuccess { currentArtistPage ->
                                             artist?.copy(
                                                 thumbnailUrl = currentArtistPage.artist.thumbnail?.url
@@ -612,7 +607,7 @@ inline fun SelectorArtistsDialog(
                                     modifier = Modifier
                                         .size(40.dp)
                                         .padding(all = 5.dp)
-                                        .offset(10.dp,10.dp),
+                                        .offset(10.dp, 10.dp),
                                     contentDescription = "Background Image",
                                     contentScale = ContentScale.Fit
                                 )
@@ -816,17 +811,28 @@ inline fun InputTextDialog(
     validationType: ValidationType = ValidationType.None,
     prefix: String = "",
 ) {
+    val inError = remember { mutableStateOf(false) }
     val txtFieldError = remember { mutableStateOf("") }
     val txtField = remember { mutableStateOf(cleanPrefix(value)) }
     val value_cannot_empty = stringResource(R.string.value_cannot_be_empty)
     //val value_must_be_greater = stringResource(R.string.value_must_be_greater_than)
     val value_must_be_ip_address = stringResource(R.string.value_must_be_ip_address)
+    val value_must_be_valid_url = stringResource(R.string.value_must_be_valid_url)
     var checkedState = remember{
         mutableStateOf(value.startsWith(prefix))
     }
 
+    inError.value = when (validationType){
+        ValidationType.Ip -> !isValidIP(txtField.value)
+        ValidationType.Url -> !isValidUrl(txtField.value)
+        ValidationType.Text -> txtField.value.isEmpty()
+        ValidationType.None -> false
+    }
 
-    Dialog(onDismissRequest = onDismiss) {
+
+    Dialog(onDismissRequest = {
+        if (!inError.value) onDismiss()
+    }) {
         Column(
             modifier = modifier
                 .padding(all = 10.dp)
@@ -931,15 +937,25 @@ inline fun InputTextDialog(
                     onClick = {
                         if (txtField.value.isEmpty() && setValueRequireNotNull) {
                             txtFieldError.value = value_cannot_empty
+                            inError.value = true
                             return@DialogTextButton
                         }
                         if (txtField.value.isNotEmpty() && validationType == ValidationType.Ip) {
                             if (!isValidIP(txtField.value)) {
                                 txtFieldError.value = value_must_be_ip_address
+                                inError.value = true
                                 return@DialogTextButton
                             }
                         }
-                        println("mediaItem ${checkedState.value} prefix ${prefix} value ${txtField.value}")
+                        if (txtField.value.isNotEmpty() && validationType == ValidationType.Url) {
+                            if (!isValidUrl(txtField.value)) {
+                                txtFieldError.value = value_must_be_valid_url
+                                inError.value = true
+                                return@DialogTextButton
+                            }
+                        }
+                        inError.value = false
+
                         if (checkedState.value && prefix.isNotEmpty())
                             setValue(prefix + cleanPrefix(txtField.value))
                         else
@@ -1102,47 +1118,6 @@ inline fun StringListDialog(
 
 }
 
-
-
-@Composable
-inline fun GenericDialog(
-    modifier: Modifier = Modifier,
-    noinline onDismiss: () -> Unit,
-    title: String,
-    textButton: String = stringResource(R.string.cancel),
-    crossinline content: @Composable () -> Unit,
-) {
-    Dialog(onDismissRequest = onDismiss) {
-        Column(
-            modifier = modifier
-                .padding(all = 48.dp)
-                .background(color = colorPalette().background1, shape = RoundedCornerShape(8.dp))
-                .padding(vertical = 16.dp)
-        ) {
-            BasicText(
-                text = title,
-                style = typography().s.bold,
-                modifier = Modifier
-                    .padding(vertical = 8.dp, horizontal = 24.dp)
-            )
-
-            content()
-
-            Box(
-                modifier = Modifier
-                    .align(Alignment.End)
-                    .padding(end = 24.dp)
-            ) {
-                DialogTextButton(
-                    text = textButton,
-                    onClick = onDismiss,
-                    modifier = Modifier
-                )
-            }
-        }
-    }
-}
-
 @Composable
 fun NewVersionDialog (
     updatedProductName: String,
@@ -1218,25 +1193,25 @@ fun NewVersionDialog (
                         .size(30.dp)
                         .clickable {
                             onDismiss()
-                            uriHandler.openUri("https://github.com/fast4x/RiMusic/releases/download/$updatedVersionName/app-foss-release.apk")
+                            uriHandler.openUri("https://github.com/fast4x/RiMusic/releases/download/$updatedVersionName/rimusic-full-release.apk")
                         }
                 )
             }
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .padding(bottom = 20.dp)
-                    .fillMaxWidth()
-            ) {
-                BasicText(
-                    text = stringResource(R.string.f_droid_users_can_wait_for_the_update_info),
-                    style = typography().xxs.semiBold.copy(color = colorPalette().textSecondary),
-                    maxLines = 4,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
+//            Row(
+//                horizontalArrangement = Arrangement.SpaceBetween,
+//                verticalAlignment = Alignment.CenterVertically,
+//                modifier = Modifier
+//                    .padding(bottom = 20.dp)
+//                    .fillMaxWidth()
+//            ) {
+//                BasicText(
+//                    text = stringResource(R.string.f_droid_users_can_wait_for_the_update_info),
+//                    style = typography().xxs.semiBold.copy(color = colorPalette().textSecondary),
+//                    maxLines = 4,
+//                    overflow = TextOverflow.Ellipsis,
+//                    modifier = Modifier.fillMaxWidth()
+//                )
+//            }
         }
 
     )
@@ -1679,7 +1654,7 @@ fun AppearancePresetDialog(
                     Image(
                         painter = painterResource(images[index]),
                         contentDescription = null,
-                        contentScale = ContentScale.FillHeight,
+                        contentScale = ContentScale.FillBounds,
                         colorFilter = null,
                         modifier = Modifier
                             .align(Alignment.Center)
@@ -1865,7 +1840,7 @@ fun SongMatchingDialog(
             modifier = Modifier
                 .fillMaxWidth(if (isLandscape) 0.5f else 0.9f)
                 .fillMaxHeight(if (isLandscape) 0.9f else 0.7f)
-                .background(color = colorPalette().background1,shape = RoundedCornerShape(8.dp))
+                .background(color = colorPalette().background1, shape = RoundedCornerShape(8.dp))
         ) {
             fun filteredText(text : String): String{
                 val filteredText = text
@@ -1881,18 +1856,18 @@ fun SongMatchingDialog(
                     .replace(Regex("\\s+"), " ")
                 return filteredText
             }
-            var songsList by remember { mutableStateOf<List<Innertube.SongItem?>>(emptyList()) }
+            var songsList by remember { mutableStateOf<List<Environment.SongItem?>>(emptyList()) }
             var searchText by remember {mutableStateOf(filteredText("${cleanPrefix(songToRematch.title)} ${songToRematch.artistsText}"))}
             var startSearch by remember { mutableStateOf(false) }
 
             LaunchedEffect(Unit,startSearch) {
                 runBlocking(Dispatchers.IO) {
-                    val searchQuery = Innertube.searchPage(
+                    val searchQuery = Environment.searchPage(
                         body = SearchBody(
                             query = searchText,
-                            params = Innertube.SearchFilter.Song.value
+                            params = Environment.SearchFilter.Song.value
                         ),
-                        fromMusicShelfRendererContent = Innertube.SongItem.Companion::from
+                        fromMusicShelfRendererContent = Environment.SongItem.Companion::from
                     )
 
                     songsList = searchQuery?.getOrNull()?.items ?: emptyList()
@@ -2011,7 +1986,7 @@ fun SongMatchingDialog(
                         startSearch = true
                     },
                     modifier = Modifier
-                        .background(shape = RoundedCornerShape(4.dp),color = Color.White)
+                        .background(shape = RoundedCornerShape(4.dp), color = Color.White)
                         .padding(all = 4.dp)
                         .size(24.dp)
                         .align(Alignment.CenterVertically)
@@ -2033,10 +2008,18 @@ fun SongMatchingDialog(
                                     .padding(vertical = 10.dp)
                                     .clickable(onClick = {
                                         Database.asyncTransaction {
-                                            if (isYouTubeSyncEnabled() && playlist?.isYoutubePlaylist == true && playlist.isEditable){
+                                            if (isYouTubeSyncEnabled() && playlist?.isYoutubePlaylist == true && playlist.isEditable) {
                                                 CoroutineScope(Dispatchers.IO).launch {
-                                                    if (removeYTSongFromPlaylist(songToRematch.id, playlist.browseId ?: "", playlistId))
-                                                        deleteSongFromPlaylist(songToRematch.id, playlistId)
+                                                    if (removeYTSongFromPlaylist(
+                                                            songToRematch.id,
+                                                            playlist.browseId ?: "",
+                                                            playlistId
+                                                        )
+                                                    )
+                                                        deleteSongFromPlaylist(
+                                                            songToRematch.id,
+                                                            playlistId
+                                                        )
                                                 }
                                             } else {
                                                 deleteSongFromPlaylist(songToRematch.id, playlistId)
@@ -2054,15 +2037,28 @@ fun SongMatchingDialog(
                                                 ).default()
                                             )
                                             insert(
-                                                Album(id = song.album?.endpoint?.browseId ?: "", title = song.asMediaItem.mediaMetadata.albumTitle?.toString()),
-                                                SongAlbumMap(songId = song.asMediaItem.mediaId, albumId = song.album?.endpoint?.browseId ?: "", position = null)
+                                                Album(
+                                                    id = song.album?.endpoint?.browseId ?: "",
+                                                    title = song.asMediaItem.mediaMetadata.albumTitle?.toString()
+                                                ),
+                                                SongAlbumMap(
+                                                    songId = song.asMediaItem.mediaId,
+                                                    albumId = song.album?.endpoint?.browseId ?: "",
+                                                    position = null
+                                                )
                                             )
                                             CoroutineScope(Dispatchers.IO).launch {
-                                                val album = Database.album(song.album?.endpoint?.browseId ?: "").firstOrNull()
-                                                album?.copy(thumbnailUrl = song.thumbnail?.url)?.let { update(it) }
+                                                val album = Database.album(
+                                                    song.album?.endpoint?.browseId ?: ""
+                                                ).firstOrNull()
+                                                album?.copy(thumbnailUrl = song.thumbnail?.url)
+                                                    ?.let { update(it) }
 
-                                                if (isYouTubeSyncEnabled() && playlist?.isYoutubePlaylist == true && playlist.isEditable){
-                                                    YtMusic.addToPlaylist(playlist.browseId ?: "", song.asMediaItem.mediaId)
+                                                if (isYouTubeSyncEnabled() && playlist?.isYoutubePlaylist == true && playlist.isEditable) {
+                                                    EnvironmentExt.addToPlaylist(
+                                                        playlist.browseId ?: "",
+                                                        song.asMediaItem.mediaId
+                                                    )
                                                 }
                                             }
                                             if ((artistsNames != null) && (artistsIds != null)) {
@@ -2071,7 +2067,10 @@ fun SongMatchingDialog(
                                                         if (artistNames.size == artistIds.size) {
                                                             insert(
                                                                 artistNames.mapIndexed { index, artistName ->
-                                                                    Artist(id = (artistIds[index]) ?: "", name = artistName)
+                                                                    Artist(
+                                                                        id = (artistIds[index])
+                                                                            ?: "", name = artistName
+                                                                    )
                                                                 },
                                                                 artistIds.map { artistId ->
                                                                     SongArtistMap(
@@ -2084,7 +2083,10 @@ fun SongMatchingDialog(
                                                     }
                                                 }
                                             }
-                                            Database.updateSongArtist(song.asMediaItem.mediaId, artistNameString)
+                                            Database.updateSongArtist(
+                                                song.asMediaItem.mediaId,
+                                                artistNameString
+                                            )
                                         }
                                         onDismiss()
                                     }
@@ -2891,8 +2893,7 @@ fun PlaybackParamsDialog(
         ) {
             IconButton(
                 onClick = {
-                    playbackDeviceVolume = getDeviceVolume(context)
-                    setDeviceVolume(context, playbackDeviceVolume)
+                    bassBoost = defaultBassboost
                 },
                 icon = R.drawable.musical_notes,
                 color = colorPalette().favoritesIcon,

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityManager
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.SharedPreferences
@@ -58,7 +57,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -99,21 +97,24 @@ import com.kieronquinn.monetcompat.interfaces.MonetColorsChangedListener
 import com.valentinilk.shimmer.LocalShimmerTheme
 import com.valentinilk.shimmer.defaultShimmerTheme
 import dev.kdrag0n.monet.theme.ColorScheme
-import it.fast4x.innertube.Innertube
-import it.fast4x.innertube.models.bodies.BrowseBody
-import it.fast4x.innertube.requests.playlistPage
-import it.fast4x.innertube.requests.song
-import it.fast4x.innertube.utils.LocalePreferenceItem
-import it.fast4x.innertube.utils.LocalePreferences
-import it.fast4x.innertube.utils.ProxyPreferenceItem
-import it.fast4x.innertube.utils.ProxyPreferences
-import it.fast4x.innertube.utils.YoutubePreferenceItem
-import it.fast4x.innertube.utils.YoutubePreferences
+import it.fast4x.environment.Environment
+import it.fast4x.environment.models.bodies.BrowseBody
+import it.fast4x.environment.requests.playlistPage
+import it.fast4x.environment.requests.song
+import it.fast4x.environment.utils.EnvironmentPreferenceItem
+import it.fast4x.environment.utils.EnvironmentPreferences
+import it.fast4x.environment.utils.LocalePreferenceItem
+import it.fast4x.environment.utils.LocalePreferences
+import it.fast4x.environment.utils.ProxyPreferenceItem
+import it.fast4x.environment.utils.ProxyPreferences
+//import it.fast4x.environment.utils.YoutubePreferenceItem
+//import it.fast4x.environment.utils.YoutubePreferences
 import it.fast4x.rimusic.enums.AnimatedGradient
 import it.fast4x.rimusic.enums.AudioQualityFormat
 import it.fast4x.rimusic.enums.CheckUpdateState
 import it.fast4x.rimusic.enums.ColorPaletteMode
 import it.fast4x.rimusic.enums.ColorPaletteName
+import it.fast4x.rimusic.enums.DnsOverHttpsType
 import it.fast4x.rimusic.enums.FontType
 import it.fast4x.rimusic.enums.HomeScreenTabs
 import it.fast4x.rimusic.enums.Languages
@@ -123,7 +124,6 @@ import it.fast4x.rimusic.enums.PipModule
 import it.fast4x.rimusic.enums.PlayerBackgroundColors
 import it.fast4x.rimusic.enums.PopupType
 import it.fast4x.rimusic.enums.ThumbnailRoundness
-import it.fast4x.rimusic.extensions.connectivity.InternetConnectivityObserver
 import it.fast4x.rimusic.extensions.pip.PipEventContainer
 import it.fast4x.rimusic.extensions.pip.PipModuleContainer
 import it.fast4x.rimusic.extensions.pip.PipModuleCover
@@ -160,6 +160,7 @@ import it.fast4x.rimusic.utils.closeWithBackButtonKey
 import it.fast4x.rimusic.utils.colorPaletteModeKey
 import it.fast4x.rimusic.utils.colorPaletteNameKey
 import it.fast4x.rimusic.utils.customColorKey
+import it.fast4x.rimusic.utils.customDnsOverHttpsServerKey
 import it.fast4x.rimusic.utils.customThemeDark_Background0Key
 import it.fast4x.rimusic.utils.customThemeDark_Background1Key
 import it.fast4x.rimusic.utils.customThemeDark_Background2Key
@@ -183,11 +184,10 @@ import it.fast4x.rimusic.utils.customThemeLight_textSecondaryKey
 import it.fast4x.rimusic.utils.disableClosingPlayerSwipingDownKey
 import it.fast4x.rimusic.utils.disablePlayerHorizontalSwipeKey
 import it.fast4x.rimusic.utils.effectRotationKey
-import it.fast4x.rimusic.utils.enableYouTubeLoginKey
-import it.fast4x.rimusic.utils.encryptedPreferences
 import it.fast4x.rimusic.utils.fontTypeKey
 import it.fast4x.rimusic.utils.forcePlay
 import it.fast4x.rimusic.utils.getEnum
+import it.fast4x.rimusic.utils.getSystemlanguage
 import it.fast4x.rimusic.utils.intent
 import it.fast4x.rimusic.utils.invokeOnReady
 import it.fast4x.rimusic.utils.isAtLeastAndroid6
@@ -195,6 +195,7 @@ import it.fast4x.rimusic.utils.isAtLeastAndroid8
 import it.fast4x.rimusic.utils.isKeepScreenOnEnabledKey
 import it.fast4x.rimusic.utils.isProxyEnabledKey
 import it.fast4x.rimusic.utils.isValidIP
+import it.fast4x.rimusic.utils.isValidUrl
 import it.fast4x.rimusic.utils.isVideo
 import it.fast4x.rimusic.utils.keepPlayerMinimizedKey
 import it.fast4x.rimusic.utils.languageAppKey
@@ -214,7 +215,6 @@ import it.fast4x.rimusic.utils.preferences
 import it.fast4x.rimusic.utils.proxyHostnameKey
 import it.fast4x.rimusic.utils.proxyModeKey
 import it.fast4x.rimusic.utils.proxyPortKey
-import it.fast4x.rimusic.utils.rememberEncryptedPreference
 import it.fast4x.rimusic.utils.rememberPreference
 import it.fast4x.rimusic.utils.resize
 import it.fast4x.rimusic.utils.restartActivityKey
@@ -244,6 +244,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Response
 import timber.log.Timber
 import java.io.File
+import java.io.IOException
 import java.net.Proxy
 import java.util.Locale
 import java.util.Objects
@@ -295,7 +296,7 @@ class MainActivity :
         super.onStart()
 
         runCatching {
-            bindService(intent<PlayerServiceModern>(), serviceConnection, Context.BIND_AUTO_CREATE)
+            bindService(intent<PlayerServiceModern>(), serviceConnection, BIND_AUTO_CREATE)
         }.onFailure {
             Timber.e("MainActivity.onStart bindService ${it.stackTraceToString()}")
         }
@@ -335,7 +336,7 @@ class MainActivity :
         }
 
         if (preferences.getBoolean(shakeEventEnabledKey, false)) {
-            sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+            sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
             Objects.requireNonNull(sensorManager)
                 ?.registerListener(
                     sensorListener,
@@ -505,10 +506,14 @@ class MainActivity :
 
                     }
 
-                    override fun onFailure(call: Call, e: java.io.IOException) {
+                    override fun onFailure(call: Call, e: IOException) {
                         Log.d("UpdatedVersionCode", "Check failure")
                     }
                 })
+            }
+
+            runBlocking {
+                InitializeEnvironment()
             }
 
             val coroutineScope = rememberCoroutineScope()
@@ -520,48 +525,50 @@ class MainActivity :
             var customColor by rememberPreference(customColorKey, Color.Green.hashCode())
             val lightTheme = colorPaletteMode == ColorPaletteMode.Light || (colorPaletteMode == ColorPaletteMode.System && (!isSystemInDarkTheme()))
 
-
+            val locale = Locale.getDefault()
+            val languageTag = locale.toLanguageTag().replace("-Hant", "")
+            val languageApp = appContext().preferences.getEnum(languageAppKey, getSystemlanguage())
             LocalePreferences.preference =
                 LocalePreferenceItem(
-                    hl = Locale.getDefault().toLanguageTag(),
-                    //Locale.getDefault().country
-                    gl = ""
-                    //gl = "US" // US IMPORTANT
+                    hl = languageApp.code.takeIf { it != Languages.System.code }
+                        ?: locale.language.takeIf { it != Languages.System.code }
+                        ?: languageTag.takeIf { it != Languages.System.code }
+                        ?: "en",
+                    gl = locale.country
+                        ?: "US"
                 )
                 //TODO Manage login
             //if (preferences.getBoolean(enableYouTubeLoginKey, false)) {
                     var visitorData by rememberPreference(
                         key = ytVisitorDataKey,
-                        defaultValue = Innertube.DEFAULT_VISITOR_DATA
+                        defaultValue = Environment._uMYwa66ycM
                     )
 
                     if (visitorData.isEmpty()) runBlocking {
-                        Innertube.visitorData().getOrNull()?.also {
+                        Environment.visitorData().getOrNull()?.also {
                             visitorData = it
                         }
                     }
 
-                    YoutubePreferences.preference =
-                        YoutubePreferenceItem(
-                            cookie = preferences.getString(ytCookieKey, ""),
-                            visitordata = visitorData
-                                .takeIf { it != "null" }
-                                ?: Innertube.DEFAULT_VISITOR_DATA,
-                            dataSyncId = preferences.getString(ytDataSyncIdKey, "")
+                    val cookie = preferences.getString(ytCookieKey, "")
+                    println("MainActivity.onCreate cookie: $cookie")
+                    val customDnsOverHttpsServer = preferences.getString(customDnsOverHttpsServerKey, "")
 
-                        )
-            //}
-
-            preferences.getEnum(audioQualityFormatKey, AudioQualityFormat.Auto)
+                    Environment.cookie = cookie
+                    Environment.visitorData = visitorData.takeIf { it != "null" }
+                        ?: Environment._uMYwa66ycM
+                    Environment.dataSyncId = preferences.getString(ytDataSyncIdKey, "").toString()
+                    Environment.customDnsToUse = if (customDnsOverHttpsServer?.let { isValidUrl(it) } == true) customDnsOverHttpsServer else null
+                    Environment.dnsToUse = getDnsOverHttpsType().type
 
             var appearance by rememberSaveable(
                 !lightTheme,
-                stateSaver = Appearance.Companion
+                stateSaver = Appearance
             ) {
                 with(preferences) {
                     val colorPaletteName =
                         getEnum(colorPaletteNameKey, ColorPaletteName.Dynamic)
-                    val colorPaletteMode = getEnum(colorPaletteModeKey, ColorPaletteMode.Dark)
+                    //val colorPaletteMode = getEnum(colorPaletteModeKey, ColorPaletteMode.Dark)
                     val thumbnailRoundness =
                         getEnum(thumbnailRoundnessKey, ThumbnailRoundness.Heavy)
                     val useSystemFont = getBoolean(useSystemFontKey, false)
@@ -619,8 +626,8 @@ class MainActivity :
 
                 if (!isDynamicPalette) return
 
-                val colorPaletteMode =
-                    preferences.getEnum(colorPaletteModeKey, ColorPaletteMode.Dark)
+//                val colorPaletteMode =
+//                    preferences.getEnum(colorPaletteModeKey, ColorPaletteMode.Dark)
                 coroutineScope.launch(Dispatchers.Main) {
                     val result = imageLoader.execute(
                         ImageRequest.Builder(this@MainActivity)
@@ -777,11 +784,11 @@ class MainActivity :
                                         ColorPaletteName.Dynamic
                                     )
 
-                                val colorPaletteMode =
-                                    sharedPreferences.getEnum(
-                                        colorPaletteModeKey,
-                                        ColorPaletteMode.System
-                                    )
+//                                val colorPaletteMode =
+//                                    sharedPreferences.getEnum(
+//                                        colorPaletteModeKey,
+//                                        ColorPaletteMode.System
+//                                    )
 
                                 var colorPalette = colorPaletteOf(
                                     colorPaletteName,
@@ -1221,7 +1228,7 @@ class MainActivity :
                             val browseId = "VL$playlistId"
 
                             if (playlistId.startsWith("OLAK5uy_")) {
-                                Innertube.playlistPage(BrowseBody(browseId = browseId))
+                                Environment.playlistPage(BrowseBody(browseId = browseId))
                                     ?.getOrNull()?.let {
                                         it.songsPage?.items?.firstOrNull()?.album?.endpoint?.browseId?.let { browseId ->
                                             navController.navigate(route = "${NavRoutes.album.name}/$browseId")
@@ -1250,7 +1257,7 @@ class MainActivity :
                             uri.host == "youtu.be" -> path
                             else -> null
                         }?.let { videoId ->
-                            Innertube.song(videoId)?.getOrNull()?.let { song ->
+                            Environment.song(videoId)?.getOrNull()?.let { song ->
                                 val binder = snapshotFlow { binder }.filterNotNull().first()
                                 withContext(Dispatchers.Main) {
                                     if (!song.explicit && !preferences.getBoolean(
@@ -1411,6 +1418,50 @@ class MainActivity :
         }
     }
 
+    fun InitializeEnvironment() {
+        EnvironmentPreferences.preference = EnvironmentPreferenceItem(
+            p0 = resources.getString(R.string.env_CrQ0JjAXgv),
+            p1 = resources.getString(R.string.env_hNpBzzAn7i),
+            p2 = resources.getString(R.string.env_lEi9YM74OL),
+            p3 = resources.getString(R.string.env_C0ZR993zmk),
+            p4 = resources.getString(R.string.env_w3TFBFL74Y),
+            p5 = resources.getString(R.string.env_mcchaHCWyK),
+            p6 = resources.getString(R.string.env_L2u4JNdp7L),
+            p7 = resources.getString(R.string.env_sqDlfmV4Mt),
+            p8 = resources.getString(R.string.env_WpLlatkrVv),
+            p9 = resources.getString(R.string.env_1zNshDpFoh),
+            p10 = resources.getString(R.string.env_mPVWVuCxJz),
+            p11 = resources.getString(R.string.env_auDsjnylCZ),
+            p12 = resources.getString(R.string.env_AW52cvJIJx),
+            p13 = resources.getString(R.string.env_0RGAyC1Zqu),
+            p14 = resources.getString(R.string.env_4Fdmu9Jkax),
+            p15 = resources.getString(R.string.env_kuSdQLhP8I),
+            p16 = resources.getString(R.string.env_QrgDKwvam1),
+            p17 = resources.getString(R.string.env_wLwNESpPtV),
+            p18 = resources.getString(R.string.env_JJUQaehRFg),
+            p19 = resources.getString(R.string.env_i7WX2bHV6R),
+            p20 = resources.getString(R.string.env_XpiuASubrV),
+            p21 = resources.getString(R.string.env_lOlIIVw38L),
+            p22 = resources.getString(R.string.env_mtcR0FhFEl),
+            p23 = resources.getString(R.string.env_DTihHAFaBR),
+            p24 = resources.getString(R.string.env_a4AcHS8CSg),
+            p25 = resources.getString(R.string.env_krdLqpYLxM),
+            p26 = resources.getString(R.string.env_ye6KGLZL7n),
+            p27 = resources.getString(R.string.env_ec09m20YH5),
+            p28 = resources.getString(R.string.env_LDRlbOvbF1),
+            p29 = resources.getString(R.string.env_EEqX0yizf2),
+            p30 = resources.getString(R.string.env_i3BRhLrV1v),
+            p31 = resources.getString(R.string.env_MApdyHLMyJ),
+            p32 = resources.getString(R.string.env_hizI7yLjL4),
+            p33 = resources.getString(R.string.env_rLoZP7BF4c),
+            p34 = resources.getString(R.string.env_nza34sU88C),
+            p35 = resources.getString(R.string.env_dwbUvjWUl3),
+            p36 = resources.getString(R.string.env_fqqhBZd0cf),
+            p37 = resources.getString(R.string.env_9sZKrkMg8p),
+            p38 = resources.getString(R.string.env_aQpNCVOe2i),
+
+            )
+    }
 
 }
 
