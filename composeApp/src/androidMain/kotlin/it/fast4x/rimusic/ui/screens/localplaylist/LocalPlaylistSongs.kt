@@ -427,20 +427,21 @@ fun LocalPlaylistSongs(
         lazyListState = lazyListState,
         //scrollThresholdPadding = WindowInsets.systemBars.asPaddingValues(),
     ) { from, to ->
+        if (to.key != binder?.player?.currentMediaItem?.mediaId) {
+            playlistSongs = playlistSongs.toMutableList().apply {
+                // can't use .index because there are other items in the list (headers, footers, etc)
+                val fromIndex = indexOfFirst { it.song.id == from.key }
+                val toIndex = indexOfFirst { it.song.id == to.key }
 
-        playlistSongs = playlistSongs.toMutableList().apply {
-            // can't use .index because there are other items in the list (headers, footers, etc)
-            val fromIndex = indexOfFirst { it.song.id == from.key }
-            val toIndex = indexOfFirst { it.song.id == to.key }
+                val currentDragInfo = dragInfo
+                dragInfo = if (currentDragInfo == null)
+                    fromIndex to toIndex
+                else currentDragInfo.first to toIndex
 
-            val currentDragInfo = dragInfo
-            dragInfo = if (currentDragInfo == null)
-                fromIndex to toIndex
-            else currentDragInfo.first to toIndex
-
-            move(fromIndex, toIndex)
-            println("reorderableLazyListState dragInfo from ${fromIndex} to ${toIndex}")
-        }
+                move(fromIndex, toIndex)
+                println("reorderableLazyListState dragInfo from ${fromIndex} to ${toIndex}")
+            }
+        } else dragInfo = null
 
     }
 

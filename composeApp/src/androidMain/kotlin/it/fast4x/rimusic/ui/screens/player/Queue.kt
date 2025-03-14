@@ -416,7 +416,8 @@ fun Queue(
             lazyListState = lazyListState,
             scrollThresholdPadding = WindowInsets.systemBars.asPaddingValues(),
         ) { from, to ->
-            player.moveMediaItem(from.index, to.index)
+            if (to.key != binder.player.currentMediaItem?.mediaId)
+                player.moveMediaItem(from.index, to.index)
         }
 
     LazyColumn(
@@ -675,7 +676,6 @@ fun Queue(
                             },
                             modifier = Modifier
                                 .combinedClickable(
-                                    //enabled = isReorderDisabled,
                                     onLongClick = {
                                         menuState.display {
                                             QueuedMediaItemMenu(
