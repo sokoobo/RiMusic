@@ -146,6 +146,7 @@ import it.fast4x.rimusic.ui.items.VideoItem
 import it.fast4x.rimusic.ui.screens.settings.isYouTubeLoggedIn
 import it.fast4x.rimusic.utils.playVideo
 import it.fast4x.rimusic.utils.quickPicsHomePageKey
+import timber.log.Timber
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 
@@ -354,7 +355,11 @@ fun HomePage(
         }.keys.toList()
     }
     val cachedSongs = remember {
-        binder?.cache?.keys?.toMutableList()
+        try {
+            binder?.cache?.keys?.toMutableList()
+        } catch (e: Exception) {
+            null
+        }
     }
     cachedSongs?.addAll(downloadedSongs)
 
@@ -552,7 +557,11 @@ fun HomePage(
                                 SongItem(
                                     song = song,
                                     onDownloadClick = {
-                                        binder?.cache?.removeResource(song.asMediaItem.mediaId)
+                                        try {
+                                            binder?.cache?.removeResource(song.asMediaItem.mediaId)
+                                        } catch (e: Exception) {
+                                            Timber.e("HomePage Failed to remove resource")
+                                        }
                                         CoroutineScope(Dispatchers.IO).launch {
                                             Database.deleteFormat( song.asMediaItem.mediaId )
                                         }
@@ -596,7 +605,11 @@ fun HomePage(
                                                         },
 
                                                         onDownload = {
-                                                            binder?.cache?.removeResource(song.asMediaItem.mediaId)
+                                                            try {
+                                                                binder?.cache?.removeResource(song.asMediaItem.mediaId)
+                                                            } catch (e: Exception) {
+                                                                Timber.e("HomePage Failed to remove resource")
+                                                            }
                                                             CoroutineScope(Dispatchers.IO).launch {
                                                                 Database.deleteFormat(song.asMediaItem.mediaId)
                                                             }
@@ -656,7 +669,11 @@ fun HomePage(
                                 SongItem(
                                     song = song,
                                     onDownloadClick = {
-                                        binder?.cache?.removeResource(song.asMediaItem.mediaId)
+                                        try {
+                                            binder?.cache?.removeResource(song.asMediaItem.mediaId)
+                                        } catch (e: Exception) {
+                                            Timber.e("HomePage Failed to remove resource")
+                                        }
                                         CoroutineScope(Dispatchers.IO).launch {
                                             Database.deleteFormat( song.asMediaItem.mediaId )
                                         }
