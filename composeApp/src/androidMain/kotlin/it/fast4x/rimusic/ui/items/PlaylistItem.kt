@@ -108,6 +108,8 @@ fun PlaylistItem(
     thumbnailSizePx: Int,
     thumbnailSizeDp: Dp,
     modifier: Modifier = Modifier,
+    homepage: Boolean = false,
+    iconSize: Dp = 0.dp,
     alternative: Boolean = false,
     showName: Boolean = true,
     disableScrollingText: Boolean,
@@ -196,6 +198,8 @@ fun PlaylistItem(
         thumbnailSizeDp = thumbnailSizeDp,
         modifier = modifier,
         alternative = alternative,
+        homePage = homepage,
+        iconSize = iconSize,
         showName = showName,
         disableScrollingText = disableScrollingText,
         isYoutubePlaylist = isYoutubePlaylist,
@@ -276,6 +280,8 @@ fun PlaylistItem(
     channelName: String?,
     thumbnailSizeDp: Dp,
     modifier: Modifier = Modifier,
+    homePage: Boolean = false,
+    iconSize: Dp = 0.dp,
     alternative: Boolean = false,
     showName: Boolean = true,
     showSongsCount: Boolean = true,
@@ -310,7 +316,7 @@ fun PlaylistItem(
                         painter = painterResource(R.drawable.piped_logo),
                         colorFilter = ColorFilter.tint(colorPalette().red),
                         modifier = Modifier
-                            .size(0.3*itemSize.size.dp)
+                            .size(if (homePage) 0.3*iconSize else 40.dp)
                             .padding(all = 5.dp),
                         contentDescription = "Background Image",
                         contentScale = ContentScale.Fit
@@ -321,7 +327,7 @@ fun PlaylistItem(
                         painter = painterResource(R.drawable.pin),
                         colorFilter = ColorFilter.tint(colorPalette().accent),
                         modifier = Modifier
-                            .size(0.3*itemSize.size.dp)
+                            .size(if (homePage) 0.3*iconSize else 40.dp)
                             .padding(all = 5.dp),
                         contentDescription = "Background Image",
                         contentScale = ContentScale.Fit
@@ -332,7 +338,7 @@ fun PlaylistItem(
                         painter = painterResource(R.drawable.stat_month),
                         colorFilter = ColorFilter.tint(colorPalette().accent),
                         modifier = Modifier
-                            .size(0.3*itemSize.size.dp)
+                            .size(if (homePage) 0.3*iconSize else 40.dp)
                             .padding(all = 5.dp),
                         contentDescription = "Background Image",
                         contentScale = ContentScale.Fit
@@ -345,7 +351,7 @@ fun PlaylistItem(
                     painter = painterResource(R.drawable.ytmusic),
                     colorFilter = ColorFilter.tint(if (isYoutubePlaylist) Color.Red.copy(0.75f).compositeOver(Color.White) else colorPalette().text),
                     modifier = Modifier
-                        .size(0.3*itemSize.size.dp)
+                        .size(if (homePage) 0.3*iconSize else 40.dp)
                         .padding(all = 5.dp),
                     contentDescription = "Background Image",
                     contentScale = ContentScale.Fit
@@ -360,7 +366,7 @@ fun PlaylistItem(
                         .padding(all = 5.dp)
                         .background(colorPalette().text, CircleShape)
                         .padding(all = 5.dp)
-                        .size(0.2*itemSize.size.dp)
+                        .size(if (homePage) 0.2*iconSize else 40.dp)
                         .align(Alignment.BottomStart),
                     contentDescription = "Background Image",
                     contentScale = ContentScale.Fit
