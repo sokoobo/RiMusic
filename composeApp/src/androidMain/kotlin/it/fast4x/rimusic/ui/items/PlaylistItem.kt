@@ -308,8 +308,6 @@ fun PlaylistItem(
                  */
             )
 
-            val itemSize = ItemSize.init( HOME_LIBRARY_ITEM_SIZE )
-
             name?.let {
                 if (it.startsWith(PIPED_PREFIX,0,true)) {
                     Image(
