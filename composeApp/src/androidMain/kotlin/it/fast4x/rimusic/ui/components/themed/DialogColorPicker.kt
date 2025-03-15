@@ -53,6 +53,7 @@ import android.graphics.Color as AndroidColor
 @Composable
 fun DialogColorPicker(
     onDismiss: () -> Unit,
+    color: Color,
     onColorSelected: (Color) -> Unit
 ) {
     DefaultDialog(
@@ -67,7 +68,7 @@ fun DialogColorPicker(
 
             val hsv = remember {
                 val hsv = floatArrayOf(0f, 0f, 0f)
-                AndroidColor.colorToHSV(Color.Blue.toArgb(), hsv)
+                AndroidColor.colorToHSV(color.toArgb(), hsv)
                 mutableStateOf(
                     Triple(hsv[0], hsv[1], hsv[2])
                 )
