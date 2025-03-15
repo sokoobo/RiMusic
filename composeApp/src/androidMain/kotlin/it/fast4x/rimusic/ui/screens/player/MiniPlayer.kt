@@ -75,6 +75,7 @@ import it.fast4x.rimusic.enums.NavRoutes
 import it.fast4x.rimusic.enums.PopupType
 import it.fast4x.rimusic.service.modern.PlayerServiceModern
 import it.fast4x.rimusic.models.Song
+import it.fast4x.rimusic.service.MyDownloadHelper
 import it.fast4x.rimusic.thumbnailShape
 import it.fast4x.rimusic.typography
 import it.fast4x.rimusic.ui.components.themed.NowPlayingSongIndicator
