@@ -1012,7 +1012,7 @@ fun Player(
 
     if (animatedGradient == AnimatedGradient.Random){
         LaunchedEffect(mediaItem.mediaId){
-            valueGrad = (2..13).random()
+            valueGrad = (2..14).random()
         }
         tempGradient = gradients[valueGrad]
     }
@@ -2025,7 +2025,7 @@ fun Player(
          Box(
              modifier = Modifier.haze(state = hazeState, style = HazeDefaults.style(backgroundColor = Color.Transparent, tint = Color.Black.copy(0.5f),blurRadius = 8.dp))
          ){
-             if (playerBackgroundColors == PlayerBackgroundColors.BlurredCoverColor && playerType == PlayerType.Modern && (!showthumbnail || albumCoverRotation)) {
+             if ((playerBackgroundColors == PlayerBackgroundColors.BlurredCoverColor && playerType == PlayerType.Modern && (!showthumbnail || albumCoverRotation)) || (animatedGradient == AnimatedGradient.Random && tempGradient == gradients[14])) {
                  val fling = PagerDefaults.flingBehavior(
                      state = pagerStateFS,
                      snapPositionalThreshold = 0.20f
@@ -2048,7 +2048,7 @@ fun Player(
                      state = pagerStateFS,
                      beyondViewportPageCount = 1,
                      flingBehavior = fling,
-                     userScrollEnabled = !(albumCoverRotation && (isShowingLyrics || showthumbnail)),
+                     userScrollEnabled = !((albumCoverRotation || (animatedGradient == AnimatedGradient.Random && tempGradient == gradients[14])) && (isShowingLyrics || showthumbnail)),
                      modifier = Modifier
                  ) { it ->
 
@@ -2108,11 +2108,11 @@ fun Player(
                              )
                              .build(),
                          contentDescription = "",
-                         contentScale = if (albumCoverRotation && (isShowingLyrics || showthumbnail)) ContentScale.Fit else ContentScale.Crop,
+                         contentScale = if ((albumCoverRotation || (animatedGradient == AnimatedGradient.Random && tempGradient == gradients[14])) && (isShowingLyrics || showthumbnail)) ContentScale.Fit else ContentScale.Crop,
                          modifier = Modifier
                              .fillMaxWidth()
                              .zIndex(if (it == pagerStateFS.currentPage) 1f else 0.9f)
-                             .conditional(albumCoverRotation) {
+                             .conditional(albumCoverRotation || (animatedGradient == AnimatedGradient.Random && tempGradient == gradients[14])) {
                                  graphicsLayer {
                                      scaleX = if (isShowingLyrics || showthumbnail) (screenWidth/screenHeight) + 0.5f else 1f
                                      scaleY = if (isShowingLyrics || showthumbnail) (screenWidth/screenHeight) + 0.5f else 1f
@@ -2622,7 +2622,7 @@ fun Player(
            Box(
                modifier = Modifier.haze(state = hazeState, style = HazeDefaults.style(backgroundColor = Color.Transparent, tint = Color.Black.copy(0.5f),blurRadius = 8.dp))
            ) {
-               if (playerBackgroundColors == PlayerBackgroundColors.BlurredCoverColor && playerType == PlayerType.Modern && (!showthumbnail || albumCoverRotation)) {
+               if ((playerBackgroundColors == PlayerBackgroundColors.BlurredCoverColor && playerType == PlayerType.Modern && (!showthumbnail || albumCoverRotation)) || (animatedGradient == AnimatedGradient.Random && tempGradient == gradients[14])) {
                     val fling = PagerDefaults.flingBehavior(
                         state = pagerStateFS,
                         snapPositionalThreshold = 0.30f
@@ -2648,7 +2648,7 @@ fun Player(
                         state = pagerStateFS,
                         beyondViewportPageCount = if (swipeAnimationNoThumbnail != SwipeAnimationNoThumbnail.Circle || albumCoverRotation && (isShowingLyrics || showthumbnail)) 1 else 0,
                         flingBehavior = fling,
-                        userScrollEnabled = !(albumCoverRotation && (isShowingLyrics || showthumbnail)),
+                        userScrollEnabled = !((albumCoverRotation || (animatedGradient == AnimatedGradient.Random && tempGradient == gradients[14])) && (isShowingLyrics || showthumbnail)),
                         modifier = Modifier
                             .background(colorPalette().background1)
                             .pointerInteropFilter {
@@ -2693,7 +2693,7 @@ fun Player(
 
                         Box(
                             modifier = Modifier
-                                .conditional(albumCoverRotation && (isShowingLyrics || showthumbnail)) {
+                                .conditional((albumCoverRotation || (animatedGradient == AnimatedGradient.Random && tempGradient == gradients[14])) && (isShowingLyrics || showthumbnail)) {
                                     zIndex(if (it == pagerStateFS.currentPage) 1f else 0.9f)
                                 }
                                 .conditional(swipeAnimationNoThumbnail == SwipeAnimationNoThumbnail.Scale && isDraggedFS) {
@@ -2726,10 +2726,10 @@ fun Player(
                                 )
                                 .build(),
                                contentDescription = "",
-                               contentScale = if (albumCoverRotation && (isShowingLyrics || showthumbnail)) ContentScale.Fit else ContentScale.Crop,
+                               contentScale = if ((albumCoverRotation || (animatedGradient == AnimatedGradient.Random && tempGradient == gradients[14])) && (isShowingLyrics || showthumbnail)) ContentScale.Fit else ContentScale.Crop,
                                modifier = Modifier
                                 .fillMaxHeight()
-                                .conditional(albumCoverRotation) {
+                                .conditional(albumCoverRotation || (animatedGradient == AnimatedGradient.Random && tempGradient == gradients[14])) {
                                     graphicsLayer {
                                         scaleX = if (isShowingLyrics || showthumbnail) (screenHeight / screenWidth) + 0.5f else 1f
                                         scaleY = if (isShowingLyrics || showthumbnail) (screenHeight / screenWidth) + 0.5f else 1f
