@@ -389,7 +389,7 @@
     <string name="export_playlist">Izvezi plejlistu</string>
     <string name="lang_afrikaans">Afrički</string>
     <string name="playlist_top">Najbolja Plejlista</string>
-    <string name="my_playlist_top">Moja Najbolja %s</string>
+    <string name="my_playlist_top">Mojih Najboljih %s</string>
     <string name="navigation_bar_position">Položaj trake za navigaciju</string>
     <string name="direction_left">Levo</string>
     <string name="direction_right">Desno</string>
@@ -547,8 +547,8 @@
     <string name="show_background_in_lyrics">Prikaži boju pozadine u Stihovima</string>
     <string name="bg_colors_blurred_cover_background">Zamućena pozadina omota</string>
     <string name="lang_estonian">Estonski</string>
-    <string name="pcontrols_modern">Moderne</string>
-    <string name="pcontrols_essential">Esencijalne</string>
+    <string name="pcontrols_modern">Moderan</string>
+    <string name="pcontrols_essential">Esencijalni</string>
     <string name="pcontrols_type">Kontrole tipa</string>
     <string name="player_swiping_down_is_disabled">Prevlačenje plejera nadole je onemogućeno</string>
     <string name="player_position">Pozicija plejera</string>
@@ -769,7 +769,7 @@
     <string name="center">Centar</string>
     <string name="lyricsalignment">Poravnanje Stihova</string>
     <string name="lang_azerbaijani">Azerbejdžanski</string>
-    <string name="translators">Prevodioci</string>
+    <string name="translators">Prevodioca</string>
     <string name="lang_tamil">Tamilski</string>
     <string name="player_auto_load_songs_in_queue">Automatsko učitavanje pesama u redosledu</string>
     <string name="player_auto_load_songs_in_queue_description">Dodaj pesme kada se redosled uskoro završava</string>
