@@ -558,11 +558,9 @@ fun ControlsEssential(
             Image(
                 painter = painterResource(R.drawable.a13shape),
                 colorFilter = ColorFilter.tint(
-                    when (colorPaletteName) {
-                        ColorPaletteName.PureBlack, ColorPaletteName.ModernBlack -> colorPalette().background4
-                        else -> if (isGradientBackgroundEnabled) colorPalette().background1
-                        else colorPalette().background2
-                    }
+                    if (playerBackgroundColors == PlayerBackgroundColors.AnimatedGradient)
+                        if (lightTheme) Color.White else Color.Black
+                    else colorPalette().accent
                 ),
                 modifier = Modifier
                     .fillMaxSize()
