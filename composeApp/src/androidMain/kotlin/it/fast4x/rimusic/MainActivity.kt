@@ -665,7 +665,7 @@ class MainActivity :
                                 .data(url)
                                 // Required to get work getPixels
                                 .bitmapConfig(if (isAtLeastAndroid8) Bitmap.Config.RGBA_F16 else Bitmap.Config.ARGB_8888)
-                                //.allowHardware(false)
+                                .allowHardware(false)
                                 .build()
                         )
                         val isPicthBlack = colorPaletteMode == ColorPaletteMode.PitchBlack

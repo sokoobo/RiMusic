@@ -37,7 +37,7 @@ class CoilBitmapLoader(
                     .networkCachePolicy(CachePolicy.ENABLED)
                     .data(uri.thumbnail(bitmapSize))
                     .size(bitmapSize)
-                    .bitmapConfig(Bitmap.Config.ARGB_8888)
+                    //.bitmapConfig(Bitmap.Config.ARGB_8888)
                     //.allowHardware(false)
                     .diskCacheKey(uri.thumbnail(bitmapSize).toString())
                     .build()
