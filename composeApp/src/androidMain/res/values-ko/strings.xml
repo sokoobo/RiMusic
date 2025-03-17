@@ -880,8 +880,8 @@
     <string name="delete_songs_not_in_library">라이브러리에 없는 곡 삭제</string>
     <string name="delete_in_process">라이브러리에 없는 곡들을 삭제합니다. 앱은 삭제가 끝나면 종료될 것입니다</string>
     <string name="nothing_to_delete">삭제할 항목 없음</string>
-    <string name="get_album_version">Match the Album/Audio Version of the Songs</string>
-    <string name="no_videos_found">No Songs Found to Match</string>
+    <string name="get_album_version">곡의 앨범/오디오 버전 맞추기</string>
+    <string name="no_videos_found">맞출 곡이 없습니다</string>
     <string name="matching_songs">Matching Songs. Please Wait. Do not Minimize or Exit the App</string>
     <string name="unmatched">Unmatched Songs</string>
     <string name="match_song">Rematch this Song</string>
