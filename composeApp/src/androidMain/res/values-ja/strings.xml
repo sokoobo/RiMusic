@@ -23,6 +23,7 @@
     <string name="enter_the_playlist_name">プレイリスト名を入力</string>
     <string name="playlists">プレイリスト</string>
     <string name="favorites">お気に入り</string>
+    <string name="disliked">Disliked</string>
     <string name="quick_picks">おすすめ</string>
     <string name="songs">曲</string>
     <string name="other_versions">その他のバージョン</string>
@@ -556,6 +557,7 @@
     <string name="position_bottom">下</string>
     <string name="added_to_favorites">お気に入りに追加しました</string>
     <string name="removed_from_favorites">お気に入りから削除しました</string>
+    <string name="added_to_disliked">Added to disliked</string>
     <string name="lang_filipino">フィリピノ語</string>
     <string name="action_bar_transparent_background">透明な背景</string>
     <string name="pinfo_type">情報の種類</string>
@@ -579,7 +581,7 @@
     <string name="info_prevent_play_songs_with_age_limitation">年齢制限のある曲を再生しない</string>
     <string name="cache_location_private">プライベート</string>
     <string name="cache_location_system">システム</string>
-    <string name="info_cannot_rename_a_monthly_or_piped_playlist">Cannot rename a monthly or online or piped playlist</string>
+    <string name="info_cannot_rename_a_monthly_or_piped_playlist">月間プレイリストやPipedの再生リストの名前は変更できません</string>
     <string name="debug">デバッグ</string>
     <string name="enable_log_debug">ログのデバッグを有効化</string>
     <string name="if_enabled_create_a_log_file_to_highlight_errors">有効なら、エラーに焦点を当てたログファイルを作成します</string>

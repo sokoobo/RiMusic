@@ -23,6 +23,7 @@
     <string name="enter_the_playlist_name">재생목록 이름</string>
     <string name="playlists">재생목록</string>
     <string name="favorites">즐겨찾기</string>
+    <string name="disliked">Disliked</string>
     <string name="quick_picks">추천</string>
     <string name="songs">곡</string>
     <string name="other_versions">다른 버전</string>
@@ -556,6 +557,7 @@
     <string name="position_bottom">아래</string>
     <string name="added_to_favorites">즐겨찾기에 추가</string>
     <string name="removed_from_favorites">즐겨찾기에서 제거됨</string>
+    <string name="added_to_disliked">Added to disliked</string>
     <string name="lang_filipino">필리핀어</string>
     <string name="action_bar_transparent_background">투명 배경</string>
     <string name="pinfo_type">정보 유형</string>

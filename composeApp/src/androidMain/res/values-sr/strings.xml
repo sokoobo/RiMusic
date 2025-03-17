@@ -23,6 +23,7 @@
     <string name="enter_the_playlist_name">Унесите име за плејлисту</string>
     <string name="playlists">Плејлисте</string>
     <string name="favorites">Омиљено</string>
+    <string name="disliked">Disliked</string>
     <string name="quick_picks">Брзи Одабири</string>
     <string name="songs">Песме</string>
     <string name="other_versions">Друге верзије</string>
@@ -556,6 +557,7 @@
     <string name="position_bottom">Дно</string>
     <string name="added_to_favorites">Додато у омиљенo</string>
     <string name="removed_from_favorites">Уклоњено из омиљених</string>
+    <string name="added_to_disliked">Added to disliked</string>
     <string name="lang_filipino">Филипински</string>
     <string name="action_bar_transparent_background">Прозирна позадина</string>
     <string name="pinfo_type">Врста информације</string>
