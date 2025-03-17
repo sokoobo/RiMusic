@@ -280,7 +280,7 @@ fun GeneralSettings(
     var isConnectionMeteredEnabled by rememberPreference(isConnectionMeteredEnabledKey, true)
     var isPreCacheEnabled by rememberPreference(enablePreCacheKey, false)
 
-    var useDnsOverHttpsType by rememberPreference(dnsOverHttpsTypeKey, DnsOverHttpsType.Google)
+    var useDnsOverHttpsType by rememberPreference(dnsOverHttpsTypeKey, DnsOverHttpsType.None)
 
 
     var keepPlayerMinimized by rememberPreference(keepPlayerMinimizedKey,   false)
