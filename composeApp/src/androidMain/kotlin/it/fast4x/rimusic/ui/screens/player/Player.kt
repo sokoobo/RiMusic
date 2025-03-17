@@ -2032,7 +2032,17 @@ fun Player(
 
         if (isLandscape) {
          Box(
-             modifier = Modifier.haze(state = hazeState, style = HazeDefaults.style(backgroundColor = Color.Transparent, tint = Color.Black.copy(0.5f),blurRadius = 8.dp))
+             modifier = Modifier
+                 .conditional(queueType == QueueType.Modern) {
+                     haze(
+                         state = hazeState,
+                         style = HazeDefaults.style(
+                             backgroundColor = Color.Transparent,
+                             tint = if (lightTheme) Color.White.copy(0.5f) else Color.Black.copy(0.5f),
+                             blurRadius = 8.dp
+                         )
+                     )
+                 }
          ){
              if ((playerBackgroundColors == PlayerBackgroundColors.BlurredCoverColor && playerType == PlayerType.Modern && (!showthumbnail || albumCoverRotation)) || (animatedGradient == AnimatedGradient.Random && tempGradient == gradients[14])) {
                  val fling = PagerDefaults.flingBehavior(
@@ -2629,7 +2639,17 @@ fun Player(
          }
         } else {
            Box(
-               modifier = Modifier.haze(state = hazeState, style = HazeDefaults.style(backgroundColor = Color.Transparent, tint = Color.Black.copy(0.5f),blurRadius = 8.dp))
+               modifier = Modifier
+                   .conditional(queueType == QueueType.Modern) {
+                       haze(
+                           state = hazeState,
+                           style = HazeDefaults.style(
+                               backgroundColor = Color.Transparent,
+                               tint = if (lightTheme) Color.White.copy(0.5f) else Color.Black.copy(0.5f),
+                               blurRadius = 8.dp
+                           )
+                       )
+                   }
            ) {
                if ((playerBackgroundColors == PlayerBackgroundColors.BlurredCoverColor && playerType == PlayerType.Modern && (!showthumbnail || albumCoverRotation)) || (animatedGradient == AnimatedGradient.Random && tempGradient == gradients[14])) {
                     val fling = PagerDefaults.flingBehavior(
@@ -3340,7 +3360,7 @@ fun Player(
             contentColor = if (queueType == QueueType.Modern) Color.Transparent else colorPalette().background2,
             modifier = Modifier
                 .fillMaxWidth()
-                .hazeChild(state = hazeState),
+                .conditional(queueType == QueueType.Modern) {hazeChild(state = hazeState)},
             sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
             dragHandle = {
                 Surface(
@@ -3370,7 +3390,7 @@ fun Player(
             contentColor = if (playerType == PlayerType.Modern) Color.Transparent else colorPalette().background2,
             modifier = Modifier
                 .fillMaxWidth()
-                .hazeChild(state = hazeState),
+                .conditional(queueType == QueueType.Modern) {hazeChild(state = hazeState)},
             sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
             dragHandle = {
                 Surface(
