@@ -216,6 +216,8 @@ suspend fun getAvancedInnerTubeStream(
                     throw NoInternetException()
                 }
 
+                is PlaybackException -> throw throwable
+
                 is SocketTimeoutException -> {
                     throw TimeoutException()
                 }
@@ -223,7 +225,11 @@ suspend fun getAvancedInnerTubeStream(
                 else -> {
                     Timber.d("PlayerServiceModern MyDownloadHelper DataSpecProcess Error: ${throwable.stackTraceToString()}")
                     println("PlayerServiceModern MyDownloadHelper DataSpecProcess Error: ${throwable.stackTraceToString()}")
-                    throw throwable
+                    throw throw PlaybackException(
+                        appContext().resources.getString(R.string.error_unknown),
+                        throwable,
+                        PlaybackException.ERROR_CODE_REMOTE_ERROR
+                    )
                 }
             }
 
