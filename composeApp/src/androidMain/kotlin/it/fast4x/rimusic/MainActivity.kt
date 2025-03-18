@@ -63,6 +63,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -130,6 +131,7 @@ import it.fast4x.rimusic.enums.PipModule
 import it.fast4x.rimusic.enums.PlayerBackgroundColors
 import it.fast4x.rimusic.enums.PopupType
 import it.fast4x.rimusic.enums.ThumbnailRoundness
+import it.fast4x.rimusic.extensions.connectivity.InternetConnectivityObserver
 import it.fast4x.rimusic.extensions.pip.PipEventContainer
 import it.fast4x.rimusic.extensions.pip.PipModuleContainer
 import it.fast4x.rimusic.extensions.pip.PipModuleCover
@@ -264,6 +266,7 @@ class MainActivity :
 //,PersistMapOwner
 {
     var downloadHelper = MyDownloadHelper
+    lateinit var internetConnectivityObserver: InternetConnectivityObserver
 
     var client = OkHttpClient()
     var request = OkHttpRequest(client)
@@ -466,28 +469,25 @@ class MainActivity :
                     )
                 }
             }
-            //if (getBoolean(isEnabledDiscoveryLangCodeKey, true))
+
         }
 
         setContent {
 
-            // Valid to get log when app crash
-//            if (intent.action == action_rescuecenter) {
-//                RescueScreen()
-//            } else {
+
+            try {
+                internetConnectivityObserver.unregister()
+            } catch (e: Exception) {
+                // isn't registered, can be registered without issue
+            }
+            internetConnectivityObserver = InternetConnectivityObserver(this@MainActivity)
+            val isInternetAvailable by internetConnectivityObserver.internetNetworkStatus.collectAsState(true)
 
                 val colorPaletteMode by rememberPreference(
                     colorPaletteModeKey,
                     ColorPaletteMode.Dark
                 )
                 val isPicthBlack = colorPaletteMode == ColorPaletteMode.PitchBlack
-//            val isDark =
-//                colorPaletteMode == ColorPaletteMode.Dark || isPicthBlack || (colorPaletteMode == ColorPaletteMode.System && isSystemInDarkTheme())
-
-                //TODO: Check internet connection
-//            val internetConnectivityObserver = InternetConnectivityObserver(this)
-//            val internetConnected by internetConnectivityObserver.networkStatus.collectAsState(false)
-//            if (internetConnected) downloadHelper.resumeDownloads(this)
 
                 if (preferences.getEnum(
                         checkUpdateStateKey,
@@ -657,14 +657,14 @@ class MainActivity :
 
                     if (!isDynamicPalette) return
 
-//                val colorPaletteMode =
-//                    preferences.getEnum(colorPaletteModeKey, ColorPaletteMode.Dark)
+
                     coroutineScope.launch(Dispatchers.IO) {
                         val result = imageLoader.execute(
                             ImageRequest.Builder(this@MainActivity)
                                 .data(url)
                                 // Required to get work getPixels
-                                .bitmapConfig(if (isAtLeastAndroid8) Bitmap.Config.RGBA_F16 else Bitmap.Config.ARGB_8888)
+                                //.bitmapConfig(if (isAtLeastAndroid8) Bitmap.Config.RGBA_F16 else Bitmap.Config.ARGB_8888)
+                                .bitmapConfig(Bitmap.Config.ARGB_8888)
                                 .allowHardware(false)
                                 .build()
                         )
@@ -706,47 +706,6 @@ class MainActivity :
 
 
                 DisposableEffect(binder, !lightTheme) {
-                    /*
-            var bitmapListenerJob: Job? = null
-
-            fun setDynamicPalette(colorPaletteMode: ColorPaletteMode) {
-                val isDark =
-                    colorPaletteMode == ColorPaletteMode.Dark || (colorPaletteMode == ColorPaletteMode.System && isSystemInDarkTheme)
-                val isPicthBlack = colorPaletteMode == ColorPaletteMode.PitchBlack
-
-                binder?.setBitmapListener { bitmap: Bitmap? ->
-                    if (bitmap == null) {
-                        val colorPalette =
-                            colorPaletteOf(
-                                ColorPaletteName.Dynamic,
-                                colorPaletteMode,
-                                isSystemInDarkTheme
-                            )
-
-                        setSystemBarAppearance(colorPalette.isDark)
-
-                        appearance = appearance.copy(
-                            colorPalette = colorPalette,
-                            typography = appearance.typography.copy(colorPalette.text)
-                        )
-
-                        return@setBitmapListener
-                    }
-
-                    bitmapListenerJob = coroutineScope.launch(Dispatchers.IO) {
-                        dynamicColorPaletteOf(bitmap, isDark, isPicthBlack)?.let {
-                            withContext(Dispatchers.Main) {
-                                setSystemBarAppearance(it.isDark)
-                            }
-                            appearance = appearance.copy(
-                                colorPalette = it,
-                                typography = appearance.typography.copy(it.text)
-                            )
-                        }
-                    }
-                }
-            }
-            */
 
                     val listener =
                         SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
@@ -758,10 +717,9 @@ class MainActivity :
                                         Languages.English
                                     )
 
-                                    //val precLangCode = LocaleListCompat.getDefault().get(0).toString()
+
                                     val systemLangCode =
                                         AppCompatDelegate.getApplicationLocales().get(0).toString()
-                                    //Log.d("LanguageActivity", "lang.code ${lang.code} precLangCode $precLangCode systemLangCode $systemLangCode")
 
                                     val sysLocale: LocaleListCompat =
                                         LocaleListCompat.forLanguageTags(systemLangCode)
@@ -1095,7 +1053,7 @@ class MainActivity :
                                 LocalDownloadHelper provides downloadHelper,
                                 LocalPlayerSheetState provides playerState,
                                 LocalMonetCompat provides monet,
-                                //LocalInternetConnected provides internetConnected
+                                LocalInternetAvailable provides isInternetAvailable
                             ) {
 
                                 if (intent.action == action_rescuecenter) {
@@ -1570,5 +1528,5 @@ val LocalDownloadHelper = staticCompositionLocalOf<MyDownloadHelper> { error("No
 val LocalPlayerSheetState =
     staticCompositionLocalOf<SheetState> { error("No player sheet state provided") }
 
-//val LocalInternetConnected = staticCompositionLocalOf<Boolean> { error("No Network Status provided") }
+val LocalInternetAvailable = staticCompositionLocalOf<Boolean> { error("No Internet Status provided") }
 

@@ -87,7 +87,7 @@ fun manageDownload(
     downloadState: Boolean = false
 ) {
 
-    if (mediaItem.isLocal) return
+    if (mediaItem.isLocal || !isNetworkConnected(appContext())) return
 
     if (downloadState) {
         MyDownloadHelper.removeDownload(context = context, mediaItem = mediaItem)

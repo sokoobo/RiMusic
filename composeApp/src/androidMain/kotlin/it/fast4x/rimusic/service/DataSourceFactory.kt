@@ -41,7 +41,7 @@ internal fun PlayerService.createDataSourceFactory(): DataSource.Factory {
             .setCacheWriteDataSinkFactory(null)
             .setFlags(FLAG_IGNORE_CACHE_ON_ERROR)
     ) { dataSpec: DataSpec ->
-        try {
+        //try {
 
             // Get song from player
              val mediaItem = runBlocking {
@@ -60,19 +60,20 @@ internal fun PlayerService.createDataSourceFactory(): DataSource.Factory {
             //println("PlayerService DataSourcefactory currentMediaItem: ${mediaItem?.mediaId}")
             //dataSpec.key?.let { player.findNextMediaItemById(it)?.mediaMetadata }
 
-            return@Factory runBlocking {
-                dataSpecProcess(dataSpec, applicationContext, applicationContext.isConnectionMetered())
-                    /*
-                    .also {
-                    //loudnessEnhancer?.update(current_song, context)
-                    }
-                     */
+        return@Factory runBlocking {
+            try {
+                dataSpecProcess(dataSpec, appContext(), appContext().isConnectionMetered())
+            } catch (e: Exception) {
+                Timber.e("PlayerService DataSourcefactory return@Factory Error: ${e.stackTraceToString()}")
+                println("PlayerService DataSourcefactory return@Factory Error: ${e.stackTraceToString()}")
+                dataSpec
             }
         }
-        catch (e: Throwable) {
-            println("PlayerService DataSourcefactory Error: ${e.message}")
-            throw IOException(e)
-        }
+//        }
+//        catch (e: Throwable) {
+//            println("PlayerService DataSourcefactory Error: ${e.message}")
+//            throw IOException(e)
+//        }
     }
 }
 
@@ -88,43 +89,34 @@ internal fun MyDownloadHelper.createDataSourceFactory(): DataSource.Factory {
                 setCacheWriteDataSinkFactory(null)
             }
     ) { dataSpec: DataSpec ->
-        try {
+        //try {
 
             return@Factory runBlocking {
-                dataSpecProcess(dataSpec, appContext(), appContext().isConnectionMetered())
+                try {
+                    dataSpecProcess(dataSpec, appContext(), appContext().isConnectionMetered())
+                } catch (e: Exception) {
+                    Timber.e("MyDownloadHelper DataSourcefactory return@Factory Error: ${e.stackTraceToString()}")
+                    println("MyDownloadHelper DataSourcefactory return@Factory Error: ${e.stackTraceToString()}")
+                    dataSpec
+                }
             }
-        }
-        catch (e: Throwable) {
-            Timber.e("MyDownloadHelper DataSourcefactory Error: ${e.stackTraceToString()}")
-            println("MyDownloadHelper DataSourcefactory Error: ${e.stackTraceToString()}")
-            throw IOException(e)
-        }
+//        } catch (e: Throwable) {
+//            Timber.e("MyDownloadHelper DataSourcefactory Error: ${e.stackTraceToString()}")
+//            println("MyDownloadHelper DataSourcefactory Error: ${e.stackTraceToString()}")
+//            dataSpec
+//        }
     }.retryIf<UnplayableException>(
         maxRetries = 3,
         printStackTrace = true
     )
-    .retryIf<InterruptedException>(
-        maxRetries = 3,
-        printStackTrace = true
-    ).retryIf<UnknownException>(
-        maxRetries = 3,
-        printStackTrace = true
-    )
-//    .retryIf<IOException>(
-//        maxRetries = 3,
-//        printStackTrace = true
-//    )
-    .retryIf(
-        maxRetries = 1,
-        printStackTrace = true
-    ) { ex ->
-        ex.findCause<InvalidResponseCodeException>()?.responseCode == 403 ||
-                ex.findCause<ClientRequestException>()?.response?.status?.value == 403 ||
-                ex.findCause<InvalidHttpCodeException>() != null
-                || ex.findCause<InterruptedException>() != null
-                || ex.findCause<UnknownException>() != null
-                || ex.findCause<IOException>() != null
-    }.handleRangeErrors()
+        .retryIf(
+            maxRetries = 1,
+            printStackTrace = true
+        ) { ex ->
+            ex.findCause<InvalidResponseCodeException>()?.responseCode == 403 ||
+                    ex.findCause<ClientRequestException>()?.response?.status?.value == 403 ||
+                    ex.findCause<InvalidHttpCodeException>() != null
+        }.handleRangeErrors()
 }
 
 @OptIn(UnstableApi::class)
@@ -138,32 +130,27 @@ internal fun MyPreCacheHelper.createDataSourceFactory(): DataSource.Factory {
                 setCacheWriteDataSinkFactory(null)
             }
     ) { dataSpec: DataSpec ->
-        try {
+        //try {
 
             return@Factory runBlocking {
-                dataSpecProcess(dataSpec, appContext(), appContext().isConnectionMetered())
+                try {
+                    dataSpecProcess(dataSpec, appContext(), appContext().isConnectionMetered())
+                } catch (e: Exception) {
+                    Timber.e("MyPreCacheHelper DataSourcefactory return@Factory Error: ${e.stackTraceToString()}")
+                    println("MyPreCacheHelper DataSourcefactory return@Factory Error: ${e.stackTraceToString()}")
+                    dataSpec
+                }
             }
-        }
-        catch (e: Throwable) {
-            Timber.e("MyDownloadHelper DataSourcefactory Error: ${e.stackTraceToString()}")
-            println("MyDownloadHelper DataSourcefactory Error: ${e.stackTraceToString()}")
-            throw IOException(e)
-        }
+//        }
+//        catch (e: Throwable) {
+//            Timber.e("MyPreCacheHelper DataSourcefactory Error: ${e.stackTraceToString()}")
+//            println("MyPreCacheHelper DataSourcefactory Error: ${e.stackTraceToString()}")
+//            dataSpec
+//        }
     }.retryIf<UnplayableException>(
         maxRetries = 3,
         printStackTrace = true
     )
-        .retryIf<InterruptedException>(
-            maxRetries = 3,
-            printStackTrace = true
-        ).retryIf<UnknownException>(
-            maxRetries = 3,
-            printStackTrace = true
-        )
-//    .retryIf<IOException>(
-//        maxRetries = 3,
-//        printStackTrace = true
-//    )
         .retryIf(
             maxRetries = 1,
             printStackTrace = true
@@ -171,8 +158,5 @@ internal fun MyPreCacheHelper.createDataSourceFactory(): DataSource.Factory {
             ex.findCause<InvalidResponseCodeException>()?.responseCode == 403 ||
                     ex.findCause<ClientRequestException>()?.response?.status?.value == 403 ||
                     ex.findCause<InvalidHttpCodeException>() != null
-                    || ex.findCause<InterruptedException>() != null
-                    || ex.findCause<UnknownException>() != null
-                    || ex.findCause<IOException>() != null
         }.handleRangeErrors()
 }

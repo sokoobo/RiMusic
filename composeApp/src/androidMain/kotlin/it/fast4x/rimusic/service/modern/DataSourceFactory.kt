@@ -9,6 +9,7 @@ import androidx.media3.datasource.ResolvingDataSource
 import androidx.media3.datasource.cache.CacheDataSource
 import androidx.media3.datasource.cache.CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR
 import io.ktor.client.plugins.ClientRequestException
+import it.fast4x.piped.utils.runCatchingCancellable
 import it.fast4x.rimusic.Database
 import it.fast4x.rimusic.utils.asSong
 import it.fast4x.rimusic.utils.isConnectionMetered
@@ -27,6 +28,8 @@ import it.fast4x.rimusic.utils.findCause
 import it.fast4x.rimusic.utils.handleRangeErrors
 import it.fast4x.rimusic.utils.readOnlyWhen
 import it.fast4x.rimusic.utils.retryIf
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.IOException
 
@@ -51,7 +54,7 @@ internal fun PlayerServiceModern.createDataSourceFactory(): DataSource.Factory {
 //        )
 
     ) { dataSpec: DataSpec ->
-        try {
+        //try {
 
             // Get song from player
              val mediaItem = runBlocking {
@@ -71,29 +74,25 @@ internal fun PlayerServiceModern.createDataSourceFactory(): DataSource.Factory {
             //dataSpec.key?.let { player.findNextMediaItemById(it)?.mediaMetadata }
 
             return@Factory runBlocking {
-                dataSpecProcess(dataSpec, applicationContext, applicationContext.isConnectionMetered())
+                try {
+                    dataSpecProcess(dataSpec, applicationContext, applicationContext.isConnectionMetered())
+                } catch (e: Exception) {
+                    Timber.e("PlayerServiceModern DataSourcefactory return@Factory Error: ${e.stackTraceToString()}")
+                    println("PlayerServiceModern DataSourcefactory return@Factory Error: ${e.stackTraceToString()}")
+                    dataSpec
+                }
             }
-        }
-        catch (e: Throwable) {
-            Timber.e("PlayerServiceModern DataSourcefactory Error: ${e.stackTraceToString()}")
-            println("PlayerServiceModern DataSourcefactory Error: ${e.stackTraceToString()}")
-            throw IOException(e)
-        }
+
+
+//        } catch (e: Throwable) {
+//            Timber.e("PlayerServiceModern DataSourcefactory Error: ${e.stackTraceToString()}")
+//            println("PlayerServiceModern DataSourcefactory Error: ${e.stackTraceToString()}")
+//            dataSpec
+//        }
     }.retryIf<UnplayableException>(
         maxRetries = 3,
         printStackTrace = true
     )
-    .retryIf<InterruptedException>(
-        maxRetries = 3,
-        printStackTrace = true
-    ).retryIf<UnknownException>(
-        maxRetries = 3,
-        printStackTrace = true
-    )
-//    .retryIf<IOException>(
-//        maxRetries = 3,
-//        printStackTrace = true
-//    )
     .retryIf(
         maxRetries = 1,
         printStackTrace = true
@@ -101,9 +100,6 @@ internal fun PlayerServiceModern.createDataSourceFactory(): DataSource.Factory {
         ex.findCause<InvalidResponseCodeException>()?.responseCode == 403 ||
                 ex.findCause<ClientRequestException>()?.response?.status?.value == 403 ||
                 ex.findCause<InvalidHttpCodeException>() != null
-                || ex.findCause<InterruptedException>() != null
-                || ex.findCause<UnknownException>() != null
-                || ex.findCause<IOException>() != null
     }.handleRangeErrors()
 }
 

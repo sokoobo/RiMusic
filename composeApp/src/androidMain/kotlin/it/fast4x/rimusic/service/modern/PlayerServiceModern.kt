@@ -44,6 +44,9 @@ import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
+import androidx.media3.common.Player.EVENT_POSITION_DISCONTINUITY
+import androidx.media3.common.Player.EVENT_TIMELINE_CHANGED
+import androidx.media3.common.Player.MEDIA_ITEM_TRANSITION_REASON_SEEK
 import androidx.media3.common.Player.STATE_IDLE
 import androidx.media3.common.Timeline
 import androidx.media3.common.audio.SonicAudioProcessor
@@ -195,6 +198,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import it.fast4x.rimusic.appContext
 import it.fast4x.rimusic.enums.PresetsReverb
+import it.fast4x.rimusic.extensions.connectivity.InternetConnectivityObserver
 import it.fast4x.rimusic.extensions.webpotoken.advancedWebPoTokenPlayer
 import it.fast4x.rimusic.isHandleAudioFocusEnabled
 import it.fast4x.rimusic.isPreCacheEnabled
@@ -280,6 +284,9 @@ class PlayerServiceModern : MediaLibraryService(),
     var currentSongStateDownload = MutableStateFlow(Download.STATE_STOPPED)
 
     //private lateinit var connectivityManager: ConnectivityManager
+    lateinit var internetConnectivityObserver: InternetConnectivityObserver
+    private val isInternetAvailable = MutableStateFlow(true)
+    private val waitingForInternet = MutableStateFlow(false)
     private var notificationManager: NotificationManager? = null
     private val playerVerticalWidget = PlayerVerticalWidget()
     private val playerHorizontalWidget = PlayerHorizontalWidget()
@@ -297,6 +304,23 @@ class PlayerServiceModern : MediaLibraryService(),
 //            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
 //            PackageManager.DONT_KILL_APP
 //        )
+
+        try {
+            internetConnectivityObserver.unregister()
+        } catch (e: Exception) {
+            // isn't registered
+        }
+        internetConnectivityObserver = InternetConnectivityObserver(this@PlayerServiceModern)
+        coroutineScope.launch {
+            internetConnectivityObserver.internetNetworkStatus.collect { isAvailable ->
+                isInternetAvailable.value = isAvailable
+                if (isAvailable && waitingForInternet.value) {
+                    waitingForInternet.value = false
+                    player.prepare()
+                    player.play()
+                }
+            }
+        }
 
         val notificationType = preferences.getEnum(notificationTypeKey, NotificationType.Default)
         when(notificationType){
@@ -735,11 +759,16 @@ class PlayerServiceModern : MediaLibraryService(),
         Timber.d("PlayerServiceModern onMediaItemTransition mediaItem $mediaItem reason $reason")
         println("PlayerServiceModern onMediaItemTransition mediaItem $mediaItem reason $reason")
 
-        currentMediaItem.update { mediaItem }
-
         if (isPreCacheEnabled() && mediaItem != null) {
             preCacheMedia(this,mediaItem)
         }
+
+        if (player.isPlaying && reason == MEDIA_ITEM_TRANSITION_REASON_SEEK) {
+            player.prepare()
+            player.play()
+        }
+
+        currentMediaItem.update { mediaItem }
 
         maybeRecoverPlaybackError()
         maybeNormalizeVolume()
@@ -808,37 +837,60 @@ class PlayerServiceModern : MediaLibraryService(),
 
     override fun onPlayerError(error: PlaybackException) {
         super.onPlayerError(error)
-        Timber.e("PlayerServiceModern onPlayerError errorCode ${error.errorCode} errorCodeName ${error.errorCodeName}")
-        println("PlayerServiceModern onPlayerError errorCode ${error.errorCode} errorCodeName ${error.errorCodeName}")
-        if (error.errorCode in PlayerErrorsToReload) {
-            Timber.e("PlayerServiceModern onPlayerError recovered occurred errorCodeName ${error.errorCodeName}")
-            println("PlayerServiceModern onPlayerError recovered occurred errorCodeName ${error.errorCodeName}")
-            player.stop()
+
+        Timber.e("PlayerServiceModern onPlayerError error code ${error.errorCode} message ${error.message} cause ${error.cause?.cause}")
+        println("PlayerServiceModern onPlayerError error code ${error.errorCode} message ${error.message} cause ${error.cause?.cause}")
+
+        val playbackConnectionExeptionList = listOf(
+            PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED, //primary error code to manage
+            PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT
+        )
+
+        // check if error is caused by internet connection
+        val isConnectionError = (error.cause?.cause is PlaybackException)
+                && (error.cause?.cause as PlaybackException).errorCode in playbackConnectionExeptionList
+
+        if (!isInternetAvailable.value || isConnectionError) {
+            waitingForInternet.value = true
+            SmartMessage(resources.getString(R.string.error_no_internet), context = this )
+            return
+        }
+
+        val playbackHttpExeptionList = listOf(
+            PlaybackException.ERROR_CODE_IO_BAD_HTTP_STATUS,
+            PlaybackException.ERROR_CODE_IO_READ_POSITION_OUT_OF_RANGE,
+            416 // 416 Range Not Satisfiable
+        )
+
+        if (error.errorCode in playbackHttpExeptionList) {
+            Timber.e("PlayerServiceModern onPlayerError recovered occurred errorCodeName ${error.errorCodeName} cause ${error.cause?.cause}")
+            println("PlayerServiceModern onPlayerError recovered occurred errorCodeName ${error.errorCodeName} cause ${error.cause?.cause}")
+            player.pause()
             player.prepare()
             player.play()
             return
         }
 
-        if (error.errorCode in PlayerErrorsToRemoveCorruptedCache) {
-            Timber.e("PlayerServiceModern onPlayerError delete corrupted resource ${currentMediaItem.value?.mediaId} errorCodeName ${error.errorCodeName}")
-            println("PlayerServiceModern onPlayerError delete corrupted resource ${currentMediaItem.value?.mediaId} errorCodeName ${error.errorCodeName}")
-            currentMediaItem.value?.mediaId?.let {
-                try {
-                    cache.removeResource(it) //try to remove from cache if exists
-                } catch (e: Exception) {
-                    Timber.e("PlayerServiceModern onPlayerError delete corrupted cache resource removeResource ${e.stackTraceToString()}")
-                }
-                try {
-                    downloadCache.removeResource(it) //try to remove from download cache if exists
-                } catch (e: Exception) {
-                    Timber.e("PlayerServiceModern onPlayerError delete corrupted downloadCache resource removeResource ${e.stackTraceToString()}")
-                }
-            }
-            player.stop()
-            player.prepare()
-            player.play()
-            return
-        }
+//        if (error.errorCode in PlayerErrorsToRemoveCorruptedCache) {
+//            Timber.e("PlayerServiceModern onPlayerError delete corrupted resource ${currentMediaItem.value?.mediaId} errorCodeName ${error.errorCodeName}")
+//            println("PlayerServiceModern onPlayerError delete corrupted resource ${currentMediaItem.value?.mediaId} errorCodeName ${error.errorCodeName}")
+//            currentMediaItem.value?.mediaId?.let {
+//                try {
+//                    cache.removeResource(it) //try to remove from cache if exists
+//                } catch (e: Exception) {
+//                    Timber.e("PlayerServiceModern onPlayerError delete corrupted cache resource removeResource ${e.stackTraceToString()}")
+//                }
+//                try {
+//                    downloadCache.removeResource(it) //try to remove from download cache if exists
+//                } catch (e: Exception) {
+//                    Timber.e("PlayerServiceModern onPlayerError delete corrupted downloadCache resource removeResource ${e.stackTraceToString()}")
+//                }
+//            }
+//            player.stop()
+//            player.prepare()
+//            player.play()
+//            return
+//        }
 
         /*
         if (error.errorCode in PlayerErrorsToSkip) {
@@ -881,12 +933,15 @@ class PlayerServiceModern : MediaLibraryService(),
                 sendOpenEqualizerIntent()
             } else {
                 sendCloseEqualizerIntent()
+                if (!player.playWhenReady) {
+                    waitingForInternet.value = false
+                }
             }
         }
 
-//        if (events.containsAny(EVENT_TIMELINE_CHANGED, EVENT_POSITION_DISCONTINUITY)) {
-//            currentMediaItem.value = player.currentMediaItem
-//        }
+        if (events.containsAny(EVENT_TIMELINE_CHANGED, EVENT_POSITION_DISCONTINUITY)) {
+            currentMediaItem.value = player.currentMediaItem
+        }
     }
 
     private fun updateOnlineHistory(mediaItem: MediaItem) {
@@ -1464,15 +1519,15 @@ class PlayerServiceModern : MediaLibraryService(),
         binder.actionSearch()
     }
 
-    override fun onPositionDiscontinuity(
-        oldPosition: Player.PositionInfo,
-        newPosition: Player.PositionInfo,
-        reason: Int
-    ) {
-        Timber.d("PlayerServiceModern onPositionDiscontinuity oldPosition ${oldPosition.mediaItemIndex} newPosition ${newPosition.mediaItemIndex} reason $reason")
-        println("PlayerServiceModern onPositionDiscontinuity oldPosition ${oldPosition.mediaItemIndex} newPosition ${newPosition.mediaItemIndex} reason $reason")
-        super.onPositionDiscontinuity(oldPosition, newPosition, reason)
-    }
+//    override fun onPositionDiscontinuity(
+//        oldPosition: Player.PositionInfo,
+//        newPosition: Player.PositionInfo,
+//        reason: Int
+//    ) {
+//        Timber.d("PlayerServiceModern onPositionDiscontinuity oldPosition ${oldPosition.mediaItemIndex} newPosition ${newPosition.mediaItemIndex} reason $reason")
+//        println("PlayerServiceModern onPositionDiscontinuity oldPosition ${oldPosition.mediaItemIndex} newPosition ${newPosition.mediaItemIndex} reason $reason")
+//        super.onPositionDiscontinuity(oldPosition, newPosition, reason)
+//    }
 
     private fun maybeSavePlayerQueue() {
         Timber.d("PlayerServiceModern onCreate savePersistentQueue")
@@ -1963,19 +2018,19 @@ class PlayerServiceModern : MediaLibraryService(),
         const val SleepTimerNotificationId = 1002
         const val SleepTimerNotificationChannelId = "sleep_timer_channel_id"
 
-        val PlayerErrorsToReload = arrayOf(
-            416,
-            4003, // ERROR_CODE_DECODING_FAILED
-        )
-
-        val PlayerErrorsToRemoveCorruptedCache = arrayOf(
-
-            2000, // ERROR_CODE_IO_UNSPECIFIED
-            2003, // ERROR_CODE_IO_INVALID_HTTP_CONTENT_TYPE
-            2004, // ERROR_CODE_IO_BAD_HTTP_STATUS
-            2005, // ERROR_CODE_IO_FILE_NOT_FOUND
-            2008 // ERROR_CODE_IO_READ_POSITION_OUT_OF_RANGE
-        )
+//        val PlayerErrorsToReload = arrayOf(
+//            416,
+//            //4003, // ERROR_CODE_DECODING_FAILED
+//        )
+//
+//        val PlayerErrorsToRemoveCorruptedCache = arrayOf(
+//
+//            2000, // ERROR_CODE_IO_UNSPECIFIED
+//            2003, // ERROR_CODE_IO_INVALID_HTTP_CONTENT_TYPE
+//            2004, // ERROR_CODE_IO_BAD_HTTP_STATUS
+//            2005, // ERROR_CODE_IO_FILE_NOT_FOUND
+//            2008 // ERROR_CODE_IO_READ_POSITION_OUT_OF_RANGE
+//        )
 
 
         const val ROOT = "root"
