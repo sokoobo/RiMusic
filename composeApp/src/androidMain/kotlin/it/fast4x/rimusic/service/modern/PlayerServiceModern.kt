@@ -1,6 +1,7 @@
 package it.fast4x.rimusic.service.modern
 
 import android.annotation.SuppressLint
+import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.WallpaperManager
@@ -15,6 +16,7 @@ import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
 import android.database.SQLException
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -25,6 +27,7 @@ import android.media.audiofx.AudioEffect
 import android.media.audiofx.BassBoost
 import android.media.audiofx.LoudnessEnhancer
 import android.media.audiofx.PresetReverb
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -80,6 +83,8 @@ import androidx.media3.session.MediaNotification
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaStyleNotificationHelper
 import androidx.media3.session.SessionToken
+import androidx.media3.ui.DefaultMediaDescriptionAdapter
+import androidx.media3.ui.PlayerNotificationManager
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
@@ -207,6 +212,7 @@ import it.fast4x.rimusic.utils.asMediaItem
 import it.fast4x.rimusic.utils.audioReverbPresetKey
 import it.fast4x.rimusic.utils.bassboostEnabledKey
 import it.fast4x.rimusic.utils.bassboostLevelKey
+import it.fast4x.rimusic.utils.isInvincibilityEnabledKey
 import it.fast4x.rimusic.utils.preCacheMedia
 import it.fast4x.rimusic.utils.principalCache
 import it.fast4x.rimusic.utils.volumeBoostLevelKey
@@ -287,10 +293,12 @@ class PlayerServiceModern : MediaLibraryService(),
     lateinit var internetConnectivityObserver: InternetConnectivityObserver
     private val isInternetAvailable = MutableStateFlow(true)
     private val waitingForInternet = MutableStateFlow(false)
-    private var notificationManager: NotificationManager? = null
+
     private val playerVerticalWidget = PlayerVerticalWidget()
     private val playerHorizontalWidget = PlayerHorizontalWidget()
 
+    private var notificationManager: NotificationManager? = null
+    private lateinit var playerNotificationManager: PlayerNotificationManager
     private lateinit var notificationActionReceiver: NotificationActionReceiver
 
     @kotlin.OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
@@ -528,6 +536,43 @@ class PlayerServiceModern : MediaLibraryService(),
             filter,
             ContextCompat.RECEIVER_NOT_EXPORTED
         )
+
+        playerNotificationManager = PlayerNotificationManager.Builder(this, NotificationId, NotificationChannelId)
+            .setNotificationListener(object : PlayerNotificationManager.NotificationListener {
+                override fun onNotificationPosted(notificationId: Int, notification: Notification, ongoing: Boolean) {
+                    fun startFg() {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            startForeground(notificationId, notification, FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
+                        } else {
+                            startForeground(notificationId, notification)
+                        }
+                    }
+
+                    // FG keep alive, thanks to OuterTune for solution
+                    if (preferences.getBoolean(isInvincibilityEnabledKey, false)) {
+                        startFg()
+                    } else {
+                        // mimic media3 default behaviour
+                        if (player.isPlaying) {
+                            startFg()
+                        } else {
+                            if (isAtLeastAndroid7)
+                                stopForeground(notificationId)
+                            else
+                                stopForeground(true)
+
+
+                        }
+                    }
+                }
+            })
+            .setMediaDescriptionAdapter(DefaultMediaDescriptionAdapter(mediaSession.sessionActivity))
+            .build()
+
+        playerNotificationManager.setPlayer(player)
+        playerNotificationManager.setSmallIcon(R.drawable.app_icon)
+        playerNotificationManager.setMediaSessionToken(mediaSession.platformToken)
+
 
         // Ensure that song is updated
         currentSong.debounce(1000).collect(coroutineScope) { song ->

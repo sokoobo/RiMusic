@@ -76,6 +76,7 @@ kotlin {
             implementation(libs.nanojson)
             implementation(libs.androidx.webkit)
             implementation(libs.room.backup)
+            implementation(libs.media3.ui)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
