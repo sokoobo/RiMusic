@@ -1232,11 +1232,12 @@ class PlayerServiceModern : MediaLibraryService(),
     private fun createMediaSourceFactory() = DefaultMediaSourceFactory(
         createDataSourceFactory(),
         DefaultExtractorsFactory()
-    ).setLoadErrorHandlingPolicy(
-        object : DefaultLoadErrorHandlingPolicy() {
-            override fun isEligibleForFallback(exception: IOException) = true
-        }
     )
+//        .setLoadErrorHandlingPolicy(
+//        object : DefaultLoadErrorHandlingPolicy() {
+//            override fun isEligibleForFallback(exception: IOException) = true
+//        }
+//    )
 
 
     private fun buildCustomCommandButtons(): MutableList<CommandButton> {

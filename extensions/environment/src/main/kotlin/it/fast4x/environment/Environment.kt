@@ -87,6 +87,7 @@ import java.io.File
 import java.net.InetAddress
 import java.net.Proxy
 import java.util.Locale
+import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 
 object Environment {
@@ -121,29 +122,31 @@ object Environment {
         expectSuccess = true
 
         install(ContentNegotiation) {
-            protobuf()
+            //protobuf()
             json(Json {
                 ignoreUnknownKeys = true
                 explicitNulls = false
                 encodeDefaults = true
             })
-            xml(
-                format =
-                XML {
-                    xmlDeclMode = XmlDeclMode.Charset
-                    autoPolymorphic = true
-                },
-                contentType = ContentType.Text.Xml,
-            )
+//            xml(
+//                format =
+//                XML {
+//                    xmlDeclMode = XmlDeclMode.Charset
+//                    autoPolymorphic = true
+//                },
+//                contentType = ContentType.Text.Xml,
+//            )
         }
 
         install(ContentEncoding) {
-            brotli(1.0F)
+            //brotli(1.0F)
             gzip(0.9F)
             deflate(0.8F)
         }
 
         install(HttpCache)
+
+
 
         engine {
             addInterceptor(
@@ -151,6 +154,8 @@ object Environment {
                     level = HttpLoggingInterceptor.Level.BODY
                 }
             )
+
+
 
             if (this@Environment.dnsToUse != null) {
                // Used in memory cache insted of this, it seems that actually there is a bug in file cache with ktor
@@ -183,6 +188,13 @@ object Environment {
 
                 val clientWithDns = bootstrapClient.newBuilder().dns(dns).build()
                 preconfigured = clientWithDns
+            }
+
+            config {
+                followRedirects(true)
+                followSslRedirects(true)
+                retryOnConnectionFailure(true)
+                pingInterval(1, TimeUnit.SECONDS)
             }
 
         }
@@ -925,6 +937,7 @@ object Environment {
         setLogin(setLogin = true)
         setBody(
             PlayerBody(
+                //context = clientType.toContext(locale, visitorData, dataSyncId),
                 videoId = videoId,
                 playlistId = playlistId,
                 playbackContext =
@@ -935,7 +948,7 @@ object Environment {
                 } else null,
                 serviceIntegrityDimensions = if (webPlayerPot != null) {
                     PlayerBody.ServiceIntegrityDimensions(webPlayerPot)
-                } else null
+                } else null,
             ),
         )
     }

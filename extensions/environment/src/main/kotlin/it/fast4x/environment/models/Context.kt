@@ -2,6 +2,7 @@ package it.fast4x.environment.models
 
 import io.ktor.http.headers
 import it.fast4x.environment.Environment
+import it.fast4x.environment.utils.EnvironmentLocale
 import it.fast4x.environment.utils.EnvironmentPreferences
 import it.fast4x.environment.utils.LocalePreferences
 import kotlinx.serialization.Serializable
@@ -31,7 +32,21 @@ data class Context(
         val osVersion: String? = null,
         val acceptHeader: String? = null,
         val xClientName: Int? = null,
-    )
+    ){
+        fun toContext(locale: EnvironmentLocale, visitorData: String?, dataSyncId: String?) = Context(
+            client = Client(
+                clientName = clientName,
+                clientVersion = clientVersion,
+                osVersion = osVersion,
+                gl = locale.gl,
+                hl = locale.hl,
+                visitorData = visitorData
+            ),
+            user = User(
+                onBehalfOfUser = dataSyncId
+            ),
+        )
+    }
 
     @Serializable
     data class ThirdParty(
@@ -40,7 +55,8 @@ data class Context(
 
     @Serializable
     data class User(
-        val lockedSafetyMode: Boolean = false
+        val lockedSafetyMode: Boolean = false,
+        val onBehalfOfUser: String? = null,
     )
 
     @Serializable

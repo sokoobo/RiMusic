@@ -105,18 +105,19 @@ internal fun MyDownloadHelper.createDataSourceFactory(): DataSource.Factory {
 //            println("MyDownloadHelper DataSourcefactory Error: ${e.stackTraceToString()}")
 //            dataSpec
 //        }
-    }.retryIf<UnplayableException>(
-        maxRetries = 3,
-        printStackTrace = true
-    )
-        .retryIf(
-            maxRetries = 1,
-            printStackTrace = true
-        ) { ex ->
-            ex.findCause<InvalidResponseCodeException>()?.responseCode == 403 ||
-                    ex.findCause<ClientRequestException>()?.response?.status?.value == 403 ||
-                    ex.findCause<InvalidHttpCodeException>() != null
-        }.handleRangeErrors()
+    }
+//        .retryIf<UnplayableException>(
+//        maxRetries = 3,
+//        printStackTrace = true
+//    )
+//        .retryIf(
+//            maxRetries = 1,
+//            printStackTrace = true
+//        ) { ex ->
+//            ex.findCause<InvalidResponseCodeException>()?.responseCode == 403 ||
+//                    ex.findCause<ClientRequestException>()?.response?.status?.value == 403 ||
+//                    ex.findCause<InvalidHttpCodeException>() != null
+//        }.handleRangeErrors()
 }
 
 @OptIn(UnstableApi::class)
@@ -147,16 +148,17 @@ internal fun MyPreCacheHelper.createDataSourceFactory(): DataSource.Factory {
 //            println("MyPreCacheHelper DataSourcefactory Error: ${e.stackTraceToString()}")
 //            dataSpec
 //        }
-    }.retryIf<UnplayableException>(
-        maxRetries = 3,
-        printStackTrace = true
-    )
-        .retryIf(
-            maxRetries = 1,
-            printStackTrace = true
-        ) { ex ->
-            ex.findCause<InvalidResponseCodeException>()?.responseCode == 403 ||
-                    ex.findCause<ClientRequestException>()?.response?.status?.value == 403 ||
-                    ex.findCause<InvalidHttpCodeException>() != null
-        }.handleRangeErrors()
+    }
+//        .retryIf<UnplayableException>(
+//        maxRetries = 3,
+//        printStackTrace = true
+//    )
+//        .retryIf(
+//            maxRetries = 1,
+//            printStackTrace = true
+//        ) { ex ->
+//            ex.findCause<InvalidResponseCodeException>()?.responseCode == 403 ||
+//                    ex.findCause<ClientRequestException>()?.response?.status?.value == 403 ||
+//                    ex.findCause<InvalidHttpCodeException>() != null
+//        }.handleRangeErrors()
 }

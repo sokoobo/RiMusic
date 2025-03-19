@@ -71,12 +71,13 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.navigation)
             implementation(libs.media3.session)
+            implementation(libs.media3.ui)
             implementation(libs.kotlin.coroutines.guava)
+            implementation(libs.kotlin.concurrent.futures)
             implementation(libs.newpipe.extractor)
             implementation(libs.nanojson)
             implementation(libs.androidx.webkit)
             implementation(libs.room.backup)
-            implementation(libs.media3.ui)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
