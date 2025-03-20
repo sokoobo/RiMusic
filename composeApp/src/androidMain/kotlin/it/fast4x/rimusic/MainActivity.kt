@@ -267,7 +267,7 @@ class MainActivity :
 //,PersistMapOwner
 {
     var downloadHelper = MyDownloadHelper
-    lateinit var internetConnectivityObserver: InternetConnectivityObserver
+    //lateinit var internetConnectivityObserver: InternetConnectivityObserver
 
     var client = OkHttpClient()
     var request = OkHttpRequest(client)
@@ -481,13 +481,13 @@ class MainActivity :
         setContent {
 
 
-            try {
-                internetConnectivityObserver.unregister()
-            } catch (e: Exception) {
-                // isn't registered, can be registered without issue
-            }
-            internetConnectivityObserver = InternetConnectivityObserver(this@MainActivity)
-            val isInternetAvailable by internetConnectivityObserver.internetNetworkStatus.collectAsState(true)
+//            try {
+//                internetConnectivityObserver.unregister()
+//            } catch (e: Exception) {
+//                // isn't registered, can be registered without issue
+//            }
+//            internetConnectivityObserver = InternetConnectivityObserver(this@MainActivity)
+//            val isInternetAvailable by internetConnectivityObserver.internetNetworkStatus.collectAsState(true)
 
                 val colorPaletteMode by rememberPreference(
                     colorPaletteModeKey,
@@ -1079,7 +1079,7 @@ class MainActivity :
                                 LocalDownloadHelper provides downloadHelper,
                                 LocalPlayerSheetState provides playerState,
                                 LocalMonetCompat provides monet,
-                                LocalInternetAvailable provides isInternetAvailable
+                                //LocalInternetAvailable provides isInternetAvailable
                             ) {
 
                                 if (intent.action == action_rescuecenter) {
@@ -1554,5 +1554,5 @@ val LocalDownloadHelper = staticCompositionLocalOf<MyDownloadHelper> { error("No
 val LocalPlayerSheetState =
     staticCompositionLocalOf<SheetState> { error("No player sheet state provided") }
 
-val LocalInternetAvailable = staticCompositionLocalOf<Boolean> { error("No Internet Status provided") }
+//val LocalInternetAvailable = staticCompositionLocalOf<Boolean> { error("No Internet Status provided") }
 
