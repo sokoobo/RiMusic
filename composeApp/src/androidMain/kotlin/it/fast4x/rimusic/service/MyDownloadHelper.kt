@@ -147,7 +147,8 @@ object MyDownloadHelper {
                 context,
                 getDatabaseProvider(context),
                 getDownloadCache(context),
-                createDataSourceFactory(),
+                //createDataSourceFactory(),
+                createSimpleDataSourceFactory(),
                 //Executor(Runnable::run)
                 executor
             ).apply {

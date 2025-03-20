@@ -158,6 +158,7 @@ import it.fast4x.rimusic.utils.InitDownloader
 import it.fast4x.rimusic.utils.LocalMonetCompat
 import it.fast4x.rimusic.utils.OkHttpRequest
 import it.fast4x.rimusic.extensions.rescuecenter.RescueScreen
+import it.fast4x.rimusic.ui.screens.settings.isYouTubeLoggedIn
 import it.fast4x.rimusic.utils.UiTypeKey
 import it.fast4x.rimusic.utils.animatedGradientKey
 import it.fast4x.rimusic.utils.applyFontPaddingKey
@@ -303,6 +304,10 @@ class MainActivity :
 
     private val pipState: MutableState<Boolean> = mutableStateOf(false)
 
+    var cookie: MutableState<String> = mutableStateOf("") //mutableStateOf(preferences.getString(ytCookieKey, "").toString())
+    var visitorData: MutableState<String> = mutableStateOf("") //mutableStateOf(preferences.getString(ytVisitorDataKey, "").toString())
+
+
     override fun onStart() {
         super.onStart()
 
@@ -313,6 +318,7 @@ class MainActivity :
         }.onFailure {
             Timber.e("MainActivity.onStart bindService ${it.stackTraceToString()}")
         }
+
     }
 
     @ExperimentalMaterialApi
@@ -549,35 +555,45 @@ class MainActivity :
                         gl = locale.country
                             ?: "US"
                     )
-                //TODO Manage login
-                //if (preferences.getBoolean(enableYouTubeLoginKey, false)) {
-                var visitorData by rememberPreference(
-                    key = ytVisitorDataKey,
-                    defaultValue = Environment._uMYwa66ycM
-                )
 
-                if (visitorData.isEmpty() || visitorData == "null")
+                cookie.value = preferences.getString(ytCookieKey, "").toString()
+                visitorData.value = preferences.getString(ytVisitorDataKey, "").toString()
+
+
+                // If visitorData is empty, get it from the server with or without login
+                if (visitorData.value.isEmpty() || visitorData.value == "null")
                     runCatching {
-                        println("MainActivity.onCreate visitorData.isEmpty() getInitialVisitorData")
-                        CoroutineScope(Dispatchers.IO).launch {
-                            Environment.getInitialVisitorData().getOrNull()?.also {
-                                visitorData = it
-                            }
-                        }
+                        println("MainActivity.onCreate visitorData.isEmpty() getInitialVisitorData visitorData ${visitorData.value}")
+                        visitorData.value = runBlocking {
+                                Environment.getInitialVisitorData().getOrNull()
+                        }.takeIf { it != "null" } ?: Environment._uMYwa66ycM
+                        // Save visitorData in SharedPreferences
+                        preferences.edit { putString(ytVisitorDataKey, visitorData.value) }
                     }.onFailure {
                         Timber.e("MainActivity.onCreate visitorData.isEmpty() getInitialVisitorData ${it.stackTraceToString()}")
                         println("MainActivity.onCreate visitorData.isEmpty() getInitialVisitorData ${it.stackTraceToString()}")
+                        visitorData.value = Environment._uMYwa66ycM
                     }
 
-                val cookie = preferences.getString(ytCookieKey, "")
-                println("MainActivity.onCreate cookie: $cookie")
+                Environment.visitorData = visitorData.value
+                println("MainActivity.onCreate visitorData in use: ${visitorData.value}")
+
+                cookie.let{
+                    if(isYouTubeLoggedIn())
+                        Environment.cookie = it.value
+                    else {
+                        Environment.cookie = ""
+                        cookie.value = ""
+                        preferences.edit { putString(ytCookieKey, "") }
+                    }
+                }
+
+                Environment.dataSyncId = preferences.getString(ytDataSyncIdKey, "").toString()
+
+                println("MainActivity.onCreate cookie: ${cookie.value}")
                 val customDnsOverHttpsServer =
                     preferences.getString(customDnsOverHttpsServerKey, "")
 
-                Environment.cookie = cookie
-                Environment.visitorData = visitorData.takeIf { it != "null" }
-                    ?: Environment._uMYwa66ycM
-                Environment.dataSyncId = preferences.getString(ytDataSyncIdKey, "").toString()
                 val customDnsIsOk = customDnsOverHttpsServer?.let { isValidHttpUrl(it) }
                 if (customDnsIsOk == false && getDnsOverHttpsType() == DnsOverHttpsType.Custom)
                     SmartMessage(
@@ -886,6 +902,16 @@ class MainActivity :
                                         ),
                                     )
                                 }
+
+                                ytCookieKey -> cookie.value =
+                                    sharedPreferences.getString(ytCookieKey, "").toString()
+
+                                ytVisitorDataKey -> {
+                                    if (visitorData.value.isEmpty())
+                                        visitorData.value =
+                                            sharedPreferences.getString(ytVisitorDataKey, "").toString()
+                                }
+
                             }
                         }
 

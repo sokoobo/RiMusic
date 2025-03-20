@@ -7,6 +7,7 @@ import it.fast4x.environment.models.BrowseResponse
 import it.fast4x.environment.models.Context
 import it.fast4x.environment.models.CreatePlaylistResponse
 import it.fast4x.environment.models.NavigationEndpoint
+import it.fast4x.environment.models.PlayerResponse
 import it.fast4x.environment.models.VideoOrSongInfo
 import it.fast4x.environment.models.getContinuation
 import it.fast4x.environment.models.oddElements
@@ -543,5 +544,14 @@ object EnvironmentExt {
     }.onFailure {
         println("EnvironmentExt addPlaybackToHistory error: ${it.stackTraceToString()}")
     }
+
+    //****************************************************************************************
+    suspend fun simplePlayer(videoId: String, playlistId: String? = null, client: Context.Client, signatureTimestamp: Int? = null): Result<PlayerResponse> = runCatching {
+        Environment.simplePlayer(client, videoId, playlistId, signatureTimestamp).body<PlayerResponse>()
+    }.onFailure {
+        println("EnvironmentExt simplePlayer error: ${it.stackTraceToString()}")
+    }
+    //*****************************************************************************************
+
 
 }

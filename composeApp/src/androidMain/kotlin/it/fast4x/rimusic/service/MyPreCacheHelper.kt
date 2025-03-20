@@ -127,7 +127,8 @@ object MyPreCacheHelper {
                 context,
                 databaseProvider,
                 cache,
-                createDataSourceFactory(),
+                //createDataSourceFactory(),
+                createSimpleDataSourceFactory(),
                 //Executor(Runnable::run)
                 executor
             ).apply {

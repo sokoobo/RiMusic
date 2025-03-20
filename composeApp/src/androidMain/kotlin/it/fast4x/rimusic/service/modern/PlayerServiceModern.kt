@@ -15,7 +15,6 @@ import android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.IntentFilter
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
 import android.database.SQLException
 import android.graphics.Bitmap
@@ -37,7 +36,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import androidx.core.text.isDigitsOnly
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.AuxEffectInfo
 import androidx.media3.common.C
@@ -56,8 +54,12 @@ import androidx.media3.common.audio.SonicAudioProcessor
 import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSpec
+import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.cache.Cache
+import androidx.media3.datasource.cache.CacheDataSource
+import androidx.media3.datasource.cache.CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR
 import androidx.media3.datasource.cache.SimpleCache
+import androidx.media3.datasource.okhttp.OkHttpDataSource
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
@@ -73,7 +75,6 @@ import androidx.media3.exoplayer.offline.Download
 import androidx.media3.exoplayer.offline.DownloadManager
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.exoplayer.source.ShuffleOrder.DefaultShuffleOrder
-import androidx.media3.exoplayer.upstream.DefaultLoadErrorHandlingPolicy
 import androidx.media3.extractor.DefaultExtractorsFactory
 import androidx.media3.session.CommandButton
 import androidx.media3.session.DefaultMediaNotificationProvider
@@ -101,8 +102,6 @@ import it.fast4x.rimusic.R
 import it.fast4x.rimusic.cleanPrefix
 import it.fast4x.rimusic.enums.AudioQualityFormat
 import it.fast4x.rimusic.enums.DurationInMilliseconds
-import it.fast4x.rimusic.enums.ExoPlayerCacheLocation
-import it.fast4x.rimusic.enums.ExoPlayerDiskCacheMaxSize
 import it.fast4x.rimusic.enums.ExoPlayerMinTimeForEvent
 import it.fast4x.rimusic.enums.NotificationButtons
 import it.fast4x.rimusic.enums.NotificationType
@@ -137,9 +136,6 @@ import it.fast4x.rimusic.utils.discordPersonalAccessTokenKey
 import it.fast4x.rimusic.utils.discoverKey
 import it.fast4x.rimusic.utils.enableWallpaperKey
 import it.fast4x.rimusic.utils.encryptedPreferences
-import it.fast4x.rimusic.utils.exoPlayerCacheLocationKey
-import it.fast4x.rimusic.utils.exoPlayerCustomCacheKey
-import it.fast4x.rimusic.utils.exoPlayerDiskCacheMaxSizeKey
 import it.fast4x.rimusic.utils.exoPlayerMinTimeForEventKey
 import it.fast4x.rimusic.utils.forcePlayFromBeginning
 import it.fast4x.rimusic.utils.getEnum
@@ -198,15 +194,16 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.plus
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import it.fast4x.rimusic.appContext
 import it.fast4x.rimusic.enums.PresetsReverb
 import it.fast4x.rimusic.extensions.connectivity.InternetConnectivityObserver
+import it.fast4x.rimusic.extensions.players.SimplePlayer
 import it.fast4x.rimusic.extensions.webpotoken.advancedWebPoTokenPlayer
 import it.fast4x.rimusic.isHandleAudioFocusEnabled
 import it.fast4x.rimusic.isPreCacheEnabled
+import it.fast4x.rimusic.service.MyPreCacheService
 import it.fast4x.rimusic.ui.screens.settings.isYouTubeSyncEnabled
 import it.fast4x.rimusic.utils.asMediaItem
 import it.fast4x.rimusic.utils.audioReverbPresetKey
@@ -217,8 +214,8 @@ import it.fast4x.rimusic.utils.preCacheMedia
 import it.fast4x.rimusic.utils.principalCache
 import it.fast4x.rimusic.utils.volumeBoostLevelKey
 import kotlinx.coroutines.SupervisorJob
+import okhttp3.OkHttpClient
 import timber.log.Timber
-import java.io.IOException
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.util.concurrent.Executors
@@ -694,14 +691,15 @@ class PlayerServiceModern : MediaLibraryService(),
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
         isclosebackgroundPlayerEnabled = preferences.getBoolean(closebackgroundPlayerKey, false)
         if (isclosebackgroundPlayerEnabled) {
-            broadCastPendingIntent<NotificationDismissReceiver>().send()
-            this.stopService(this.intent<MyDownloadService>())
-            this.stopService(this.intent<PlayerServiceModern>())
+//            broadCastPendingIntent<NotificationDismissReceiver>().send()
+//            this.stopService(this.intent<MyDownloadService>())
+//            this.stopService(this.intent<PlayerServiceModern>())
             onDestroy()
         }
-        super.onTaskRemoved(rootIntent)
+
     }
 
     @UnstableApi
@@ -709,13 +707,19 @@ class PlayerServiceModern : MediaLibraryService(),
         runCatching {
             maybeSavePlayerQueue()
 
-            preferences.unregisterOnSharedPreferenceChangeListener(this)
+            player.stop()
 
             stopService(intent<MyDownloadService>())
+            stopService(intent<MyPreCacheService>())
             stopService(intent<PlayerServiceModern>())
 
+            MediaController.releaseFuture(controllerFuture)
+            mediaSession.release()
+
+            MyDownloadHelper.getDownloadManager(this).removeListener(downloadListener)
+            loudnessEnhancer?.release()
+            audioVolumeObserver.unregister()
             player.removeListener(this)
-            player.stop()
             player.release()
 
             try{
@@ -724,27 +728,49 @@ class PlayerServiceModern : MediaLibraryService(),
                 Timber.e("PlayerServiceModern onDestroy unregisterReceiver notificationActionReceiver ${e.stackTraceToString()}")
             }
 
-
-            mediaSession.release()
-            MediaController.releaseFuture(controllerFuture)
-            cache.release()
-            //downloadCache.release()
-            MyDownloadHelper.getDownloadManager(this).removeListener(downloadListener)
-
-            loudnessEnhancer?.release()
-            audioVolumeObserver.unregister()
-
             timerJob?.cancel()
             timerJob = null
-
             notificationManager?.cancel(NotificationId)
             notificationManager?.cancelAll()
             notificationManager = null
 
             coroutineScope.cancel()
 
+//            preferences.unregisterOnSharedPreferenceChangeListener(this)
+//
+//            stopService(intent<MyDownloadService>())
+//            stopService(intent<PlayerServiceModern>())
+//
+//            player.removeListener(this)
+//            player.stop()
+//            player.release()
+//
+//            try{
+//                unregisterReceiver(notificationActionReceiver)
+//            } catch (e: Exception){
+//                Timber.e("PlayerServiceModern onDestroy unregisterReceiver notificationActionReceiver ${e.stackTraceToString()}")
+//            }
+//
+//            mediaSession.release()
+//            MediaController.releaseFuture(controllerFuture)
+//            cache.release()
+//            //downloadCache.release()
+//            MyDownloadHelper.getDownloadManager(this).removeListener(downloadListener)
+//
+//            loudnessEnhancer?.release()
+//            audioVolumeObserver.unregister()
+//
+//            timerJob?.cancel()
+//            timerJob = null
+//
+//            notificationManager?.cancel(NotificationId)
+//            notificationManager?.cancelAll()
+//            notificationManager = null
+//
+//            coroutineScope.cancel()
+
         }.onFailure {
-            Timber.e("Failed onDestroy in PlayerService ${it.stackTraceToString()}")
+            Timber.e("Failed onDestroy in PlayerServiceModern ${it.stackTraceToString()}")
         }
         super.onDestroy()
     }
@@ -996,8 +1022,8 @@ class PlayerServiceModern : MediaLibraryService(),
 
         if (!mediaItem.isLocal && isYouTubeSyncEnabled()) {
             CoroutineScope(Dispatchers.IO).launch {
-                advancedWebPoTokenPlayer(PlayerBody(videoId = mediaItem.mediaId, playlistId = null))
-                    .getOrNull()?.second?.playbackTracking?.videostatsPlaybackUrl?.baseUrl
+                SimplePlayer.playerResponseForMetadata(mediaItem.mediaId)
+                    .getOrNull()?.playbackTracking?.videostatsPlaybackUrl?.baseUrl
                     ?.let { playbackUrl ->
                         println("PlayerServiceModern updateOnlineHistory addPlaybackToHistory playbackUrl $playbackUrl")
                         EnvironmentExt.addPlaybackToHistory(null, playbackUrl)
@@ -1230,7 +1256,8 @@ class PlayerServiceModern : MediaLibraryService(),
     }
 
     private fun createMediaSourceFactory() = DefaultMediaSourceFactory(
-        createDataSourceFactory(),
+        //createDataSourceFactory(),
+        createSimpleDataSourceFactory( coroutineScope ),
         DefaultExtractorsFactory()
     )
 //        .setLoadErrorHandlingPolicy(
@@ -1238,6 +1265,28 @@ class PlayerServiceModern : MediaLibraryService(),
 //            override fun isEligibleForFallback(exception: IOException) = true
 //        }
 //    )
+
+    fun createCacheDataSource(): CacheDataSource.Factory =
+        CacheDataSource
+            .Factory()
+            .setCache(downloadCache)
+            .setUpstreamDataSourceFactory(
+                CacheDataSource
+                    .Factory()
+                    .setCache(cache)
+                    .setUpstreamDataSourceFactory(
+                        DefaultDataSource.Factory(
+                            this,
+                            OkHttpDataSource.Factory(
+                                OkHttpClient
+                                    .Builder()
+                                    .proxy(Environment.proxy)
+                                    .build(),
+                            ),
+                        ),
+                    ),
+            ).setCacheWriteDataSinkFactory(null)
+            .setFlags(FLAG_IGNORE_CACHE_ON_ERROR)
 
 
     private fun buildCustomCommandButtons(): MutableList<CommandButton> {
@@ -2063,6 +2112,8 @@ class PlayerServiceModern : MediaLibraryService(),
 
         const val SleepTimerNotificationId = 1002
         const val SleepTimerNotificationChannelId = "sleep_timer_channel_id"
+
+        const val ChunkLength = 512 * 1024L
 
 //        val PlayerErrorsToReload = arrayOf(
 //            416,

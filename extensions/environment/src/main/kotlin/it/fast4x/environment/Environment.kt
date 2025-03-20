@@ -242,7 +242,7 @@ object Environment {
         //hl = LocalePreferences.preference?.hl ?: "en"
     )
 
-    var visitorData: String? = null
+    var visitorData: String = _uMYwa66ycM
     var dataSyncId: String? = null
 
     var cookie: String? = null
@@ -586,19 +586,22 @@ object Environment {
             .jsonArray[2]
             .jsonArray.first { (it as? JsonPrimitive)?.content?.startsWith(_7ZoUy0mkCP) == true }
             .jsonPrimitive.content
+    }.onFailure {
+        println("Environment Error in getInitialVisitorData(): ${it.stackTraceToString()}")
     }
 
     fun HttpRequestBuilder.setLogin(clientType: Client = DefaultWeb.client, setLogin: Boolean = false) {
         println("HttpRequestBuilder.setLogin CALLED")
         contentType(ContentType.Application.Json)
         headers {
+            append("X-Goog-Api-Format-Version", "1")
             append("X-YouTube-Client-Name", "${clientType.xClientName ?: 1}")
             append("X-YouTube-Client-Version", clientType.clientVersion)
             append("X-Origin", _XsHo8IdebO)
             if (clientType.referer != null) {
                 append("Referer", clientType.referer)
             }
-            if (setLogin) {
+            if (setLogin && clientType.loginSupported) {
                 println("HttpRequestBuilder.setLogin $setLogin")
                 println("HttpRequestBuilder.setLogin beforeCreateHeaders cookie: $cookie")
                 cookie?.let { cookieData ->
@@ -610,12 +613,12 @@ object Environment {
                     println("HttpRequestBuilder.setLogin x-origin ${_XsHo8IdebO}")
                     println("HttpRequestBuilder.setLogin visitorData ${visitorData}")
                     cookieMap = parseCookieString(cookieData)
-                    append("X-Goog-Authuser", "0")
-                    append("X-Goog-Visitor-Id", visitorData ?: "")
+//                    append("X-Goog-Authuser", "0")
+//                    append("X-Goog-Visitor-Id", visitorData ?: "")
                     append("Cookie", cookieData)
-                    if ("SAPISID" !in cookieMap || "__Secure-3PAPISID" !in cookieMap) return@let
+                    if ("SAPISID" !in cookieMap) return@let
                     val currentTime = System.currentTimeMillis() / 1000
-                    val sapisidCookie = cookieMap["SAPISID"] ?: cookieMap["__Secure-3PAPISID"]
+                    val sapisidCookie = cookieMap["SAPISID"]
                     val sapisidHash = sha1("$currentTime $sapisidCookie $_XsHo8IdebO")
                     println("HttpRequestBuilder.setLogin currentTime ${currentTime}")
                     println("HttpRequestBuilder.setLogin sapisidCookie ${sapisidCookie}")
@@ -927,6 +930,40 @@ object Environment {
             ),
         )
     }
+
+    suspend fun simplePlayer(
+        clientType: Client,
+        videoId: String,
+        playlistId: String?,
+        signatureTimestamp: Int?,
+    ) = client.post(_cdSL7DrPbA) {
+        setLogin(clientType, setLogin = true)
+        setBody(
+            PlayerBody(
+                context =
+                    clientType.toContext(locale, visitorData).let {
+                        if ((clientType.isEmbedded)) {
+                            it.copy(
+                                thirdParty =
+                                    Context.ThirdParty(
+                                        embedUrl = "https://www.youtube.com/watch?v=$videoId",
+                                    ),
+                            )
+                        } else {
+                            it
+                        }
+                    },
+                videoId = videoId,
+                playlistId = playlistId,
+                playbackContext = if (clientType.useSignatureTimestamp && signatureTimestamp != null) {
+                    PlayerBody.PlaybackContext(PlayerBody.PlaybackContext.ContentPlaybackContext(
+                        signatureTimestamp = signatureTimestamp
+                    ))
+                } else null
+            ),
+        )
+    }
+
 
     suspend fun playerWithWebPoToken(
         videoId: String,

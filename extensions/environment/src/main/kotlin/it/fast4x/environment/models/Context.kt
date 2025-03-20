@@ -32,8 +32,19 @@ data class Context(
         val osVersion: String? = null,
         val acceptHeader: String? = null,
         val xClientName: Int? = null,
+
+        val loginSupported: Boolean = false,
+        val loginRequired: Boolean = false,
+        val useSignatureTimestamp: Boolean = false,
+        val isEmbedded: Boolean = false,
+        // val origin: String? = null,
+        // val referer: String? = null,
     ){
-        fun toContext(locale: EnvironmentLocale, visitorData: String?, dataSyncId: String?) = Context(
+        fun toContext(
+            locale: EnvironmentLocale,
+            visitorData: String?,
+            //dataSyncId: String?
+        ) = Context(
             client = Client(
                 clientName = clientName,
                 clientVersion = clientVersion,
@@ -42,9 +53,9 @@ data class Context(
                 hl = locale.hl,
                 visitorData = visitorData
             ),
-            user = User(
-                onBehalfOfUser = dataSyncId
-            ),
+//            user = User(
+//                onBehalfOfUser = dataSyncId
+//            ),
         )
     }
 
@@ -100,7 +111,9 @@ data class Context(
                 userAgent = USER_AGENT,
                 referer = REFERER1,
                 visitorData = Environment.visitorData,
-                xClientName = cxname.toIntOrNull()
+                xClientName = cxname.toIntOrNull(),
+                loginSupported = true,
+                useSignatureTimestamp = true,
             )
         )
 
@@ -149,6 +162,19 @@ data class Context(
                 acceptHeader = accept,
                 userAgent = USER_AGENT1,
                 xClientName = cxname3.toIntOrNull()
+            )
+        )
+
+        val TVHTML5_SIMPLY_EMBEDDED_PLAYER = Context(
+            Client(
+                clientName = "TVHTML5_SIMPLY_EMBEDDED_PLAYER",
+                clientVersion = "2.0",
+                userAgent = "Mozilla/5.0 (PlayStation; PlayStation 4/12.00) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.4 Safari/605.1.15",
+                loginSupported = true,
+                loginRequired = true,
+                useSignatureTimestamp = true,
+                isEmbedded = true,
+                xClientName = 85
             )
         )
 
