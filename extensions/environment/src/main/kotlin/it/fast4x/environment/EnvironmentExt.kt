@@ -234,7 +234,7 @@ object EnvironmentExt {
             )
         } else {
             ArtistItemsPage(
-                title = response.header?.musicHeaderRenderer?.title?.runs?.firstOrNull()?.text!!,
+                title = response.header?.musicHeaderRenderer?.title?.runs?.firstOrNull()?.text ?: "",
                 items = response.contents?.singleColumnBrowseResultsRenderer?.tabs?.firstOrNull()
                     ?.tabRenderer?.content?.sectionListRenderer?.contents?.firstOrNull()
                     ?.musicPlaylistShelfRenderer?.contents?.mapNotNull {
