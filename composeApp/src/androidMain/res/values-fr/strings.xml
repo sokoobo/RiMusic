@@ -23,7 +23,7 @@
     <string name="enter_the_playlist_name">Entrez le nom de la playlist</string>
     <string name="playlists">Playlists</string>
     <string name="favorites">Favoris</string>
-    <string name="disliked">Disliked</string>
+    <string name="disliked">Détestés</string>
     <string name="quick_picks">Sélection Rapide</string>
     <string name="songs">Titres</string>
     <string name="other_versions">Autres versions</string>
@@ -559,7 +559,7 @@
     <string name="position_bottom">En bas</string>
     <string name="added_to_favorites">Ajouté aux favoris</string>
     <string name="removed_from_favorites">Retiré des favoris</string>
-    <string name="added_to_disliked">Added to disliked</string>
+    <string name="added_to_disliked">Ajouté aux détestés</string>
     <string name="lang_filipino">Philippin (Filipino)</string>
     <string name="action_bar_transparent_background">Arrière-plan transparent</string>
     <string name="pinfo_type">Type d\'informations</string>

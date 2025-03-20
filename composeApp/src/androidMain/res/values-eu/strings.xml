@@ -317,7 +317,7 @@
     <string name="app_update_dialog_new">%s bertsio berria deskargatu daiteke!</string>
     <string name="enable_language_in_discovery">Discovery-n hizkuntza gaitu</string>
     <string name="if_possible_allows_discovery_content_language">If possible, it allows to receive Discovery content in your own language.</string>
-    <string name="set_to">Set to</string>
+    <string name="set_to"></string>
     <string name="end_of_song">abestiaren amaiera</string>
     <string name="restore_completed">Berreskuratzea amaitu da!</string>
     <string name="click_to_close">Ixteko klik egin</string>
