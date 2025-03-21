@@ -159,6 +159,7 @@ import it.fast4x.rimusic.utils.LocalMonetCompat
 import it.fast4x.rimusic.utils.OkHttpRequest
 import it.fast4x.rimusic.extensions.rescuecenter.RescueScreen
 import it.fast4x.rimusic.ui.screens.settings.isYouTubeLoggedIn
+import it.fast4x.rimusic.utils.InitializeEnvironment
 import it.fast4x.rimusic.utils.UiTypeKey
 import it.fast4x.rimusic.utils.animatedGradientKey
 import it.fast4x.rimusic.utils.applyFontPaddingKey
@@ -526,7 +527,9 @@ class MainActivity :
                 }
 
 
-                InitializeEnvironment()
+                InitializeEnvironment(
+                    appContext()
+                )
 
 
                 val coroutineScope = rememberCoroutineScope()
@@ -1495,50 +1498,50 @@ class MainActivity :
         }
     }
 
-    fun InitializeEnvironment() {
-        EnvironmentPreferences.preference = EnvironmentPreferenceItem(
-            p0 = resources.getString(R.string.env_CrQ0JjAXgv),
-            p1 = resources.getString(R.string.env_hNpBzzAn7i),
-            p2 = resources.getString(R.string.env_lEi9YM74OL),
-            p3 = resources.getString(R.string.env_C0ZR993zmk),
-            p4 = resources.getString(R.string.env_w3TFBFL74Y),
-            p5 = resources.getString(R.string.env_mcchaHCWyK),
-            p6 = resources.getString(R.string.env_L2u4JNdp7L),
-            p7 = resources.getString(R.string.env_sqDlfmV4Mt),
-            p8 = resources.getString(R.string.env_WpLlatkrVv),
-            p9 = resources.getString(R.string.env_1zNshDpFoh),
-            p10 = resources.getString(R.string.env_mPVWVuCxJz),
-            p11 = resources.getString(R.string.env_auDsjnylCZ),
-            p12 = resources.getString(R.string.env_AW52cvJIJx),
-            p13 = resources.getString(R.string.env_0RGAyC1Zqu),
-            p14 = resources.getString(R.string.env_4Fdmu9Jkax),
-            p15 = resources.getString(R.string.env_kuSdQLhP8I),
-            p16 = resources.getString(R.string.env_QrgDKwvam1),
-            p17 = resources.getString(R.string.env_wLwNESpPtV),
-            p18 = resources.getString(R.string.env_JJUQaehRFg),
-            p19 = resources.getString(R.string.env_i7WX2bHV6R),
-            p20 = resources.getString(R.string.env_XpiuASubrV),
-            p21 = resources.getString(R.string.env_lOlIIVw38L),
-            p22 = resources.getString(R.string.env_mtcR0FhFEl),
-            p23 = resources.getString(R.string.env_DTihHAFaBR),
-            p24 = resources.getString(R.string.env_a4AcHS8CSg),
-            p25 = resources.getString(R.string.env_krdLqpYLxM),
-            p26 = resources.getString(R.string.env_ye6KGLZL7n),
-            p27 = resources.getString(R.string.env_ec09m20YH5),
-            p28 = resources.getString(R.string.env_LDRlbOvbF1),
-            p29 = resources.getString(R.string.env_EEqX0yizf2),
-            p30 = resources.getString(R.string.env_i3BRhLrV1v),
-            p31 = resources.getString(R.string.env_MApdyHLMyJ),
-            p32 = resources.getString(R.string.env_hizI7yLjL4),
-            p33 = resources.getString(R.string.env_rLoZP7BF4c),
-            p34 = resources.getString(R.string.env_nza34sU88C),
-            p35 = resources.getString(R.string.env_dwbUvjWUl3),
-            p36 = resources.getString(R.string.env_fqqhBZd0cf),
-            p37 = resources.getString(R.string.env_9sZKrkMg8p),
-            p38 = resources.getString(R.string.env_aQpNCVOe2i),
-
-            )
-    }
+//    fun InitializeEnvironment() {
+//        EnvironmentPreferences.preference = EnvironmentPreferenceItem(
+//            p0 = resources.getString(R.string.env_CrQ0JjAXgv),
+//            p1 = resources.getString(R.string.env_hNpBzzAn7i),
+//            p2 = resources.getString(R.string.env_lEi9YM74OL),
+//            p3 = resources.getString(R.string.env_C0ZR993zmk),
+//            p4 = resources.getString(R.string.env_w3TFBFL74Y),
+//            p5 = resources.getString(R.string.env_mcchaHCWyK),
+//            p6 = resources.getString(R.string.env_L2u4JNdp7L),
+//            p7 = resources.getString(R.string.env_sqDlfmV4Mt),
+//            p8 = resources.getString(R.string.env_WpLlatkrVv),
+//            p9 = resources.getString(R.string.env_1zNshDpFoh),
+//            p10 = resources.getString(R.string.env_mPVWVuCxJz),
+//            p11 = resources.getString(R.string.env_auDsjnylCZ),
+//            p12 = resources.getString(R.string.env_AW52cvJIJx),
+//            p13 = resources.getString(R.string.env_0RGAyC1Zqu),
+//            p14 = resources.getString(R.string.env_4Fdmu9Jkax),
+//            p15 = resources.getString(R.string.env_kuSdQLhP8I),
+//            p16 = resources.getString(R.string.env_QrgDKwvam1),
+//            p17 = resources.getString(R.string.env_wLwNESpPtV),
+//            p18 = resources.getString(R.string.env_JJUQaehRFg),
+//            p19 = resources.getString(R.string.env_i7WX2bHV6R),
+//            p20 = resources.getString(R.string.env_XpiuASubrV),
+//            p21 = resources.getString(R.string.env_lOlIIVw38L),
+//            p22 = resources.getString(R.string.env_mtcR0FhFEl),
+//            p23 = resources.getString(R.string.env_DTihHAFaBR),
+//            p24 = resources.getString(R.string.env_a4AcHS8CSg),
+//            p25 = resources.getString(R.string.env_krdLqpYLxM),
+//            p26 = resources.getString(R.string.env_ye6KGLZL7n),
+//            p27 = resources.getString(R.string.env_ec09m20YH5),
+//            p28 = resources.getString(R.string.env_LDRlbOvbF1),
+//            p29 = resources.getString(R.string.env_EEqX0yizf2),
+//            p30 = resources.getString(R.string.env_i3BRhLrV1v),
+//            p31 = resources.getString(R.string.env_MApdyHLMyJ),
+//            p32 = resources.getString(R.string.env_hizI7yLjL4),
+//            p33 = resources.getString(R.string.env_rLoZP7BF4c),
+//            p34 = resources.getString(R.string.env_nza34sU88C),
+//            p35 = resources.getString(R.string.env_dwbUvjWUl3),
+//            p36 = resources.getString(R.string.env_fqqhBZd0cf),
+//            p37 = resources.getString(R.string.env_9sZKrkMg8p),
+//            p38 = resources.getString(R.string.env_aQpNCVOe2i),
+//
+//            )
+//    }
 
 }
 
