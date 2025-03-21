@@ -952,4 +952,6 @@ Volume BAS : titre précédent</string>
     <string name="use_dns_over_https_title">Utiliser DNS plutôt que https</string>
     <string name="also_delete_playback_data">Supprimer également les données de lecture</string>
     <string name="rescue_center">Centre de Sauvetage</string>
+    <string name="midnightodyssey">Midnight Odyssey</string>
+    <string name="circle">Circle</string>
 </resources>
