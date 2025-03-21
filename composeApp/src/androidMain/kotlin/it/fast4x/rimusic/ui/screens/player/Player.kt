@@ -44,6 +44,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
@@ -308,9 +309,22 @@ import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.unit.LayoutDirection
+import it.fast4x.rimusic.appContext
+import it.fast4x.rimusic.context
+import it.fast4x.rimusic.service.MyDownloadHelper
 import it.fast4x.rimusic.ui.components.themed.AddToPlaylistPlayerMenu
+import it.fast4x.rimusic.ui.screens.settings.isYouTubeSyncEnabled
+import it.fast4x.rimusic.ui.styling.favoritesIcon
+import it.fast4x.rimusic.utils.addToYtLikedSong
+import it.fast4x.rimusic.utils.getLikeState
+import it.fast4x.rimusic.utils.mediaItemToggleLike
+import it.fast4x.rimusic.utils.setDisLikeState
+import it.fast4x.rimusic.utils.unlikeYtVideoOrSong
+import kotlinx.coroutines.CoroutineScope
+import org.dailyislam.android.utilities.isNetworkConnected
 import kotlin.math.sqrt
 
 
@@ -1012,13 +1026,16 @@ fun Player(
 
     if (animatedGradient == AnimatedGradient.Random){
         LaunchedEffect(mediaItem.mediaId){
-            valueGrad = (2..13).random()
+            valueGrad = (2..14).random()
         }
         tempGradient = gradients[valueGrad]
     }
 
 
-    if (!isGradientBackgroundEnabled) {
+    if (playerBackgroundColors == PlayerBackgroundColors.MidnightOdyssey){
+        containerModifier = containerModifier
+            .background(dynamicColorPalette.accent.copy(0.8f).compositeOver(Color.Black))
+    } else if (!isGradientBackgroundEnabled) {
         if (playerBackgroundColors == PlayerBackgroundColors.BlurredCoverColor && (playerType == PlayerType.Essential || (showthumbnail && (!albumCoverRotation)))) {
             containerModifier = containerModifier
                 .background(dynamicColorPalette.background1)
@@ -1266,7 +1283,9 @@ fun Player(
                     .background(
                         Brush.verticalGradient(
                             0.5f to if (playerBackgroundColors == PlayerBackgroundColors.CoverColorGradient) dynamicColorPalette.background1 else colorPalette().background1,
-                            1.0f to if (blackgradient) Color.Black else colorPalette().background2,
+                            1.0f to if (blackgradient) Color.Black
+                                    else if ((playerBackgroundColors == PlayerBackgroundColors.CoverColorGradient) && transparentBackgroundActionBarPlayer) dynamicColorPalette.background2
+                                         else colorPalette().background2,
                             //0.0f to colorPalette().background0,
                             //1.0f to colorPalette().background2,
                             startY = 0.0f,
@@ -1852,16 +1871,25 @@ fun Player(
 
 
                         if (showButtonPlayerSleepTimer)
-                            IconButton(
-                                icon = R.drawable.sleep,
-                                color = if (sleepTimerMillisLeft != null) colorPalette().accent else Color.Gray,
-                                enabled = true,
-                                onClick = {
-                                    isShowingSleepTimerDialog = true
-                                },
-                                modifier = Modifier
-                                    .size(24.dp),
-                            )
+                            if (sleepTimerMillisLeft == null){
+                                IconButton(
+                                    icon = R.drawable.sleep,
+                                    color = Color.Gray,
+                                    enabled = true,
+                                    onClick = {
+                                        isShowingSleepTimerDialog = true
+                                    },
+                                    modifier = Modifier
+                                        .size(24.dp),
+                                )
+                            } else {
+                                BasicText(
+                                    text = formatAsDuration(sleepTimerMillisLeft!!),
+                                    style = typography().l.semiBold,
+                                    modifier = Modifier
+                                        .clickable(onClick = {isShowingSleepTimerDialog = true})
+                                )
+                            }
 
                         if (showButtonPlayerSystemEqualizer) {
                             val activityResultLauncher =
@@ -2021,9 +2049,19 @@ fun Player(
 
         if (isLandscape) {
          Box(
-             modifier = Modifier.haze(state = hazeState, style = HazeDefaults.style(backgroundColor = Color.Transparent, tint = Color.Black.copy(0.5f),blurRadius = 8.dp))
+             modifier = Modifier
+                 .conditional(queueType == QueueType.Modern) {
+                     haze(
+                         state = hazeState,
+                         style = HazeDefaults.style(
+                             backgroundColor = Color.Transparent,
+                             tint = if (lightTheme) Color.White.copy(0.5f) else Color.Black.copy(0.5f),
+                             blurRadius = 8.dp
+                         )
+                     )
+                 }
          ){
-             if (playerBackgroundColors == PlayerBackgroundColors.BlurredCoverColor && playerType == PlayerType.Modern && (!showthumbnail || albumCoverRotation)) {
+             if ((playerBackgroundColors == PlayerBackgroundColors.BlurredCoverColor && playerType == PlayerType.Modern && (!showthumbnail || albumCoverRotation)) || (animatedGradient == AnimatedGradient.Random && tempGradient == gradients[14])) {
                  val fling = PagerDefaults.flingBehavior(
                      state = pagerStateFS,
                      snapPositionalThreshold = 0.20f
@@ -2046,7 +2084,7 @@ fun Player(
                      state = pagerStateFS,
                      beyondViewportPageCount = 1,
                      flingBehavior = fling,
-                     userScrollEnabled = !(albumCoverRotation && (isShowingLyrics || showthumbnail)),
+                     userScrollEnabled = !((albumCoverRotation || (animatedGradient == AnimatedGradient.Random && tempGradient == gradients[14])) && (isShowingLyrics || showthumbnail)),
                      modifier = Modifier
                  ) { it ->
 
@@ -2106,11 +2144,11 @@ fun Player(
                              )
                              .build(),
                          contentDescription = "",
-                         contentScale = if (albumCoverRotation && (isShowingLyrics || showthumbnail)) ContentScale.Fit else ContentScale.Crop,
+                         contentScale = if ((albumCoverRotation || (animatedGradient == AnimatedGradient.Random && tempGradient == gradients[14])) && (isShowingLyrics || showthumbnail)) ContentScale.Fit else ContentScale.Crop,
                          modifier = Modifier
                              .fillMaxWidth()
                              .zIndex(if (it == pagerStateFS.currentPage) 1f else 0.9f)
-                             .conditional(albumCoverRotation) {
+                             .conditional(albumCoverRotation || (animatedGradient == AnimatedGradient.Random && tempGradient == gradients[14])) {
                                  graphicsLayer {
                                      scaleX = if (isShowingLyrics || showthumbnail) (screenWidth/screenHeight) + 0.5f else 1f
                                      scaleY = if (isShowingLyrics || showthumbnail) (screenWidth/screenHeight) + 0.5f else 1f
@@ -2618,9 +2656,19 @@ fun Player(
          }
         } else {
            Box(
-               modifier = Modifier.haze(state = hazeState, style = HazeDefaults.style(backgroundColor = Color.Transparent, tint = Color.Black.copy(0.5f),blurRadius = 8.dp))
+               modifier = Modifier
+                   .conditional(queueType == QueueType.Modern) {
+                       haze(
+                           state = hazeState,
+                           style = HazeDefaults.style(
+                               backgroundColor = Color.Transparent,
+                               tint = if (lightTheme) Color.White.copy(0.5f) else Color.Black.copy(0.5f),
+                               blurRadius = 8.dp
+                           )
+                       )
+                   }
            ) {
-               if (playerBackgroundColors == PlayerBackgroundColors.BlurredCoverColor && playerType == PlayerType.Modern && (!showthumbnail || albumCoverRotation)) {
+               if ((playerBackgroundColors == PlayerBackgroundColors.BlurredCoverColor && playerType == PlayerType.Modern && (!showthumbnail || albumCoverRotation)) || (animatedGradient == AnimatedGradient.Random && tempGradient == gradients[14])) {
                     val fling = PagerDefaults.flingBehavior(
                         state = pagerStateFS,
                         snapPositionalThreshold = 0.30f
@@ -2646,7 +2694,7 @@ fun Player(
                         state = pagerStateFS,
                         beyondViewportPageCount = if (swipeAnimationNoThumbnail != SwipeAnimationNoThumbnail.Circle || albumCoverRotation && (isShowingLyrics || showthumbnail)) 1 else 0,
                         flingBehavior = fling,
-                        userScrollEnabled = !(albumCoverRotation && (isShowingLyrics || showthumbnail)),
+                        userScrollEnabled = !((albumCoverRotation || (animatedGradient == AnimatedGradient.Random && tempGradient == gradients[14])) && (isShowingLyrics || showthumbnail)),
                         modifier = Modifier
                             .background(colorPalette().background1)
                             .pointerInteropFilter {
@@ -2691,7 +2739,7 @@ fun Player(
 
                         Box(
                             modifier = Modifier
-                                .conditional(albumCoverRotation && (isShowingLyrics || showthumbnail)) {
+                                .conditional((albumCoverRotation || (animatedGradient == AnimatedGradient.Random && tempGradient == gradients[14])) && (isShowingLyrics || showthumbnail)) {
                                     zIndex(if (it == pagerStateFS.currentPage) 1f else 0.9f)
                                 }
                                 .conditional(swipeAnimationNoThumbnail == SwipeAnimationNoThumbnail.Scale && isDraggedFS) {
@@ -2724,10 +2772,10 @@ fun Player(
                                 )
                                 .build(),
                                contentDescription = "",
-                               contentScale = if (albumCoverRotation && (isShowingLyrics || showthumbnail)) ContentScale.Fit else ContentScale.Crop,
+                               contentScale = if ((albumCoverRotation || (animatedGradient == AnimatedGradient.Random && tempGradient == gradients[14])) && (isShowingLyrics || showthumbnail)) ContentScale.Fit else ContentScale.Crop,
                                modifier = Modifier
                                 .fillMaxHeight()
-                                .conditional(albumCoverRotation) {
+                                .conditional(albumCoverRotation || (animatedGradient == AnimatedGradient.Random && tempGradient == gradients[14])) {
                                     graphicsLayer {
                                         scaleX = if (isShowingLyrics || showthumbnail) (screenHeight / screenWidth) + 0.5f else 1f
                                         scaleY = if (isShowingLyrics || showthumbnail) (screenHeight / screenWidth) + 0.5f else 1f
@@ -2899,7 +2947,7 @@ fun Player(
                             Image(
                                 painter = painterResource(R.drawable.chevron_down),
                                 contentDescription = null,
-                                colorFilter = ColorFilter.tint(colorPalette().collapsedPlayerProgressBar),
+                                colorFilter = ColorFilter.tint(if (playerBackgroundColors == PlayerBackgroundColors.MidnightOdyssey) dynamicColorPalette.background2 else colorPalette().collapsedPlayerProgressBar),
                                 modifier = Modifier
                                     .clickable {
                                         onDismiss()
@@ -2913,7 +2961,7 @@ fun Player(
                             Image(
                                 painter = painterResource(R.drawable.app_icon),
                                 contentDescription = null,
-                                colorFilter = ColorFilter.tint(colorPalette().collapsedPlayerProgressBar),
+                                colorFilter = ColorFilter.tint(if (playerBackgroundColors == PlayerBackgroundColors.MidnightOdyssey) dynamicColorPalette.background2 else colorPalette().collapsedPlayerProgressBar),
                                 modifier = Modifier
                                     .clickable {
                                         onDismiss()
@@ -2929,7 +2977,7 @@ fun Player(
                                 Image(
                                     painter = painterResource(R.drawable.ellipsis_vertical),
                                     contentDescription = null,
-                                    colorFilter = ColorFilter.tint(colorPalette().collapsedPlayerProgressBar),
+                                    colorFilter = ColorFilter.tint(if (playerBackgroundColors == PlayerBackgroundColors.MidnightOdyssey) dynamicColorPalette.background2 else colorPalette().collapsedPlayerProgressBar),
                                     modifier = Modifier
                                         .clickable {
                                             menuState.display {
@@ -3206,7 +3254,77 @@ fun Player(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                     .conditional(!expandedplayer && (!isShowingLyrics || showlyricsthumbnail)){weight(1f)}
+                    .conditional(playerBackgroundColors == PlayerBackgroundColors.MidnightOdyssey){
+                        background(
+                        Brush.verticalGradient(
+                            0.0f to Color(0xff141414),
+                            1.0f to Color.Black,
+                            startY = 0f,
+                            endY = POSITIVE_INFINITY
+                            ),
+                            RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
+                        )
+                    }
                 ){
+                  if (playerBackgroundColors == PlayerBackgroundColors.MidnightOdyssey && !isShowingLyrics){
+                    Box{
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .offset(0.dp,(-15).dp)
+                                .size(30.dp)
+                                .background(Color.DarkGray.copy(0.5f), CircleShape)
+                        ){
+                            IconButton(
+                                color = colorPalette().favoritesIcon,
+                                icon = getLikeState(mediaItem.mediaId),
+                                onClick = {
+                                    if (!isNetworkConnected(appContext()) && isYouTubeSyncEnabled()) {
+                                        SmartMessage(appContext().resources.getString(R.string.no_connection), context = appContext(), type = PopupType.Error)
+                                    } else if (!isYouTubeSyncEnabled()){
+                                        Database.asyncTransaction {
+                                            CoroutineScope(Dispatchers.IO).launch {
+                                                mediaItem.takeIf { it.mediaId == mediaItem.mediaId }?.let { mediaItem ->
+                                                    mediaItemToggleLike(mediaItem)
+                                                    MyDownloadHelper.autoDownloadWhenLiked(context(), mediaItem)
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        CoroutineScope(Dispatchers.IO).launch {
+                                            addToYtLikedSong(mediaItem)
+                                        }
+                                    }
+                                    if (effectRotationEnabled) isRotated = !isRotated
+                                },
+                                onLongClick = {
+                                    if (!isNetworkConnected(appContext()) && isYouTubeSyncEnabled()) {
+                                        SmartMessage(appContext().resources.getString(R.string.no_connection), context = appContext(), type = PopupType.Error)
+                                    } else if (!isYouTubeSyncEnabled()){
+                                        Database.asyncTransaction {
+                                            CoroutineScope(Dispatchers.IO).launch {
+                                                mediaItem.takeIf { it.mediaId == mediaItem.mediaId }?.let { mediaItem ->
+                                                    if (like(mediaItem.mediaId, setDisLikeState(likedAt)) == 0){
+                                                        insert(mediaItem, Song::toggleDislike)
+                                                    }
+                                                    MyDownloadHelper.autoDownloadWhenLiked(context(), mediaItem)
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        CoroutineScope(Dispatchers.IO).launch {
+                                            unlikeYtVideoOrSong(mediaItem)
+                                        }
+                                    }
+                                    if (effectRotationEnabled) isRotated = !isRotated
+                                },
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .align(Alignment.Center)
+                            )
+                        }
+                    }
+                  }
                 if (!expandedplayer || !isShowingLyrics || queueDurationExpanded) {
                     if (showTotalTimeQueue)
                         Row(
@@ -3329,7 +3447,7 @@ fun Player(
             contentColor = if (queueType == QueueType.Modern) Color.Transparent else colorPalette().background2,
             modifier = Modifier
                 .fillMaxWidth()
-                .hazeChild(state = hazeState),
+                .conditional(queueType == QueueType.Modern) {hazeChild(state = hazeState)},
             sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
             dragHandle = {
                 Surface(
@@ -3359,7 +3477,7 @@ fun Player(
             contentColor = if (playerType == PlayerType.Modern) Color.Transparent else colorPalette().background2,
             modifier = Modifier
                 .fillMaxWidth()
-                .hazeChild(state = hazeState),
+                .conditional(queueType == QueueType.Modern) {hazeChild(state = hazeState)},
             sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
             dragHandle = {
                 Surface(
