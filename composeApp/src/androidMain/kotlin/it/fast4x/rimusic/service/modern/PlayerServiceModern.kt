@@ -212,6 +212,7 @@ import it.fast4x.rimusic.utils.bassboostLevelKey
 import it.fast4x.rimusic.utils.isInvincibilityEnabledKey
 import it.fast4x.rimusic.utils.preCacheMedia
 import it.fast4x.rimusic.utils.principalCache
+import it.fast4x.rimusic.utils.shouldBePlaying
 import it.fast4x.rimusic.utils.volumeBoostLevelKey
 import kotlinx.coroutines.SupervisorJob
 import okhttp3.OkHttpClient
@@ -690,16 +691,26 @@ class PlayerServiceModern : MediaLibraryService(),
 
     }
 
-    override fun onTaskRemoved(rootIntent: Intent?) {
-        super.onTaskRemoved(rootIntent)
-        isclosebackgroundPlayerEnabled = preferences.getBoolean(closebackgroundPlayerKey, false)
-        if (isclosebackgroundPlayerEnabled) {
-//            broadCastPendingIntent<NotificationDismissReceiver>().send()
-//            this.stopService(this.intent<MyDownloadService>())
-//            this.stopService(this.intent<PlayerServiceModern>())
-            onDestroy()
-        }
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        super.onStartCommand(intent, flags, startId)
+        return START_NOT_STICKY
+    }
 
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        isclosebackgroundPlayerEnabled = preferences.getBoolean(closebackgroundPlayerKey, false)
+        if (isclosebackgroundPlayerEnabled
+            //|| !player.shouldBePlaying // also stop if player is not playing
+            ) {
+            // Some system not stop service when app is closed from task manager
+            // This workaround permit to simulate stop service when app is closed from task manager
+            // When app is relaunched any error will be thrown
+            if (isAtLeastAndroid7)
+                stopForeground(STOP_FOREGROUND_REMOVE)
+            else stopForeground(true)
+            player.pause()
+            stopSelf()
+        }
+        super.onTaskRemoved(rootIntent)
     }
 
     @UnstableApi
@@ -707,67 +718,26 @@ class PlayerServiceModern : MediaLibraryService(),
         runCatching {
             maybeSavePlayerQueue()
 
+            if (player.isReleased) return
+
             player.stop()
 
-            stopService(intent<MyDownloadService>())
-            stopService(intent<MyPreCacheService>())
-            stopService(intent<PlayerServiceModern>())
+            if (isAtLeastAndroid7)
+                stopForeground(STOP_FOREGROUND_DETACH)
+            else stopForeground(true)
 
-            MediaController.releaseFuture(controllerFuture)
-            mediaSession.release()
-
-            MyDownloadHelper.getDownloadManager(this).removeListener(downloadListener)
-            loudnessEnhancer?.release()
-            audioVolumeObserver.unregister()
-            player.removeListener(this)
-            player.release()
-
-            try{
-                unregisterReceiver(notificationActionReceiver)
-            } catch (e: Exception){
-                Timber.e("PlayerServiceModern onDestroy unregisterReceiver notificationActionReceiver ${e.stackTraceToString()}")
+            mediaSession.run {
+                player.removeListener(this@PlayerServiceModern)
+                player.release()
+                timerJob?.cancel()
+                timerJob = null
+                release()
             }
 
-            timerJob?.cancel()
-            timerJob = null
-            notificationManager?.cancel(NotificationId)
-            notificationManager?.cancelAll()
-            notificationManager = null
-
-            coroutineScope.cancel()
-
-//            preferences.unregisterOnSharedPreferenceChangeListener(this)
-//
-//            stopService(intent<MyDownloadService>())
-//            stopService(intent<PlayerServiceModern>())
-//
-//            player.removeListener(this)
-//            player.stop()
-//            player.release()
-//
-//            try{
-//                unregisterReceiver(notificationActionReceiver)
-//            } catch (e: Exception){
-//                Timber.e("PlayerServiceModern onDestroy unregisterReceiver notificationActionReceiver ${e.stackTraceToString()}")
-//            }
-//
-//            mediaSession.release()
-//            MediaController.releaseFuture(controllerFuture)
-//            cache.release()
-//            //downloadCache.release()
-//            MyDownloadHelper.getDownloadManager(this).removeListener(downloadListener)
-//
-//            loudnessEnhancer?.release()
-//            audioVolumeObserver.unregister()
-//
-//            timerJob?.cancel()
-//            timerJob = null
-//
-//            notificationManager?.cancel(NotificationId)
-//            notificationManager?.cancelAll()
-//            notificationManager = null
-//
-//            coroutineScope.cancel()
+            coroutineScope.cancel(
+                "PlayerServiceModern onDestroy called"
+            )
+            stopSelf()
 
         }.onFailure {
             Timber.e("Failed onDestroy in PlayerServiceModern ${it.stackTraceToString()}")
@@ -1199,7 +1169,9 @@ class PlayerServiceModern : MediaLibraryService(),
                     return audioDeviceInfo.type == AudioDeviceInfo.TYPE_BLUETOOTH_A2DP ||
                             audioDeviceInfo.type == AudioDeviceInfo.TYPE_WIRED_HEADSET ||
                             audioDeviceInfo.type == AudioDeviceInfo.TYPE_WIRED_HEADPHONES ||
-                            audioDeviceInfo.type == AudioDeviceInfo.TYPE_USB_HEADSET
+                            audioDeviceInfo.type == AudioDeviceInfo.TYPE_USB_HEADSET ||
+                            audioDeviceInfo.type == AudioDeviceInfo.TYPE_USB_DEVICE ||
+                            audioDeviceInfo.type == AudioDeviceInfo.TYPE_USB_ACCESSORY
                 }
 
                 override fun onAudioDevicesAdded(addedDevices: Array<AudioDeviceInfo>) {
