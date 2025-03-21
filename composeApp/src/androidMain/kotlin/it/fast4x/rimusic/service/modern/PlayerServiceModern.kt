@@ -1173,7 +1173,9 @@ class PlayerServiceModern : MediaLibraryService(),
                 }
 
                 override fun onAudioDevicesAdded(addedDevices: Array<AudioDeviceInfo>) {
+                    Timber.d("PlayerServiceModern onAudioDevicesAdded addedDevices ${addedDevices.map { it.type }}")
                     if (!player.isPlaying && addedDevices.any(::canPlayMusic)) {
+                        Timber.d("PlayerServiceModern onAudioDevicesAdded device known ${addedDevices.map { it.productName }}")
                         player.play()
                     }
                 }
