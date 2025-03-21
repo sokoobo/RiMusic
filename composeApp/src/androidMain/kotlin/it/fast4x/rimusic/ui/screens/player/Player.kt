@@ -3254,7 +3254,17 @@ fun Player(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                     .conditional(!expandedplayer && (!isShowingLyrics || showlyricsthumbnail)){weight(1f)}
-                    .conditional(playerBackgroundColors == PlayerBackgroundColors.MidnightOdyssey){background(Color(0xff141414), RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))}
+                    .conditional(playerBackgroundColors == PlayerBackgroundColors.MidnightOdyssey){
+                        background(
+                        Brush.verticalGradient(
+                            0.0f to Color(0xff141414),
+                            1.0f to Color.Black,
+                            startY = 0f,
+                            endY = POSITIVE_INFINITY
+                            ),
+                            RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
+                        )
+                    }
                 ){
                   if (playerBackgroundColors == PlayerBackgroundColors.MidnightOdyssey && !isShowingLyrics){
                     Box{
@@ -3309,7 +3319,7 @@ fun Player(
                                     if (effectRotationEnabled) isRotated = !isRotated
                                 },
                                 modifier = Modifier
-                                    .size(26.dp)
+                                    .size(24.dp)
                                     .align(Alignment.Center)
                             )
                         }
