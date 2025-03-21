@@ -104,9 +104,11 @@ fun downloadedStateMedia(mediaId: String): DownloadedStateMedia {
     println("downloadedStateMedia: mediaId $mediaId contentLength $mediaFormatContentLenght cachedBytes $cachedBytes isCached $isCached downloadedBytes $downloadedBytes isDownloaded $isDownloaded")
 
     return when {
-        isDownloaded && isCached -> DownloadedStateMedia.CACHED_AND_DOWNLOADED
-        isDownloaded && !isCached -> DownloadedStateMedia.DOWNLOADED
-        !isDownloaded && isCached -> DownloadedStateMedia.CACHED
+        isCached -> DownloadedStateMedia.CACHED
+        isDownloaded -> DownloadedStateMedia.DOWNLOADED
+        //isDownloaded && isCached -> DownloadedStateMedia.CACHED_AND_DOWNLOADED
+        //isDownloaded && !isCached -> DownloadedStateMedia.DOWNLOADED
+        //!isDownloaded && isCached -> DownloadedStateMedia.CACHED
         else -> DownloadedStateMedia.NOT_CACHED_OR_DOWNLOADED
     }
 }
