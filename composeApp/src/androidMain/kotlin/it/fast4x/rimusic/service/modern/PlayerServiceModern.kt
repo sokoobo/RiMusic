@@ -1169,7 +1169,8 @@ class PlayerServiceModern : MediaLibraryService(),
                             audioDeviceInfo.type == AudioDeviceInfo.TYPE_WIRED_HEADPHONES ||
                             audioDeviceInfo.type == AudioDeviceInfo.TYPE_USB_HEADSET ||
                             audioDeviceInfo.type == AudioDeviceInfo.TYPE_USB_DEVICE ||
-                            audioDeviceInfo.type == AudioDeviceInfo.TYPE_USB_ACCESSORY
+                            audioDeviceInfo.type == AudioDeviceInfo.TYPE_USB_ACCESSORY ||
+                            audioDeviceInfo.type == AudioDeviceInfo.TYPE_REMOTE_SUBMIX
                 }
 
                 override fun onAudioDevicesAdded(addedDevices: Array<AudioDeviceInfo>) {
