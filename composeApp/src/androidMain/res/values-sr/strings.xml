@@ -949,4 +949,6 @@
     <string name="use_dns_over_https_title">Користи днс преко хттпс</string>
     <string name="also_delete_playback_data">Такође избриши податке о репродукцији</string>
     <string name="rescue_center">Центар За Спасавање</string>
+    <string name="midnightodyssey">Midnight Odyssey</string>
+    <string name="circle">Circle</string>
 </resources>
