@@ -135,8 +135,8 @@ android {
         applicationId = "it.fast4x.rimusic"
         minSdk = 21
         targetSdk = 35
-        versionCode = 88
-        versionName = "0.6.75"
+        versionCode = 89
+        versionName = "0.6.76"
 
         // INIT ENVIRONMENT
         resValue(
