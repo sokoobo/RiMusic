@@ -619,22 +619,22 @@ class PlayerServiceModern : MediaLibraryService(),
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaLibrarySession =
         mediaSession
 
-    @UnstableApi
-    override fun onUpdateNotification(
-        session: MediaSession,
-        startInForegroundRequired: Boolean,
-    ) {
-        super.onUpdateNotification(session, startInForegroundRequired)
-    }
+//    @UnstableApi
+//    override fun onUpdateNotification(
+//        session: MediaSession,
+//        startInForegroundRequired: Boolean,
+//    ) {
+//        super.onUpdateNotification(session, startInForegroundRequired)
+//    }
 
-    override fun onTrimMemory(level: Int) {
-        super.onTrimMemory(level)
-        maybeSavePlayerQueue()
-    }
-
-    override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
-        maybeSavePlayerQueue()
-    }
+//    override fun onTrimMemory(level: Int) {
+//        super.onTrimMemory(level)
+//        maybeSavePlayerQueue()
+//    }
+//
+//    override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
+//        maybeSavePlayerQueue()
+//    }
 
     override fun onRepeatModeChanged(repeatMode: Int) {
         updateDefaultNotification()
@@ -715,33 +715,31 @@ class PlayerServiceModern : MediaLibraryService(),
 
     @UnstableApi
     override fun onDestroy() {
-        runCatching {
-            maybeSavePlayerQueue()
 
-            if (player.isReleased) return
+        maybeSavePlayerQueue()
 
+        if (!player.isReleased) {
+            player.removeListener(this@PlayerServiceModern)
             player.stop()
-
-            if (isAtLeastAndroid7)
-                stopForeground(STOP_FOREGROUND_DETACH)
-            else stopForeground(true)
-
-            mediaSession.run {
-                player.removeListener(this@PlayerServiceModern)
-                player.release()
-                timerJob?.cancel()
-                timerJob = null
-                release()
-            }
-
-            coroutineScope.cancel(
-                "PlayerServiceModern onDestroy called"
-            )
-            stopSelf()
-
-        }.onFailure {
-            Timber.e("Failed onDestroy in PlayerServiceModern ${it.stackTraceToString()}")
+            player.release()
         }
+
+        //unregisterReceiver(notificationActionReceiver)
+
+//        if (isAtLeastAndroid7)
+//            stopForeground(STOP_FOREGROUND_DETACH)
+//        else stopForeground(true)
+
+        mediaSession.release()
+        cache.release()
+        downloadCache.release()
+        Database.close()
+
+//        timerJob?.cancel()
+//        timerJob = null
+
+        //coroutineScope.cancel()
+
         super.onDestroy()
     }
 

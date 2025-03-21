@@ -525,9 +525,9 @@ class MainActivity :
                     })
                 }
 
-                runBlocking {
-                    InitializeEnvironment()
-                }
+
+                InitializeEnvironment()
+
 
                 val coroutineScope = rememberCoroutineScope()
                 val isSystemInDarkTheme = isSystemInDarkTheme()
