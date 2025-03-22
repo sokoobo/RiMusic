@@ -402,7 +402,7 @@ class PlayerService : InvincibleService(),
         preferences.registerOnSharedPreferenceChangeListener(this)
 
         val preferences = preferences
-        isPersistentQueueEnabled = preferences.getBoolean(persistentQueueKey, false)
+        isPersistentQueueEnabled = preferences.getBoolean(persistentQueueKey, true)
         isInvincibilityEnabled = preferences.getBoolean(isInvincibilityEnabledKey, false)
         isShowingThumbnailInLockscreen =
             preferences.getBoolean(isShowingThumbnailInLockscreenKey, false)

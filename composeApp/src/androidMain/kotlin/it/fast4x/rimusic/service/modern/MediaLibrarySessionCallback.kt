@@ -638,7 +638,7 @@ class MediaLibrarySessionCallback (
                 0,
                 0
             )
-        if(!context.preferences.getBoolean(persistentQueueKey, false))
+        if(!context.preferences.getBoolean(persistentQueueKey, true))
             return Futures.immediateFuture(defaultResult)
 
         scope.future {
