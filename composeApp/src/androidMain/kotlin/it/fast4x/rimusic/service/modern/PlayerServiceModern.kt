@@ -539,11 +539,17 @@ class PlayerServiceModern : MediaLibraryService(),
             .setNotificationListener(object : PlayerNotificationManager.NotificationListener {
                 override fun onNotificationPosted(notificationId: Int, notification: Notification, ongoing: Boolean) {
                     fun startFg() {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                            startForeground(notificationId, notification, FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
-                        } else {
-                            startForeground(notificationId, notification)
+                        runCatching {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                startForeground(notificationId, notification, FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
+                            } else {
+                                startForeground(notificationId, notification)
+                            }
+                        }.onFailure {
+                            Timber.e("PlayerServiceModern onNotificationPosted startForeground failed ${it.stackTraceToString()}")
+                            println("PlayerServiceModern onNotificationPosted startForeground failed ${it.stackTraceToString()}")
                         }
+
                     }
 
                     // FG keep alive, thanks to OuterTune for solution
@@ -554,10 +560,16 @@ class PlayerServiceModern : MediaLibraryService(),
                         if (player.isPlaying) {
                             startFg()
                         } else {
-                            if (isAtLeastAndroid7)
-                                stopForeground(notificationId)
-                            else
-                                stopForeground(true)
+                            runCatching {
+                                if (isAtLeastAndroid7)
+                                    stopForeground(notificationId)
+                                else
+                                    stopForeground(true)
+                            }.onFailure {
+                                Timber.e("PlayerServiceModern onNotificationPosted stopForeground failed ${it.stackTraceToString()}")
+                                println("PlayerServiceModern onNotificationPosted stopForeground failed ${it.stackTraceToString()}")
+                            }
+
 
 
                         }
