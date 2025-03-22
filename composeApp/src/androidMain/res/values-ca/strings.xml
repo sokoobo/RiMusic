@@ -23,7 +23,7 @@
     <string name="enter_the_playlist_name">Posa nom a la llista de reproducció</string>
     <string name="playlists">Llistes de reproducció</string>
     <string name="favorites">Favorits</string>
-    <string name="disliked">Disliked</string>
+    <string name="disliked">No m\'ha agradat</string>
     <string name="quick_picks">Seleccions ràpides</string>
     <string name="songs">Cançons</string>
     <string name="other_versions">Altres versions</string>
@@ -938,7 +938,7 @@
     <string name="dislikes">No m\'agrada</string>
     <string name="loudness_boost_level">Nivell d\'augment de la sonoritat</string>
     <string name="loudness_boost_level_info">El nivell de sonoritat addicional, que s\'utilitza sense exagerar, pot danyar el dispositiu</string>
-    <string name="export_crash_log">Export crash log</string>
+    <string name="export_crash_log">Exportar registre d\'aturada</string>
     <string name="export_log">Exportar registre</string>
     <string name="value_must_be_valid_url">El valor ha de ser una adreça web vàlida</string>
     <string name="caching">Guardant a la memòria cau...</string>
@@ -949,8 +949,8 @@
     <string name="use_alternative_dns">Utilitzar DNS alternatiu</string>
     <string name="use_dns_over_https_title">Utilitzar dns sobre https</string>
     <string name="also_delete_playback_data">També esborrar dades de reproducció</string>
-    <string name="rescue_center">Rescue Center</string>
-    <string name="midnightodyssey">Midnight Odyssey</string>
-    <string name="circle">Circle</string>
+    <string name="rescue_center">Centre de rescat</string>
+    <string name="midnightodyssey">Odissea de Mitjanit</string>
+    <string name="circle">Cercle</string>
     <string name="enter_hex">Insereix el codi HEX de 7 dígits</string>
 </resources>
