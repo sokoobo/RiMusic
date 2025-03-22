@@ -33,6 +33,7 @@ import it.fast4x.environment.models.bodies.ContinuationBody
 import it.fast4x.environment.models.bodies.SearchBody
 import it.fast4x.environment.requests.playlistPage
 import it.fast4x.environment.requests.searchPage
+import it.fast4x.environment.requests.song
 import it.fast4x.environment.utils.from
 import it.fast4x.kugou.KuGou
 import it.fast4x.lrclib.LrcLib
@@ -756,60 +757,40 @@ suspend fun getAlbumVersionFromVideo(song: Song,playlistId : Long, position : In
 }
 
 suspend fun updateLocalPlaylist(song: Song){
-    val searchQuery = Environment.searchPage(
-        body = SearchBody(
-            query = "${cleanPrefix(song.title)} ${song.artistsText}",
-            params = Environment.SearchFilter.Song.value
-        ),
-        fromMusicShelfRendererContent = Environment.SongItem.Companion::from
-    )
 
-    val searchResults = searchQuery?.getOrNull()?.items
-
-    fun findSongIndex() : Int {
-        for (i in 0..9) {
-            val requiredSong = searchResults?.getOrNull(i)
-            val songMatched = (requiredSong?.asMediaItem?.mediaId) == (song.asMediaItem.mediaId)
-            if (songMatched) return i
-        }
-        return -1
-    }
-
-    val matchedSong = searchResults?.getOrNull(findSongIndex())
+    val matchedSong = Environment.song(song.id)?.getOrNull()
     val artistsNames = matchedSong?.authors?.filter { it.endpoint != null }?.map { it.name }
     val artistNameString = matchedSong?.asMediaItem?.mediaMetadata?.artist?.toString() ?: ""
     val artistsIds = matchedSong?.authors?.filter { it.endpoint != null }?.map { it.endpoint?.browseId }
 
     Database.asyncTransaction {
-        if (findSongIndex() != -1) {
-            if (matchedSong != null) {
-                insert(
-                    Album(id = matchedSong.album?.endpoint?.browseId ?: "", title = matchedSong.asMediaItem.mediaMetadata.albumTitle?.toString()),
-                    SongAlbumMap(songId = matchedSong.asMediaItem.mediaId, albumId = matchedSong.album?.endpoint?.browseId ?: "", position = null)
-                )
-                CoroutineScope(Dispatchers.IO).launch {
-                    val album = Database.album(matchedSong.album?.endpoint?.browseId ?: "").firstOrNull()
-                    album?.copy(thumbnailUrl = matchedSong.thumbnail?.url)?.let { update(it) }
-                }
+        if (matchedSong != null && song.id == matchedSong.asMediaItem.mediaId) {
+            insert(
+                Album(id = matchedSong.album?.endpoint?.browseId ?: "", title = matchedSong.asMediaItem.mediaMetadata.albumTitle?.toString()),
+                SongAlbumMap(songId = matchedSong.asMediaItem.mediaId, albumId = matchedSong.album?.endpoint?.browseId ?: "", position = null)
+            )
+            CoroutineScope(Dispatchers.IO).launch {
+                val album = Database.album(matchedSong.album?.endpoint?.browseId ?: "").firstOrNull()
+                album?.copy(thumbnailUrl = matchedSong.thumbnail?.url)?.let { update(it) }
+            }
 
-                if ((artistsNames != null) && (artistsIds != null)) {
-                    artistsNames.let { artistNames ->
-                        artistsIds.let { artistIds ->
-                            if (artistNames.size == artistIds.size) {
-                                insert(
-                                    artistNames.mapIndexed { index, artistName ->
-                                        Artist(id = (artistIds[index]) ?: "", name = artistName)
-                                    },
-                                    artistIds.map { artistId ->
-                                        SongArtistMap(songId = song.id, artistId = (artistId) ?: "")
-                                    }
-                                )
-                            }
+            if ((artistsNames != null) && (artistsIds != null)) {
+                artistsNames.let { artistNames ->
+                    artistsIds.let { artistIds ->
+                        if (artistNames.size == artistIds.size) {
+                            insert(
+                                artistNames.mapIndexed { index, artistName ->
+                                    Artist(id = (artistIds[index]) ?: "", name = artistName)
+                                },
+                                artistIds.map { artistId ->
+                                    SongArtistMap(songId = song.id, artistId = (artistId) ?: "")
+                                }
+                            )
                         }
                     }
                 }
-                Database.updateSongArtist(matchedSong.asMediaItem.mediaId, artistNameString)
             }
+            Database.updateSongArtist(matchedSong.asMediaItem.mediaId, artistNameString)
         }
     }
 }
