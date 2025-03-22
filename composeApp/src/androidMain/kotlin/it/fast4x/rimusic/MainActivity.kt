@@ -527,9 +527,9 @@ class MainActivity :
                 }
 
 
-                InitializeEnvironment(
-                    appContext()
-                )
+//                InitializeEnvironment(
+//                    appContext()
+//                )
 
 
                 val coroutineScope = rememberCoroutineScope()
