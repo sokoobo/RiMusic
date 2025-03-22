@@ -194,7 +194,7 @@
     <string name="mood">Raspoloženje</string>
     <string name="new_albums">Novi albumi</string>
     <string name="moods_and_genres">Raspoloženja i žanrovi</string>
-    <string name="search_queries">" upiti za pretragu"</string>
+    <string name="search_queries">" upita za pretragu"</string>
     <string name="not_find_battery_optimization_settings">Nismo uspeli da pronađemo podešavanja za optimizaciju baterije, ručno stavite na belu listu</string>
     <string name="search">Pretraga</string>
     <string name="no">Ne</string>
