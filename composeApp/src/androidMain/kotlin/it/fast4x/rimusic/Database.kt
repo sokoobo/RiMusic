@@ -2351,6 +2351,11 @@ interface Database {
     @RewriteQueriesToDropUnusedColumns
     fun artistSongs(artistId: String): Flow<List<Song>>
 
+    @Transaction
+    @Query("SELECT * FROM Song JOIN SongArtistMap ON Song.id = SongArtistMap.songId WHERE SongArtistMap.artistId = :artistId ORDER BY Song.ROWID DESC")
+    @RewriteQueriesToDropUnusedColumns
+    fun artistAllSongs(artistId: String): Flow<List<Song>>
+
     @Query("SELECT * FROM Format WHERE songId = :songId")
     fun format(songId: String): Flow<Format?>
 
@@ -2593,6 +2598,9 @@ interface Database {
 
     @Upsert
     fun upsert(artist: Artist)
+
+    @Upsert
+    fun upsert(songArtistMaps: List<SongArtistMap>)
 
     @Upsert
     fun upsert(format: Format)

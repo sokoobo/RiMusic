@@ -23,7 +23,7 @@
     <string name="enter_the_playlist_name">Введіть назву плейлиста</string>
     <string name="playlists">Плейлисти</string>
     <string name="favorites">Вибране</string>
-    <string name="disliked">Disliked</string>
+    <string name="disliked">Не сподобалося</string>
     <string name="quick_picks">Швидкий вибір</string>
     <string name="songs">Композиції</string>
     <string name="other_versions">Альтернативний варіант</string>
@@ -557,7 +557,7 @@
     <string name="position_bottom">Знизу</string>
     <string name="added_to_favorites">Додано до обраного</string>
     <string name="removed_from_favorites">Видалено з обраного</string>
-    <string name="added_to_disliked">Added to disliked</string>
+    <string name="added_to_disliked">Додано в не сподобалося</string>
     <string name="lang_filipino">Філіппінська</string>
     <string name="action_bar_transparent_background">Прозорий фон</string>
     <string name="pinfo_type">Тип інформації</string>
@@ -706,6 +706,7 @@
     <string name="info_pauses_player_when_volume_zero">Призупиняє відтворення, коли гучність досягає 0, і відновлює, коли гучність перевищує 0</string>
     <string name="quality">Якість</string>
     <string name="value_must_be_ip_address">Значенням має бути IP-адреса</string>
+    <string name="value_must_be_hex">Value must be an hex code</string>
     <string name="swipe_up_to_open_the_queue">Swipe up to open the queue</string>
     <string name="pinfo_show_icons">Показувати інформацію за допомогою значків</string>
     <string name="format_ms">%1$s мс</string>
@@ -949,4 +950,7 @@
     <string name="use_dns_over_https_title">Використовувати DNS через https</string>
     <string name="also_delete_playback_data">Також видаляти дані відтворення</string>
     <string name="rescue_center">Служба підтримки</string>
+    <string name="midnightodyssey">Опівнічна Одіссея</string>
+    <string name="circle">Коло</string>
+    <string name="enter_hex">Enter the 7-digit HEX code</string>
 </resources>

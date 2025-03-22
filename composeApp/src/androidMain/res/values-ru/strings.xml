@@ -24,7 +24,7 @@
     <string name="enter_the_playlist_name">Введите название плейлиста</string>
     <string name="playlists">Плейлисты</string>
     <string name="favorites">Избранное</string>
-    <string name="disliked">Disliked</string>
+    <string name="disliked">Не понравилось</string>
     <string name="quick_picks">Обзор</string>
     <string name="songs">Песни</string>
     <string name="other_versions">Другие версии</string>
@@ -558,7 +558,7 @@
     <string name="position_bottom">Снизу</string>
     <string name="added_to_favorites">Добавлено в избранное</string>
     <string name="removed_from_favorites">Удалено из избранного</string>
-    <string name="added_to_disliked">Added to disliked</string>
+    <string name="added_to_disliked">Добавлено в не понравившееся</string>
     <string name="lang_filipino">Филиппинский (Wikang Filipino)</string>
     <string name="action_bar_transparent_background">Прозрачный фон</string>
     <string name="pinfo_type">Стиль отображения</string>
@@ -707,6 +707,7 @@
     <string name="info_pauses_player_when_volume_zero">Приостановит проигрывание, когда громкость достигнет 0 и возобновит, когда громкость будет больше 0</string>
     <string name="quality">Качество</string>
     <string name="value_must_be_ip_address">Значение должно быть ip адресом</string>
+    <string name="value_must_be_hex">Value must be an hex code</string>
     <string name="swipe_up_to_open_the_queue">Смахните вверх, чтобы открыть очередь</string>
     <string name="pinfo_show_icons">Показать информацию с иконками</string>
     <string name="format_ms"> %1$s мс</string>
@@ -951,4 +952,7 @@
     <string name="use_dns_over_https_title">Использовать DNS через https</string>
     <string name="also_delete_playback_data">Также удалять данные воспроизведения</string>
     <string name="rescue_center">Служба поддержки</string>
+    <string name="midnightodyssey">Полуночная Одиссея</string>
+    <string name="circle">Круг</string>
+    <string name="enter_hex">Enter the 7-digit HEX code</string>
 </resources>
