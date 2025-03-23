@@ -116,7 +116,7 @@ object SimplePlayer {
             }
         }
         if (streamPlayerResponse == null) {
-            throw Exception("Bad stream player response")
+            throw Exception("SimplePlayer playerResponseForPlayback Bad stream player response")
         }
         if (streamPlayerResponse.playabilityStatus?.status != "OK") {
             throw PlaybackException(
@@ -126,13 +126,13 @@ object SimplePlayer {
             )
         }
         if (streamExpiresInSeconds == null) {
-            throw Exception("Missing stream expire time")
+            throw Exception("SimplePlayer playerResponseForPlayback Missing stream expire time")
         }
         if (format == null) {
-            throw Exception("Could not find format")
+            throw Exception("SimplePlayer playerResponseForPlayback Could not find format")
         }
         if (streamUrl == null) {
-            throw Exception("Could not find stream url")
+            throw Exception("SimplePlayer playerResponseForPlayback Could not find stream url")
         }
         PlaybackData(
             audioConfig,
