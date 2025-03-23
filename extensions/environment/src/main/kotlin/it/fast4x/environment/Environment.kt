@@ -60,7 +60,6 @@ import it.fast4x.environment.models.bodies.PlaylistDeleteBody
 import it.fast4x.environment.models.bodies.SubscribeBody
 import it.fast4x.environment.utils.EnvironmentPreferences
 import it.fast4x.environment.utils.ProxyPreferences
-//import it.fast4x.environment.utils.YoutubePreferences
 import it.fast4x.environment.utils.getProxy
 import it.fast4x.environment.utils.parseCookieString
 import it.fast4x.environment.utils.sha1
@@ -110,9 +109,7 @@ object Environment {
     val _0WL1AVN5v3 = EnvironmentPreferences.preference?.p42 ?: ""
     val _p4N2lun1CR = EnvironmentPreferences.preference?.p43 ?: ""
 
-    @OptIn(ExperimentalSerializationApi::class)
     private fun buildClient() = HttpClient(OkHttp) {
-        //BrowserUserAgent()
 
         expectSuccess = true
 
@@ -332,7 +329,6 @@ object Environment {
         val explicit: Boolean = false,
         val setVideoId: String? = null
     ) : Item() {
-        //override val key get() = info!!.endpoint!!.videoId!!
         override val key get() = info?.endpoint?.videoId ?: ""
         override val title get() = info?.name
 
@@ -494,7 +490,6 @@ object Environment {
 
     data class Podcast(
         val title: String,
-        //val author: ArtistItem,
         val author: String?,
         val authorThumbnail: String?,
         val thumbnail: List<Thumbnail>,
@@ -503,7 +498,6 @@ object Environment {
     ) {
         data class EpisodeItem(
             val title: String,
-            //val author: ArtistItem,
             val author: String?,
             val description: String?,
             val thumbnail: List<Thumbnail>,
@@ -989,11 +983,7 @@ object Environment {
                 header("Host", _YfkInZQChm)
                 header("Cookie", if (cookie.isNullOrEmpty()) "PREF=hl=en&tz=UTC; SOCS=CAI" else cookie)
                 header("Sec-Fetch-Mode", "navigate")
-                header(
-                    "User-Agent",
-                    //"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36",
-                    _rjH3trYO7G
-                )
+                header("User-Agent",_rjH3trYO7G)
             }
         }
 
@@ -1010,31 +1000,20 @@ object Environment {
             header("sec-fetch-dest", "empty")
             header("sec-fetch-mode", "cors")
             header("sec-fetch-site", "cross-site")
-            header(
-                "user-agent",
-                //"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0",
-                _0WL1AVN5v3
-            )
-            //header("x-goog-api-key", "AIzaSyDyT5W0Jh49F30Pqqtyfdf7pDLFKLJoAnw")
+            header("user-agent",_0WL1AVN5v3)
             header("x-goog-api-key", _p4N2lun1CR)
             header("x-user-agent", "grpc-web-javascript/0.1")
         }
     }
 
     private suspend fun createPoTokenChallenge() =
-        client.post(
-            //"https://jnn-pa.googleapis.com/\$rpc/google.internal.waa.v1.Waa/Create",
-            _umx3sFb2yf
-        ) {
+        client.post(_umx3sFb2yf) {
             poHeader()
             setBody("[\"$poTokenChallengeRequestKey\"]")
         }
 
     private suspend fun generatePoToken(challenge: String) =
-        client.post(
-            //"https://jnn-pa.googleapis.com/\$rpc/google.internal.waa.v1.Waa/GenerateIT",
-            _FNIXTCyeZC
-        ) {
+        client.post(_FNIXTCyeZC) {
             poHeader()
             setBody("[\"$poTokenChallengeRequestKey\", \"$challenge\"]")
         }
