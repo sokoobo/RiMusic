@@ -390,7 +390,7 @@
     <string name="export_playlist">プレイリストのエクスポート</string>
     <string name="lang_afrikaans">アフリカーンス語</string>
     <string name="playlist_top">上位の再生リスト</string>
-    <string name="my_playlist_top">再生上位 %s</string>
+    <string name="my_playlist_top">My Top</string>
     <string name="navigation_bar_position">ナビゲーションバーの位置</string>
     <string name="direction_left">左</string>
     <string name="direction_right">右</string>
@@ -573,7 +573,7 @@
     <string name="player_swap_controls_with_timeline">タイムラインとコントロールを入れ替え</string>
     <string name="player_enable_lyrics_popup_message">歌詞のポップアップを有効にする</string>
     <string name="exclude_songs_with_duration_limit">曲の長さが上限を超えたら除外</string>
-    <string name="exclude_songs_with_duration_limit_description">長さが上限を超える曲を除外します。再生上位と再生キューに適用されます</string>
+    <string name="exclude_songs_with_duration_limit_description">制限時間を超えた曲を除外します。マイトップと再生キューに適用されます</string>
     <string name="no_log_available">ログがありません</string>
     <string name="enable_quick_picks_page">おすすめページを使用</string>
     <string name="lang_vietnamese">ベトナム語</string>
