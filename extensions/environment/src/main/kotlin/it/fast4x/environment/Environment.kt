@@ -939,7 +939,7 @@ object Environment {
         )
     }
 
-    suspend fun potokenPlayer(
+    private suspend fun internalPotokenPlayer(
         videoId: String,
         cookie: String,
         visitorData: String?,
@@ -1154,7 +1154,7 @@ object Environment {
 
                 val (tempCookie, visitorData, playbackTracking) = getAlternativeVisitorData(videoId, playlistId)
 
-                val playerResponse = potokenPlayer(videoId, tempCookie, visitorData, poToken ?: "").body<PlayerResponse>()
+                val playerResponse = internalPotokenPlayer(videoId, tempCookie, visitorData, poToken ?: "").body<PlayerResponse>()
                 println("simplePlayerWithPoToken player Player Response $playerResponse")
                 println("simplePlayerWithPoToken player Player Response status: ${playerResponse.playabilityStatus?.status}")
                 val firstThumb =
