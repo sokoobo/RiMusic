@@ -196,7 +196,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import it.fast4x.rimusic.appContext
 import it.fast4x.rimusic.enums.PresetsReverb
-import it.fast4x.rimusic.extensions.connectivity.InternetConnectivityObserver
+import it.fast4x.rimusic.extensions.connectivity.AndroidConnectivityObserverLegacy
 import it.fast4x.rimusic.extensions.players.SimplePlayer
 import it.fast4x.rimusic.isHandleAudioFocusEnabled
 import it.fast4x.rimusic.isPreCacheEnabled
@@ -276,17 +276,11 @@ class PlayerServiceModern : MediaLibraryService(),
         Database.song(mediaItem?.mediaId)
     }.stateIn(coroutineScope, SharingStarted.Lazily, null)
 
-//    @kotlin.OptIn(ExperimentalCoroutinesApi::class)
-//    private val currentFormat = currentMediaItem.flatMapLatest { mediaItem ->
-//        mediaItem?.mediaId?.let { Database.format(it) }!!
-//    }
-
     var currentSongStateDownload = MutableStateFlow(Download.STATE_STOPPED)
 
-    //private lateinit var connectivityManager: ConnectivityManager
-    lateinit var internetConnectivityObserver: InternetConnectivityObserver
-    private val isInternetAvailable = MutableStateFlow(true)
-    private val waitingForInternet = MutableStateFlow(false)
+    lateinit var connectivityObserver: AndroidConnectivityObserverLegacy
+    private val isNetworkAvailable = MutableStateFlow(true)
+    private val waitingForNetwork = MutableStateFlow(false)
 
     private val playerVerticalWidget = PlayerVerticalWidget()
     private val playerHorizontalWidget = PlayerHorizontalWidget()
@@ -308,18 +302,22 @@ class PlayerServiceModern : MediaLibraryService(),
 //        )
 
         try {
-            internetConnectivityObserver.unregister()
+            connectivityObserver.unregister()
         } catch (e: Exception) {
             // isn't registered
         }
-        internetConnectivityObserver = InternetConnectivityObserver(this@PlayerServiceModern)
+        connectivityObserver = AndroidConnectivityObserverLegacy(this@PlayerServiceModern)
         coroutineScope.launch {
-            internetConnectivityObserver.internetNetworkStatus.collect { isAvailable ->
-                isInternetAvailable.value = isAvailable
-                if (isAvailable && waitingForInternet.value) {
-                    waitingForInternet.value = false
-                    player.prepare()
-                    player.play()
+            connectivityObserver.networkStatus.collect { isAvailable ->
+                isNetworkAvailable.value = isAvailable
+                Timber.d("PlayerServiceModern network status: $isAvailable")
+                println("PlayerServiceModern network status: $isAvailable")
+                if (isAvailable && waitingForNetwork.value) {
+                    waitingForNetwork.value = false
+                    withContext(Dispatchers.Main) {
+                        player.prepare()
+                        player.play()
+                    }
                 }
             }
         }
@@ -490,8 +488,6 @@ class PlayerServiceModern : MediaLibraryService(),
 
         audioVolumeObserver = AudioVolumeObserver(this)
         audioVolumeObserver.register(AudioManager.STREAM_MUSIC, this)
-
-        //connectivityManager = getSystemService()!!
 
         // Download listener help to notify download change to UI
         downloadListener = object : DownloadManager.Listener {
@@ -898,8 +894,8 @@ class PlayerServiceModern : MediaLibraryService(),
         val isConnectionError = (error.cause?.cause is PlaybackException)
                 && (error.cause?.cause as PlaybackException).errorCode in playbackConnectionExeptionList
 
-        if (!isInternetAvailable.value || isConnectionError) {
-            waitingForInternet.value = true
+        if (!isNetworkAvailable.value || isConnectionError) {
+            waitingForNetwork.value = true
             SmartMessage(resources.getString(R.string.error_no_internet), context = this )
             return
         }
@@ -982,7 +978,7 @@ class PlayerServiceModern : MediaLibraryService(),
             } else {
                 sendCloseEqualizerIntent()
                 if (!player.playWhenReady) {
-                    waitingForInternet.value = false
+                    waitingForNetwork.value = false
                 }
             }
         }
