@@ -243,7 +243,7 @@ class MediaLibrarySessionCallback (
                                 )
                             }
 
-                        PlayerServiceModern.ALBUM -> database.albumsByRowIdAsc().first()
+                        PlayerServiceModern.ALBUM -> database.albumsByRowIdDesc().first()
                             .map { album ->
                                 browsableMediaItem(
                                     "${PlayerServiceModern.ALBUM}/${album.id}",
