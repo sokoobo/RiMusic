@@ -1048,7 +1048,10 @@ fun LocalPlaylistSongs(
 
     LaunchedEffect(Unit,playlistUpdateDialog){
         Database.asyncTransaction {
-            totalSongsToUpdate = playlistAllSongs.filter { it.song.thumbnailUrl?.startsWith("https://lh3.googleusercontent.com/") == true && ((songAlbumInfo(it.asMediaItem.mediaId)?.id == null) || songArtistInfo(it.asMediaItem.mediaId).isEmpty()) }.size
+            totalSongsToUpdate = playlistAllSongs.filter { it.song.thumbnailUrl?.startsWith("https://lh3.googleusercontent.com/") == true
+                    && !((songAlbumInfo(it.asMediaItem.mediaId)?.id != null)
+                    && songArtistInfo(it.asMediaItem.mediaId).isNotEmpty()
+                    && !it.song.artistsText.isNullOrBlank()) }.size
         }
     }
 
@@ -1064,7 +1067,8 @@ fun LocalPlaylistSongs(
         withContext(Dispatchers.IO) {
             songsUpdated = 0
             val jobs = mutableListOf<Job>()
-            playlistAllSongs.filter { it.song.thumbnailUrl?.startsWith("https://lh3.googleusercontent.com/") == true && ((songAlbumInfo(it.asMediaItem.mediaId)?.id == null) || songArtistInfo(it.asMediaItem.mediaId).isEmpty()) }.forEach { song ->
+            playlistAllSongs.filter { it.song.thumbnailUrl?.startsWith("https://lh3.googleusercontent.com/") == true
+                    && !((songAlbumInfo(it.asMediaItem.mediaId)?.id != null) && songArtistInfo(it.asMediaItem.mediaId).isNotEmpty() && !it.song.artistsText.isNullOrBlank()) }.forEach { song ->
                 jobs.add(coroutineScope.launch(Dispatchers.IO) {
                     updateLocalPlaylist(song.song)
                 }
