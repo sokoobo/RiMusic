@@ -472,7 +472,7 @@ class MediaLibrarySessionCallback (
                                             }
                                     }
 
-                                    else -> database.sortSongsFromPlaylistByRowId(playlistId.toLong())
+                                    else -> database.sortSongsPlaylistByPosition(playlistId.toLong())
                                         .map { list ->
                                             list.map { it.song }
                                         }
@@ -608,7 +608,7 @@ class MediaLibrarySessionCallback (
                                 }
                         }
 
-                        else -> database.sortSongsFromPlaylistByRowId(playlistId.toLong())
+                        else -> database.sortSongsPlaylistByPosition(playlistId.toLong())
                             .map { list ->
                                 list.map { it }
                             }
