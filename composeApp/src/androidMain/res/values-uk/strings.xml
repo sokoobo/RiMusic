@@ -953,4 +953,7 @@
     <string name="midnightodyssey">Опівнічна Одіссея</string>
     <string name="circle">Коло</string>
     <string name="enter_hex">Enter the 7-digit HEX code</string>
+    <string name="streaming_player_type_default">Default</string>
+    <string name="streaming_player_type_next">Next</string>
+    <string name="streaming_player_type">Streaming player type</string>
 </resources>
