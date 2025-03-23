@@ -23,7 +23,7 @@
     <string name="enter_the_playlist_name">Indtast playlistens navn</string>
     <string name="playlists">Playlister</string>
     <string name="favorites">Favoritter</string>
-    <string name="disliked">Disliked</string>
+    <string name="disliked">Syntes ikke om</string>
     <string name="quick_picks">Hurtige valg</string>
     <string name="songs">Sange</string>
     <string name="other_versions">Andre versioner</string>
@@ -706,7 +706,7 @@
     <string name="info_pauses_player_when_volume_zero">Pauser afspilleren, når lydstyrken er på 0, og genoptager, når den er højere end 0</string>
     <string name="quality">Kvalitet</string>
     <string name="value_must_be_ip_address">Værdi skal være en IP-adresse</string>
-    <string name="value_must_be_hex">Value must be an hex code</string>
+    <string name="value_must_be_hex">Værdi skal være en hex-kode</string>
     <string name="swipe_up_to_open_the_queue">Swipe up to open the queue</string>
     <string name="pinfo_show_icons">Vis info med ikoner</string>
     <string name="format_ms">%1$s ms</string>
