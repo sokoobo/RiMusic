@@ -1238,15 +1238,9 @@ class PlayerServiceModern : MediaLibraryService(),
     }
 
     private fun createMediaSourceFactory() = DefaultMediaSourceFactory(
-        //createDataSourceFactory(),
         createSimpleDataSourceFactory( coroutineScope ),
         DefaultExtractorsFactory()
     )
-//        .setLoadErrorHandlingPolicy(
-//        object : DefaultLoadErrorHandlingPolicy() {
-//            override fun isEligibleForFallback(exception: IOException) = true
-//        }
-//    )
 
     fun createCacheDataSource(): CacheDataSource.Factory =
         CacheDataSource

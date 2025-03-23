@@ -18,7 +18,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import it.fast4x.rimusic.appContext
+import it.fast4x.rimusic.enums.StreamingPlayerType
 import it.fast4x.rimusic.extensions.players.SimplePlayer
+import it.fast4x.rimusic.getStreamingPlayerType
 import it.fast4x.rimusic.models.Format
 import it.fast4x.rimusic.service.isLocal
 import kotlinx.coroutines.CoroutineScope
@@ -75,12 +77,19 @@ internal fun PlayerServiceModern.createSimpleDataSourceFactory(scope: CoroutineS
         // There may be inconsistent between the downloaded file and the displayed info if user change audio quality frequently
         val playedFormat = runBlocking(Dispatchers.IO) { Database.format(mediaId).first() }
         val playbackData = runBlocking(Dispatchers.IO) {
-            SimplePlayer.playerResponseForPlayback(
-                mediaId,
-                playedFormat = playedFormat,
-                audioQuality = audioQualityFormat,
-                //connectivityManager = connectivityManager,
-            )
+            if (getStreamingPlayerType() == StreamingPlayerType.Default) {
+                SimplePlayer.playerResponseForPlayback(
+                    mediaId,
+                    playedFormat = playedFormat,
+                    audioQuality = audioQualityFormat
+                )
+            } else {
+                SimplePlayer.playerResponseForPlaybackWithPotoken(
+                    mediaId,
+                    playedFormat = playedFormat,
+                    audioQuality = audioQualityFormat,
+                )
+            }
         }.getOrElse { throwable ->
             when (throwable) {
                 is PlaybackException -> throw throwable
@@ -133,77 +142,6 @@ internal fun PlayerServiceModern.createSimpleDataSourceFactory(scope: CoroutineS
         songUrlCache[mediaId] = streamUrl to System.currentTimeMillis() + (playbackData.streamExpiresInSeconds * 1000L)
         dataSpec.withUri(streamUrl.toUri()).subrange(dataSpec.uriPositionOffset, PlayerServiceModern.ChunkLength)
     }
-}
-
-@OptIn(UnstableApi::class)
-internal fun PlayerServiceModern.createDataSourceFactory(): DataSource.Factory {
-    return ResolvingDataSource.Factory(
-        CacheDataSource.Factory()
-            .setCache(downloadCache)
-            .setUpstreamDataSourceFactory(
-                CacheDataSource.Factory()
-                    .setCache(cache)
-                    .setUpstreamDataSourceFactory(
-                        appContext().okHttpDataSourceFactory
-                    )
-            )
-            .setCacheWriteDataSinkFactory(null)
-            .setFlags(FLAG_IGNORE_CACHE_ON_ERROR)
-//        ConditionalCacheDataSourceFactory(
-//            cacheDataSourceFactory = cache.asDataSource, //.readOnlyWhen { PlayerPreferences.pauseCache }.asDataSource,
-//            upstreamDataSourceFactory = appContext().defaultDataSourceFactory,
-//            shouldCache = { !it.isLocal }
-//        )
-
-    ) { dataSpec: DataSpec ->
-        //try {
-
-            // Get song from player
-             val mediaItem = runBlocking {
-                 withContext(Dispatchers.Main) {
-                     player.currentMediaItem
-                 }
-            }
-            // Ensure that the song is in database
-            Database.asyncTransaction {
-                if (mediaItem != null) {
-                    insert(mediaItem.asSong)
-                }
-            }
-
-
-            //println("PlayerService DataSourcefactory currentMediaItem: ${mediaItem?.mediaId}")
-            //dataSpec.key?.let { player.findNextMediaItemById(it)?.mediaMetadata }
-
-            return@Factory runBlocking {
-                try {
-                    dataSpecProcess(dataSpec, applicationContext, applicationContext.isConnectionMetered())
-                } catch (e: Exception) {
-                    Timber.e("PlayerServiceModern DataSourcefactory return@Factory Error: ${e.stackTraceToString()}")
-                    println("PlayerServiceModern DataSourcefactory return@Factory Error: ${e.stackTraceToString()}")
-                    dataSpec
-                }
-            }
-
-
-//        } catch (e: Throwable) {
-//            Timber.e("PlayerServiceModern DataSourcefactory Error: ${e.stackTraceToString()}")
-//            println("PlayerServiceModern DataSourcefactory Error: ${e.stackTraceToString()}")
-//            dataSpec
-//        }
-    }
-//        .retryIf<UnplayableException>(
-//        maxRetries = 3,
-//        printStackTrace = true
-//    )
-//    .retryIf(
-//        maxRetries = 1,
-//        printStackTrace = true
-//    ) { ex ->
-//        ex.findCause<InvalidResponseCodeException>()?.responseCode == 403 ||
-//                ex.findCause<ClientRequestException>()?.response?.status?.value == 403 ||
-//                ex.findCause<InvalidHttpCodeException>() != null
-//    }.handleRangeErrors()
 }
 
 

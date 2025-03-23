@@ -11,6 +11,7 @@ import it.fast4x.environment.models.Context.Companion.TVHTML5_SIMPLY_EMBEDDED_PL
 import it.fast4x.environment.models.PlayerResponse
 import it.fast4x.environment.utils.NewPipeUtils
 import it.fast4x.rimusic.enums.AudioQualityFormat
+import it.fast4x.rimusic.extensions.players.models.PlaybackData
 import it.fast4x.rimusic.isConnectionMetered
 import it.fast4x.rimusic.isConnectionMeteredEnabled
 import it.fast4x.rimusic.models.Format
@@ -41,14 +42,7 @@ object SimplePlayer {
         DefaultWeb3.client,
     )
 
-    data class PlaybackData(
-        val audioConfig: PlayerResponse.PlayerConfig.AudioConfig?,
-        val videoDetails: PlayerResponse.VideoDetails?,
-        val playbackTracking: PlayerResponse.PlaybackTracking?,
-        val format: PlayerResponse.StreamingData.Format,
-        val streamUrl: String,
-        val streamExpiresInSeconds: Int,
-    )
+
 
     /**
      * Custom player response intended to use for playback.
@@ -61,8 +55,9 @@ object SimplePlayer {
         playlistId: String? = null,
         playedFormat: Format?,
         audioQuality: AudioQualityFormat,
-        //connectivityManager: ConnectivityManager,
     ): Result<PlaybackData> = runCatching {
+        Timber.d("SimplePlayer playerResponseForPlayback: $videoId")
+        println("SimplePlayer playerResponseForPlayback: $videoId")
         /**
          * This is required for some clients to get working streams however
          * it should not be forced for the [MAIN_CLIENT] because the response of the [MAIN_CLIENT]
@@ -149,6 +144,80 @@ object SimplePlayer {
         )
     }
 
+    @OptIn(UnstableApi::class)
+    suspend fun playerResponseForPlaybackWithPotoken(
+        videoId: String,
+        playlistId: String? = null,
+        playedFormat: Format?,
+        audioQuality: AudioQualityFormat,
+    ): Result<PlaybackData> = runCatching {
+        Timber.d("SimplePlayer playerResponseForPlaybackWithPotoken: $videoId")
+        println("SimplePlayer playerResponseForPlaybackWithPotoken: $videoId")
+        /**
+         * This approach is alternative and experimental
+         */
+        val mainPlayerResponse =
+            EnvironmentExt.simplePlayerWithPotoken(videoId, playlistId).getOrThrow()
+        val audioConfig = mainPlayerResponse.second?.playerConfig?.audioConfig
+        val videoDetails = mainPlayerResponse.second?.videoDetails
+        val playbackTracking = mainPlayerResponse.second?.playbackTracking
+        var format: PlayerResponse.StreamingData.Format? = null
+        var streamUrl: String? = null
+        var streamExpiresInSeconds: Int? = null
+        val streamPlayerResponse: PlayerResponse? = mainPlayerResponse.second
+        //val cpn = mainPlayerResponse.first
+
+            // process current client response
+        if (streamPlayerResponse?.playabilityStatus?.status == "OK") {
+            format =
+                findFormat(
+                    streamPlayerResponse,
+                    playedFormat,
+                    audioQuality,
+                )
+
+            streamUrl = format?.let { findUrlOrNull(
+                // maybe cpn isn't mandatory
+//                if (cpn != null) it.copy(url = it.url.plus("&cpn=${cpn}"))
+//                else it,
+                  it, videoId
+
+            ) }
+
+            streamExpiresInSeconds =
+                streamPlayerResponse.streamingData?.expiresInSeconds
+
+        }
+
+        if (streamPlayerResponse == null) {
+            throw Exception("playerResponseForPlaybackWithPotoken Bad stream player response")
+        }
+        if (streamPlayerResponse.playabilityStatus?.status != "OK") {
+            throw PlaybackException(
+                streamPlayerResponse.playabilityStatus?.reason,
+                null,
+                PlaybackException.ERROR_CODE_REMOTE_ERROR
+            )
+        }
+        if (streamExpiresInSeconds == null) {
+            throw Exception("playerResponseForPlaybackWithPotoken Missing stream expire time")
+        }
+        if (format == null) {
+            throw Exception("playerResponseForPlaybackWithPotoken Could not find format")
+        }
+        if (streamUrl == null) {
+            throw Exception("playerResponseForPlaybackWithPotoken Could not find stream url")
+        }
+        PlaybackData(
+            audioConfig,
+            videoDetails,
+            playbackTracking,
+            format,
+            streamUrl,
+            streamExpiresInSeconds,
+        )
+    }
+
     /**
      * Simple player response intended to use for metadata only.
      * Stream URLs of this response might not work so don't use them.
@@ -163,7 +232,6 @@ object SimplePlayer {
         playerResponse: PlayerResponse,
         playedFormat: Format?,
         audioQuality: AudioQualityFormat,
-        //connectivityManager: ConnectivityManager,
     ): PlayerResponse.StreamingData.Format? =
         if (playedFormat != null) {
             playerResponse.streamingData?.adaptiveFormats?.find { it.itag == playedFormat.itag }

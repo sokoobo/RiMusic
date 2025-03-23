@@ -1725,7 +1725,7 @@ class PlayerService : InvincibleService(),
 
 
     private fun createMediaSourceFactory() = DefaultMediaSourceFactory(
-        createDataSourceFactory(),
+        createSimpleDataSourceFactory(),
         DefaultExtractorsFactory()
     ).setLoadErrorHandlingPolicy(
         object : DefaultLoadErrorHandlingPolicy() {
