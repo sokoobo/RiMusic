@@ -144,8 +144,8 @@ fun StatsForNerds(
                 }
 
                 override fun onSpanTouched(cache: Cache, oldSpan: CacheSpan, newSpan: CacheSpan) {
-                    //Unit
-                    cachedBytes -= newSpan.length
+                    Unit
+                    //cachedBytes -= newSpan.length
                 }
             }
 
