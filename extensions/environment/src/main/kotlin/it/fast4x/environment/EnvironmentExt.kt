@@ -343,7 +343,7 @@ object EnvironmentExt {
         return PlaylistPage(
             playlist = Environment.PlaylistItem(
                 info = Environment.Info(
-                    name = header?.title?.runs?.firstOrNull()?.text!!,
+                    name = header?.title?.runs?.firstOrNull()?.text,
                     endpoint = NavigationEndpoint.Endpoint.Browse(
                         browseId = playlistId,
                     )
