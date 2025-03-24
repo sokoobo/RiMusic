@@ -19,6 +19,8 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
+import android.view.Window
+import android.view.WindowInsetsController
 import android.view.WindowManager
 import android.window.OnBackInvokedDispatcher
 import androidx.activity.ComponentActivity
@@ -87,7 +89,10 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
 import androidx.core.net.toUri
 import androidx.core.os.LocaleListCompat
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
@@ -334,6 +339,26 @@ class MainActivity :
         )
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
+
+
+        /***********/
+        // TODO() enable fullscreen mode
+        // Old method to hide status bar
+        // requestWindowFeature(Window.FEATURE_NO_TITLE)
+        // this.window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+
+        // New method to hide system bars
+//        val windowInsetsController =
+//            WindowCompat.getInsetsController(window, window.decorView)
+//        // Configure the behavior of the hidden system bars.
+//        windowInsetsController.systemBarsBehavior =
+//            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+//
+//        windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
+////        windowInsetsController.hide(WindowInsetsCompat.Type.statusBars())
+////        windowInsetsController.hide(WindowInsetsCompat.Type.navigationBars())
+        /***********/
 
         MonetCompat.setup(this)
         _monet = MonetCompat.getInstance()
