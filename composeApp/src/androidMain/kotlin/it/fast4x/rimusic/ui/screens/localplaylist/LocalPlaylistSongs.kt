@@ -208,6 +208,7 @@ import it.fast4x.rimusic.utils.mediaItemToggleLike
 import it.fast4x.rimusic.utils.move
 import it.fast4x.rimusic.utils.playlistSongsTypeFilterKey
 import it.fast4x.rimusic.utils.removeYTSongFromPlaylist
+import it.fast4x.rimusic.utils.unlikeYtVideoOrSong
 import it.fast4x.rimusic.utils.updateLocalPlaylist
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -1714,7 +1715,7 @@ fun LocalPlaylistSongs(
                                                         context = context,
                                                         type = PopupType.Error
                                                     )
-                                                } else if (playlistPreview.playlist.isEditable && playlistNotMonthlyType) {
+                                                } else if (playlistPreview.playlist.isEditable && playlistNotMonthlyType && playlistPreview.playlist.browseId != "LM") {
                                                     isRenaming = true
                                                 } else SmartMessage(
                                                     context.resources.getString(R.string.info_cannot_rename_a_monthly_or_piped_playlist),
@@ -2391,6 +2392,9 @@ fun LocalPlaylistSongs(
                                                             song.asMediaItem.mediaId,
                                                             playlistId
                                                         )
+                                                    }
+                                                    if (playlistPreview?.playlist?.browseId == "LM"){
+                                                        unlikeYtVideoOrSong(song.asMediaItem)
                                                     }
                                                 }
                                             }
