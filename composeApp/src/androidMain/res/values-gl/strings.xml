@@ -23,7 +23,7 @@
     <string name="enter_the_playlist_name">Insire o nome da lista de reprodución</string>
     <string name="playlists">Listas de reprodución</string>
     <string name="favorites">Favoritos</string>
-    <string name="disliked">Disliked</string>
+    <string name="disliked">Non lle gustou</string>
     <string name="quick_picks">Escollas rápidas</string>
     <string name="songs">Cancións</string>
     <string name="other_versions">Outras versións</string>
@@ -557,7 +557,7 @@
     <string name="position_bottom">Abaixo</string>
     <string name="added_to_favorites">Engadido aos favoritos</string>
     <string name="removed_from_favorites">Eliminado dos favoritos</string>
-    <string name="added_to_disliked">Added to disliked</string>
+    <string name="added_to_disliked">Engadido á lista de non gustados</string>
     <string name="lang_filipino">Filipino</string>
     <string name="action_bar_transparent_background">Fondo transparente</string>
     <string name="pinfo_type">Tipo de información</string>
@@ -706,7 +706,7 @@
     <string name="info_pauses_player_when_volume_zero">Detén o reprodutor cando o volume chega a 0 e reanuda cando o volume é superior a 0</string>
     <string name="quality">Calidade</string>
     <string name="value_must_be_ip_address">O valor debe ser un enderezo ip</string>
-    <string name="value_must_be_hex">Value must be an hex code</string>
+    <string name="value_must_be_hex">O valor debe ser un código hexadecimal</string>
     <string name="swipe_up_to_open_the_queue">Desliza cara arriba para abrir a cola</string>
     <string name="pinfo_show_icons">Amosar información con iconas</string>
     <string name="format_ms">%1$s ms</string>
@@ -917,7 +917,7 @@
     <string name="settings_audio_reverb_info_apply_a_depth_effect_to_the_audio">Aplica un efecto de profundidade ao son</string>
     <string name="settings_audio_focus">Enfoque de son</string>
     <string name="settings_audio_focus_info">Permite pausar e recomezar a reprodución de forma automática despois dunha chamada, por exemplo</string>
-    <string name="please_wait">Please Wait</string>
+    <string name="please_wait">Agarde, por favor</string>
     <string name="songs_liked_yt">Song(s) are Liked in YouTube</string>
     <string name="song_unliked_yt">Song is Unliked in YouTube</string>
     <string name="add_rimusic_to_ytm_favorites">Like RiMusic Liked songs in Youtube</string>
