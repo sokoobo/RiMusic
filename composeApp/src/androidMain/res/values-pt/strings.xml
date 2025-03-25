@@ -771,7 +771,7 @@
     <string name="actionbar">Action Bar</string>
     <string name="center">Center</string>
     <string name="lyricsalignment">Lyrics Alignment</string>
-    <string name="lang_azerbaijani"></string>
+    <string name="lang_azerbaijani">Azerbaijani</string>
     <string name="translators">Tradutores</string>
     <string name="lang_tamil">Tamil</string>
     <string name="player_auto_load_songs_in_queue">Auto load songs in queue</string>
@@ -956,4 +956,5 @@
     <string name="streaming_player_type_default">Default</string>
     <string name="streaming_player_type_next">Next</string>
     <string name="streaming_player_type">Streaming player type</string>
+    <string name="streaming_player_type_advanced">Advanced</string>
 </resources>
