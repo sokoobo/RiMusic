@@ -95,6 +95,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.offline.Download
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import it.fast4x.compose.persist.persist
@@ -153,14 +154,18 @@ import it.fast4x.rimusic.models.SongAlbumMap
 import it.fast4x.rimusic.models.SongArtistMap
 import it.fast4x.rimusic.models.SongPlaylistMap
 import it.fast4x.rimusic.typography
+import it.fast4x.rimusic.ui.items.SongItem
 import it.fast4x.rimusic.ui.screens.settings.isYouTubeSyncEnabled
 import it.fast4x.rimusic.ui.styling.Dimensions
 import it.fast4x.rimusic.ui.styling.px
 import it.fast4x.rimusic.utils.asMediaItem
 import it.fast4x.rimusic.utils.asSong
 import it.fast4x.rimusic.utils.bassboostLevelKey
+import it.fast4x.rimusic.utils.disableScrollingTextKey
+import it.fast4x.rimusic.utils.getDownloadState
 import it.fast4x.rimusic.utils.getLikeState
 import it.fast4x.rimusic.utils.isExplicit
+import it.fast4x.rimusic.utils.isNowPlaying
 import it.fast4x.rimusic.utils.isValidHex
 import it.fast4x.rimusic.utils.isValidHttpUrl
 import it.fast4x.rimusic.utils.isValidUrl
@@ -1906,6 +1911,10 @@ fun SongMatchingDialog(
             var songsList by remember { mutableStateOf<List<Environment.SongItem?>>(emptyList()) }
             var searchText by remember {mutableStateOf(filteredText("${cleanPrefix(songToRematch.title)} ${songToRematch.artistsText}"))}
             var startSearch by remember { mutableStateOf(false) }
+            val binder = LocalPlayerServiceBinder.current
+            val songThumbnailSizeDp = Dimensions.thumbnails.song
+            val songThumbnailSizePx = songThumbnailSizeDp.px
+            val disableScrollingText by rememberPreference(disableScrollingTextKey, false)
 
             LaunchedEffect(Unit,startSearch) {
                 runBlocking(Dispatchers.IO) {
@@ -1921,94 +1930,15 @@ fun SongMatchingDialog(
                     startSearch = false
                 }
             }
-            Row(
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, colorPalette().text, shape = RoundedCornerShape(8.dp))
-                    .padding(horizontal = 5.dp)
-                    .padding(vertical = 10.dp)
-            ) {
-                Box {
-                    AsyncImage(
-                        model = songToRematch.asMediaItem.mediaMetadata.artworkUri.thumbnail(
-                            Dimensions.thumbnails.song.px / 2
-                        ),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .padding(end = 5.dp)
-                            .clip(RoundedCornerShape(5.dp))
-                            .size(40.dp)
-                    )
-                    if (songToRematch.likedAt != null) {
-                        HeaderIconButton(
-                            onClick = {},
-                            icon = getLikeState(songToRematch.asMediaItem.mediaId),
-                            color = colorPalette().favoritesIcon,
-                            iconSize = 12.dp,
-                            modifier = Modifier
-                                .align(Alignment.BottomStart)
-                                .absoluteOffset((-8).dp, 0.dp)
-                        )
-                    }
-                }
-                Column(
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .basicMarquee(iterations = Int.MAX_VALUE)
-                    ) {
-                        if (songToRematch.asMediaItem.isExplicit) {
-                            IconButton(
-                                icon = R.drawable.explicit,
-                                color = colorPalette().text,
-                                enabled = true,
-                                onClick = {},
-                                modifier = Modifier
-                                    .size(18.dp)
-                            )
-                            Spacer(
-                                modifier = Modifier
-                                    .width(5.dp)
-                            )
-                        }
-                        BasicText(
-                            text = cleanPrefix(songToRematch.title),
-                            style = typography().xs.semiBold,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    ) {
-                        BasicText(
-                            text = songToRematch.artistsText ?: "",
-                            style = typography().s.semiBold.secondary,
-                            maxLines = 1,
-                            overflow = TextOverflow.Clip,
-                            modifier = Modifier
-                                .weight(1f)
-                                .basicMarquee(iterations = Int.MAX_VALUE)
-                        )
-                        BasicText(
-                            text = songToRematch.durationText ?: "",
-                            style = typography().xs.secondary.medium,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier
-                                .padding(end = 5.dp)
-                        )
-                    }
-                }
-            }
+            SongItem(
+                song = songToRematch,
+                onDownloadClick = {},
+                downloadState = getDownloadState(songToRematch.id),
+                thumbnailSizeDp = songThumbnailSizeDp,
+                thumbnailSizePx = songThumbnailSizePx,
+                disableScrollingText = disableScrollingText,
+                isNowPlaying = binder?.player?.isNowPlaying(songToRematch.id) ?: false
+            )
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -2049,170 +1979,105 @@ fun SongMatchingDialog(
                         if (song != null) {
                             Row(horizontalArrangement = Arrangement.Start,
                                 verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 10.dp)
-                                    .padding(vertical = 10.dp)
-                                    .clickable(onClick = {
-                                        Database.asyncTransaction {
-                                            if (isYouTubeSyncEnabled() && playlist?.isYoutubePlaylist == true && playlist.isEditable) {
-                                                CoroutineScope(Dispatchers.IO).launch {
-                                                    if (removeYTSongFromPlaylist(
-                                                            songToRematch.id,
-                                                            playlist.browseId ?: "",
-                                                            playlistId
-                                                        )
-                                                    )
-                                                        deleteSongFromPlaylist(
-                                                            songToRematch.id,
-                                                            playlistId
-                                                        )
-                                                }
-                                            } else {
-                                                deleteSongFromPlaylist(songToRematch.id, playlistId)
-                                            }
-
-                                            if (songExist(song.asSong.id) == 0) {
-                                                Database.insert(song.asMediaItem)
-                                            }
-
-                                            insert(
-                                                SongPlaylistMap(
-                                                    songId = song.asMediaItem.mediaId,
-                                                    playlistId = playlistId,
-                                                    position = position
-                                                ).default()
-                                            )
-                                            insert(
-                                                Album(
-                                                    id = song.album?.endpoint?.browseId ?: "",
-                                                    title = song.asMediaItem.mediaMetadata.albumTitle?.toString()
-                                                ),
-                                                SongAlbumMap(
-                                                    songId = song.asMediaItem.mediaId,
-                                                    albumId = song.album?.endpoint?.browseId ?: "",
-                                                    position = null
-                                                )
-                                            )
-                                            CoroutineScope(Dispatchers.IO).launch {
-                                                val album = Database.album(
-                                                    song.album?.endpoint?.browseId ?: ""
-                                                ).firstOrNull()
-                                                album?.copy(thumbnailUrl = song.thumbnail?.url)
-                                                    ?.let { update(it) }
-
+                            ) {
+                                SongItem(
+                                    song = song,
+                                    thumbnailSizePx = songThumbnailSizePx,
+                                    thumbnailSizeDp = songThumbnailSizeDp,
+                                    onDownloadClick = {},
+                                    downloadState = Download.STATE_STOPPED,
+                                    disableScrollingText = disableScrollingText,
+                                    isNowPlaying = false,
+                                    forceRecompose = false,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 10.dp)
+                                        .clickable(onClick = {
+                                            Database.asyncTransaction {
                                                 if (isYouTubeSyncEnabled() && playlist?.isYoutubePlaylist == true && playlist.isEditable) {
-                                                    EnvironmentExt.addToPlaylist(
-                                                        playlist.browseId ?: "",
-                                                        song.asMediaItem.mediaId
-                                                    )
-                                                }
-                                            }
-                                            if ((artistsNames != null) && (artistsIds != null)) {
-                                                artistsNames.let { artistNames ->
-                                                    artistsIds.let { artistIds ->
-                                                        if (artistNames.size == artistIds.size) {
-                                                            insert(
-                                                                artistNames.mapIndexed { index, artistName ->
-                                                                    Artist(
-                                                                        id = (artistIds[index])
-                                                                            ?: "", name = artistName
-                                                                    )
-                                                                },
-                                                                artistIds.map { artistId ->
-                                                                    SongArtistMap(
-                                                                        songId = song.asMediaItem.mediaId,
-                                                                        artistId = (artistId) ?: ""
-                                                                    )
-                                                                }
+                                                    CoroutineScope(Dispatchers.IO).launch {
+                                                        if (removeYTSongFromPlaylist(
+                                                                songToRematch.id,
+                                                                playlist.browseId ?: "",
+                                                                playlistId
                                                             )
+                                                        )
+                                                            deleteSongFromPlaylist(
+                                                                songToRematch.id,
+                                                                playlistId
+                                                            )
+                                                    }
+                                                } else {
+                                                    deleteSongFromPlaylist(songToRematch.id, playlistId)
+                                                }
+
+                                                if (songExist(song.asSong.id) == 0) {
+                                                    Database.insert(song.asMediaItem)
+                                                }
+
+                                                insert(
+                                                    SongPlaylistMap(
+                                                        songId = song.asMediaItem.mediaId,
+                                                        playlistId = playlistId,
+                                                        position = position
+                                                    ).default()
+                                                )
+                                                insert(
+                                                    Album(
+                                                        id = song.album?.endpoint?.browseId ?: "",
+                                                        title = song.asMediaItem.mediaMetadata.albumTitle?.toString()
+                                                    ),
+                                                    SongAlbumMap(
+                                                        songId = song.asMediaItem.mediaId,
+                                                        albumId = song.album?.endpoint?.browseId ?: "",
+                                                        position = null
+                                                    )
+                                                )
+                                                CoroutineScope(Dispatchers.IO).launch {
+                                                    val album = Database.album(
+                                                        song.album?.endpoint?.browseId ?: ""
+                                                    ).firstOrNull()
+                                                    album?.copy(thumbnailUrl = song.thumbnail?.url)
+                                                        ?.let { update(it) }
+
+                                                    if (isYouTubeSyncEnabled() && playlist?.isYoutubePlaylist == true && playlist.isEditable) {
+                                                        EnvironmentExt.addToPlaylist(
+                                                            playlist.browseId ?: "",
+                                                            song.asMediaItem.mediaId
+                                                        )
+                                                    }
+                                                }
+                                                if ((artistsNames != null) && (artistsIds != null)) {
+                                                    artistsNames.let { artistNames ->
+                                                        artistsIds.let { artistIds ->
+                                                            if (artistNames.size == artistIds.size) {
+                                                                insert(
+                                                                    artistNames.mapIndexed { index, artistName ->
+                                                                        Artist(
+                                                                            id = (artistIds[index])
+                                                                                ?: "", name = artistName
+                                                                        )
+                                                                    },
+                                                                    artistIds.map { artistId ->
+                                                                        SongArtistMap(
+                                                                            songId = song.asMediaItem.mediaId,
+                                                                            artistId = (artistId) ?: ""
+                                                                        )
+                                                                    }
+                                                                )
+                                                            }
                                                         }
                                                     }
                                                 }
+                                                Database.updateSongArtist(
+                                                    song.asMediaItem.mediaId,
+                                                    artistNameString
+                                                )
                                             }
-                                            Database.updateSongArtist(
-                                                song.asMediaItem.mediaId,
-                                                artistNameString
-                                            )
+                                            onDismiss()
                                         }
-                                        onDismiss()
-                                    }
                                     )
-                            ) {
-                                Box {
-                                    AsyncImage(
-                                        model = song.asMediaItem.mediaMetadata.artworkUri.thumbnail(
-                                            Dimensions.thumbnails.song.px / 2
-                                        ),
-                                        contentDescription = null,
-                                        contentScale = ContentScale.Crop,
-                                        modifier = Modifier
-                                            .padding(end = 5.dp)
-                                            .clip(RoundedCornerShape(5.dp))
-                                            .size(30.dp)
-                                    )
-                                    if (song.asSong.likedAt != null) {
-                                        HeaderIconButton(
-                                            onClick = {},
-                                            icon = getLikeState(song.asMediaItem.mediaId),
-                                            color = colorPalette().favoritesIcon,
-                                            iconSize = 9.dp,
-                                            modifier = Modifier
-                                                .align(Alignment.BottomStart)
-                                                .absoluteOffset((-6.75).dp, 0.dp)
-                                        )
-                                    }
-                                }
-                                Column {
-                                    Row(
-                                        modifier = Modifier
-                                            .basicMarquee(iterations = Int.MAX_VALUE)
-                                    ) {
-                                        if (song.asMediaItem.isExplicit) {
-                                            IconButton(
-                                                icon = R.drawable.explicit,
-                                                color = colorPalette().text,
-                                                enabled = true,
-                                                onClick = {},
-                                                modifier = Modifier
-                                                    .size(18.dp)
-                                            )
-                                            Spacer(
-                                                modifier = Modifier
-                                                    .width(5.dp)
-                                            )
-                                        }
-                                        BasicText(
-                                            text = cleanPrefix(song.title ?: ""),
-                                            style = typography().xs.semiBold,
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis,
-                                        )
-                                    }
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                    ) {
-                                        BasicText(
-                                            text = song.asSong.artistsText ?: "",
-                                            style = typography().xs.semiBold.secondary,
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Clip,
-                                            modifier = Modifier
-                                                .weight(1f)
-                                                .basicMarquee(iterations = Int.MAX_VALUE)
-                                        )
-                                        BasicText(
-                                            text = song.durationText ?: "",
-                                            style = typography().xxs.secondary.medium,
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis,
-                                            modifier = Modifier
-                                                .padding(end = 5.dp)
-                                        )
-                                    }
-                                }
+                                )
                             }
                         }
                     }
