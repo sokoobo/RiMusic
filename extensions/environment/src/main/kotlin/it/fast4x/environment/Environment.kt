@@ -911,7 +911,7 @@ object Environment {
         setBody(
             PlayerBody(
                 context =
-                    clientType.toContext(locale, visitorData, dataSyncId).let {
+                    clientType.toContext(locale, visitorData).let {
                         if ((clientType.isEmbedded)) {
                             it.copy(
                                 thirdParty =

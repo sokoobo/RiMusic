@@ -44,7 +44,7 @@ data class Context(
         fun toContext(
             locale: EnvironmentLocale,
             visitorData: String?,
-            dataSyncId: String?
+            //dataSyncId: String?
         ) = Context(
             client = Client(
                 clientName = clientName,
@@ -54,9 +54,9 @@ data class Context(
                 hl = locale.hl,
                 visitorData = visitorData
             ),
-            user = User(
-                onBehalfOfUser = dataSyncId
-            ),
+//            user = User(
+//                onBehalfOfUser = dataSyncId
+//            ),
         )
     }
 
