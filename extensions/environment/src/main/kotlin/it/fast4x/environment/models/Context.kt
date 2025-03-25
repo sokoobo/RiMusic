@@ -36,6 +36,7 @@ data class Context(
         val loginSupported: Boolean = false,
         val loginRequired: Boolean = false,
         val useSignatureTimestamp: Boolean = false,
+        val useWebPoTokens: Boolean = false,
         val isEmbedded: Boolean = false,
         // val origin: String? = null,
         // val referer: String? = null,
@@ -43,7 +44,7 @@ data class Context(
         fun toContext(
             locale: EnvironmentLocale,
             visitorData: String?,
-            //dataSyncId: String?
+            dataSyncId: String?
         ) = Context(
             client = Client(
                 clientName = clientName,
@@ -53,9 +54,9 @@ data class Context(
                 hl = locale.hl,
                 visitorData = visitorData
             ),
-//            user = User(
-//                onBehalfOfUser = dataSyncId
-//            ),
+            user = User(
+                onBehalfOfUser = dataSyncId
+            ),
         )
     }
 
@@ -114,6 +115,7 @@ data class Context(
                 xClientName = cxname.toIntOrNull(),
                 loginSupported = true,
                 useSignatureTimestamp = true,
+                useWebPoTokens = true,
             )
         )
 

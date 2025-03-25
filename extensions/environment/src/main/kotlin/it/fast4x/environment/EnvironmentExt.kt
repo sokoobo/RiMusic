@@ -549,8 +549,8 @@ object EnvironmentExt {
     /**************
      * Simple player without use of potoken
      */
-    suspend fun simplePlayer(videoId: String, playlistId: String? = null, client: Context.Client, signatureTimestamp: Int? = null): Result<PlayerResponse> = runCatching {
-        Environment.simplePlayer(client, videoId, playlistId, signatureTimestamp).body<PlayerResponse>()
+    suspend fun simplePlayer(videoId: String, playlistId: String? = null, client: Context.Client, signatureTimestamp: Int? = null, webPlayerPot: String? = null): Result<PlayerResponse> = runCatching {
+        Environment.simplePlayer(client, videoId, playlistId, signatureTimestamp, webPlayerPot).body<PlayerResponse>()
     }.onFailure {
         println("EnvironmentExt simplePlayer error: ${it.stackTraceToString()}")
     }

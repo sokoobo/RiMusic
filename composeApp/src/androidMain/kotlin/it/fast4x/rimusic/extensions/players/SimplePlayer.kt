@@ -1,6 +1,9 @@
 package it.fast4x.rimusic.extensions.players
 
+import android.os.Build
+import android.util.Log
 import androidx.annotation.OptIn
+import androidx.annotation.RequiresApi
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.util.UnstableApi
 import it.fast4x.environment.Environment
@@ -12,6 +15,8 @@ import it.fast4x.environment.models.PlayerResponse
 import it.fast4x.environment.utils.NewPipeUtils
 import it.fast4x.rimusic.enums.AudioQualityFormat
 import it.fast4x.rimusic.extensions.players.models.PlaybackData
+import it.fast4x.rimusic.extensions.webpotoken.PoTokenGenerator
+import it.fast4x.rimusic.extensions.webpotoken.PoTokenResult
 import it.fast4x.rimusic.isConnectionMetered
 import it.fast4x.rimusic.isConnectionMeteredEnabled
 import it.fast4x.rimusic.models.Format
@@ -22,6 +27,8 @@ object SimplePlayer {
     private val httpClient = OkHttpClient.Builder()
         .proxy(Environment.proxy)
         .build()
+
+    private val poTokenGenerator = PoTokenGenerator()
 
     /**
      * The main client is used for metadata and initial streams.
@@ -219,6 +226,136 @@ object SimplePlayer {
     }
 
     /**
+     * Custom player response intended to use for playback.
+     * Metadata like audioConfig and videoDetails are from [MAIN_CLIENT].
+     * Format & stream can be from [MAIN_CLIENT] or [STREAM_FALLBACK_CLIENTS].
+     */
+    @RequiresApi(Build.VERSION_CODES.O)
+    @OptIn(UnstableApi::class)
+    suspend fun playerResponseForPlaybackWithWebPotoken(
+        videoId: String,
+        playlistId: String? = null,
+        playedFormat: Format?,
+        audioQuality: AudioQualityFormat,
+    ): Result<PlaybackData> = runCatching {
+        Timber.d("SimplePlayer playerResponseForPlaybackWithWebPotoken: $videoId")
+        println("SimplePlayer playerResponseForPlaybackWithWebPotoken: $videoId")
+        /**
+         * This is required for some clients to get working streams however
+         * it should not be forced for the [MAIN_CLIENT] because the response of the [MAIN_CLIENT]
+         * is required even if the streams won't work from this client.
+         * This is why it is allowed to be null.
+         */
+        val signatureTimestamp = getSignatureTimestampOrNull(videoId)
+
+        val isLoggedIn = Environment.cookie != null
+        val sessionId =
+            if (isLoggedIn) {
+                // signed in sessions use dataSyncId as identifier
+                Environment.dataSyncId
+            } else {
+                // signed out sessions use visitorData as identifier
+                Environment.visitorData
+            }
+        Timber.d("SimplePlayer playerResponseForPlaybackWithWebPotoken [$videoId] signatureTimestamp: $signatureTimestamp, isLoggedIn: $isLoggedIn")
+        println("SimplePlayer playerResponseForPlaybackWithWebPotoken [$videoId] signatureTimestamp: $signatureTimestamp, isLoggedIn: $isLoggedIn")
+
+        val (webPlayerPot, webStreamingPot) = getWebClientPoTokenOrNull(videoId, sessionId)?.let {
+            Pair(it.playerRequestPoToken, it.streamingDataPoToken)
+        } ?: Pair(null, null).also {
+            Timber.d("SimplePlayer playerResponseForPlaybackWithWebPotoken [$videoId] No po token")
+            println("SimplePlayer playerResponseForPlaybackWithWebPotoken [$videoId] No po token")
+        }
+
+        val mainPlayerResponse =
+            EnvironmentExt.simplePlayer(videoId, playlistId, MAIN_CLIENT, signatureTimestamp, webPlayerPot).getOrThrow()
+
+        val audioConfig = mainPlayerResponse.playerConfig?.audioConfig
+        val videoDetails = mainPlayerResponse.videoDetails
+        val playbackTracking = mainPlayerResponse.playbackTracking
+        var format: PlayerResponse.StreamingData.Format? = null
+        var streamUrl: String? = null
+        var streamExpiresInSeconds: Int? = null
+        var streamPlayerResponse: PlayerResponse? = null
+        var client: Context.Client
+        for (clientIndex in (-1 until STREAM_FALLBACK_CLIENTS.size)) {
+            // reset for each client
+            format = null
+            streamUrl = null
+            streamExpiresInSeconds = null
+            // decide which client to use
+            if (clientIndex == -1) {
+                // try with streams from main client first
+                client = MAIN_CLIENT
+                streamPlayerResponse = mainPlayerResponse
+            } else {
+                // after main client use fallback clients
+                client = STREAM_FALLBACK_CLIENTS[clientIndex]
+                if (client.loginRequired && !isLoggedIn) {
+                    // skip client if it requires login but user is not logged in
+                    continue
+                }
+                streamPlayerResponse =
+                    EnvironmentExt.simplePlayer(videoId, playlistId, client, signatureTimestamp, webPlayerPot).getOrNull()
+            }
+            // process current client response
+            if (streamPlayerResponse?.playabilityStatus?.status == "OK") {
+                format =
+                    findFormat(
+                        streamPlayerResponse,
+                        playedFormat,
+                        audioQuality,
+                        //connectivityManager,
+                    ) ?: continue
+                streamUrl = findUrlOrNull(format, videoId) ?: continue
+                streamExpiresInSeconds =
+                    streamPlayerResponse.streamingData?.expiresInSeconds ?: continue
+
+                if (client.useWebPoTokens && webStreamingPot != null) {
+                    streamUrl += "&pot=$webStreamingPot";
+                }
+
+                if (clientIndex == STREAM_FALLBACK_CLIENTS.size - 1) {
+                    /** skip [validateStatus] for last client */
+                    break
+                }
+                if (validateStatus(streamUrl)) {
+                    // working stream found
+                    break
+                }
+            }
+        }
+        if (streamPlayerResponse == null) {
+            throw Exception("SimplePlayer playerResponseForPlayback Bad stream player response")
+        }
+        if (streamPlayerResponse.playabilityStatus?.status != "OK") {
+            throw PlaybackException(
+                streamPlayerResponse.playabilityStatus?.reason,
+                null,
+                PlaybackException.ERROR_CODE_REMOTE_ERROR
+            )
+        }
+        if (streamExpiresInSeconds == null) {
+            throw Exception("SimplePlayer playerResponseForPlayback Missing stream expire time")
+        }
+        if (format == null) {
+            throw Exception("SimplePlayer playerResponseForPlayback Could not find format")
+        }
+        if (streamUrl == null) {
+            throw Exception("SimplePlayer playerResponseForPlayback Could not find stream url")
+        }
+        PlaybackData(
+            audioConfig,
+            videoDetails,
+            playbackTracking,
+            format,
+            streamUrl,
+            streamExpiresInSeconds,
+        )
+    }
+
+
+    /**
      * Simple player response intended to use for metadata only.
      * Stream URLs of this response might not work so don't use them.
      */
@@ -262,8 +399,8 @@ object SimplePlayer {
             val response = httpClient.newCall(requestBuilder.build()).execute()
             return response.isSuccessful
         } catch (e: Exception) {
-            Timber.e("SimplePlayer Could not validate stream url: $url")
-            println("SimplePlayer Could not validate stream url: $url")
+            Timber.e("SimplePlayer validateStatus Could not validate stream url: $url")
+            println("SimplePlayer validateStatus Could not validate stream url: $url")
         }
         return false
     }
@@ -276,8 +413,8 @@ object SimplePlayer {
     ): Int? {
         return NewPipeUtils.getSignatureTimestamp(videoId)
             .onFailure {
-                Timber.e("SimplePlayer Could not get signature timestamp: $videoId")
-                println("SimplePlayer Could not get signature timestamp: $videoId")
+                Timber.e("SimplePlayer getSignatureTimestampOrNull Could not get signature timestamp: $videoId")
+                println("SimplePlayer getSignatureTimestampOrNull Could not get signature timestamp: $videoId")
             }
             .getOrNull()
     }
@@ -291,9 +428,29 @@ object SimplePlayer {
     ): String? {
         return NewPipeUtils.getStreamUrl(format, videoId)
             .onFailure {
-                Timber.e("SimplePlayer Could not get stream url: $videoId")
-                println("SimplePlayer Could not get stream url: $videoId")
+                Timber.e("SimplePlayer findUrlOrNull Could not get stream url: $videoId")
+                println("SimplePlayer findUrlOrNull Could not get stream url: $videoId")
             }
             .getOrNull()
     }
+
+    /**
+     * Wrapper around the [PoTokenGenerator.getWebClientPoToken] function which reports exceptions
+     */
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun getWebClientPoTokenOrNull(videoId: String, sessionId: String?): PoTokenResult? {
+        if (sessionId == null) {
+            Timber.d("SimplePlayer getWebClientPoTokenOrNull [$videoId] Session identifier is null")
+            println("SimplePlayer getWebClientPoTokenOrNull [$videoId] Session identifier is null")
+            return null
+        }
+        try {
+            return poTokenGenerator.getWebClientPoToken(videoId, sessionId)
+        } catch (e: Exception) {
+            Timber.e("SimplePlayer getWebClientPoTokenOrNull Could not get web client po token: $videoId")
+            println("SimplePlayer getWebClientPoTokenOrNull Could not get web client po token: $videoId")
+        }
+        return null
+    }
+
 }

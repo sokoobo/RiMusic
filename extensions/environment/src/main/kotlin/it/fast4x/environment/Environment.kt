@@ -905,12 +905,13 @@ object Environment {
         videoId: String,
         playlistId: String?,
         signatureTimestamp: Int?,
+        webPlayerPot: String?,
     ) = client.post(_cdSL7DrPbA) {
         setLogin(clientType, setLogin = true)
         setBody(
             PlayerBody(
                 context =
-                    clientType.toContext(locale, visitorData).let {
+                    clientType.toContext(locale, visitorData, dataSyncId).let {
                         if ((clientType.isEmbedded)) {
                             it.copy(
                                 thirdParty =
@@ -928,6 +929,9 @@ object Environment {
                     PlayerBody.PlaybackContext(PlayerBody.PlaybackContext.ContentPlaybackContext(
                         signatureTimestamp = signatureTimestamp
                     ))
+                } else null,
+                serviceIntegrityDimensions = if (clientType.useWebPoTokens && webPlayerPot != null) {
+                    PlayerBody.ServiceIntegrityDimensions(webPlayerPot)
                 } else null
             ),
         )

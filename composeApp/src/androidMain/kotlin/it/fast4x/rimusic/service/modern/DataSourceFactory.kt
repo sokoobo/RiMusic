@@ -1,6 +1,8 @@
 package it.fast4x.rimusic.service.modern
 
+import android.os.Build
 import androidx.annotation.OptIn
+import androidx.annotation.RequiresApi
 import androidx.core.net.toUri
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.util.UnstableApi
@@ -19,10 +21,12 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import it.fast4x.rimusic.appContext
 import it.fast4x.rimusic.enums.StreamingPlayerType
+import it.fast4x.rimusic.extensions.players.SelectSimplePlayerType
 import it.fast4x.rimusic.extensions.players.SimplePlayer
 import it.fast4x.rimusic.getStreamingPlayerType
 import it.fast4x.rimusic.models.Format
 import it.fast4x.rimusic.service.isLocal
+import it.fast4x.rimusic.utils.isAtLeastAndroid8
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
 import timber.log.Timber
@@ -77,19 +81,50 @@ internal fun PlayerServiceModern.createSimpleDataSourceFactory(scope: CoroutineS
         // There may be inconsistent between the downloaded file and the displayed info if user change audio quality frequently
         val playedFormat = runBlocking(Dispatchers.IO) { Database.format(mediaId).first() }
         val playbackData = runBlocking(Dispatchers.IO) {
-            if (getStreamingPlayerType() == StreamingPlayerType.Default) {
-                SimplePlayer.playerResponseForPlayback(
-                    mediaId,
-                    playedFormat = playedFormat,
-                    audioQuality = audioQualityFormat
-                )
-            } else {
-                SimplePlayer.playerResponseForPlaybackWithPotoken(
-                    mediaId,
-                    playedFormat = playedFormat,
-                    audioQuality = audioQualityFormat,
-                )
-            }
+            SelectSimplePlayerType(
+                mediaId,
+                playedFormat,
+                audioQualityFormat
+            )
+//            when(getStreamingPlayerType()) {
+//                StreamingPlayerType.Default -> {
+//                    if (isAtLeastAndroid8) {
+//                        SimplePlayer.playerResponseForPlaybackWithWebPotoken(
+//                            mediaId,
+//                            playedFormat = playedFormat,
+//                            audioQuality = audioQualityFormat
+//                        )
+//                    } else {
+//                        SimplePlayer.playerResponseForPlayback(
+//                            mediaId,
+//                            playedFormat = playedFormat,
+//                            audioQuality = audioQualityFormat
+//                        )
+//                    }
+//                }
+//                StreamingPlayerType.Next -> {
+//                    SimplePlayer.playerResponseForPlaybackWithPotoken(
+//                        mediaId,
+//                        playedFormat = playedFormat,
+//                        audioQuality = audioQualityFormat,
+//                    )
+//                }
+//                StreamingPlayerType.Advanced -> {
+//                    if  (isAtLeastAndroid8) {
+//                        SimplePlayer.playerResponseForPlaybackWithWebPotoken(
+//                            mediaId,
+//                            playedFormat = playedFormat,
+//                            audioQuality = audioQualityFormat,
+//                        )
+//                    } else {
+//                        SimplePlayer.playerResponseForPlaybackWithPotoken(
+//                            mediaId,
+//                            playedFormat = playedFormat,
+//                            audioQuality = audioQualityFormat,
+//                        )
+//                    }
+//                }
+//            }
         }.getOrElse { throwable ->
             when (throwable) {
                 is PlaybackException -> throw throwable

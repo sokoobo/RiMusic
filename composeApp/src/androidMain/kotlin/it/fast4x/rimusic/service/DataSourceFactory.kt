@@ -20,6 +20,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import it.fast4x.rimusic.appContext
+import it.fast4x.rimusic.extensions.players.SelectSimplePlayerType
 import it.fast4x.rimusic.extensions.players.SimplePlayer
 import it.fast4x.rimusic.models.Format
 import it.fast4x.rimusic.service.MyDownloadHelper.downloadCache
@@ -69,12 +70,16 @@ internal fun MyDownloadHelper.createSimpleDataSourceFactory(): DataSource.Factor
 
         val playedFormat = runBlocking(Dispatchers.IO) { Database.format(mediaId).first() }
         val playbackData = runBlocking(Dispatchers.IO) {
-            SimplePlayer.playerResponseForPlayback(
+            SelectSimplePlayerType(
                 mediaId,
-                playedFormat = playedFormat,
-                audioQuality = audioQualityFormat,
-                //connectivityManager = connectivityManager,
+                playedFormat,
+                audioQualityFormat
             )
+//            SimplePlayer.playerResponseForPlayback(
+//                mediaId,
+//                playedFormat = playedFormat,
+//                audioQuality = audioQualityFormat,
+//            )
         }.getOrThrow()
         val format = playbackData.format
 
@@ -141,11 +146,16 @@ internal fun MyPreCacheHelper.createSimpleDataSourceFactory(): DataSource.Factor
 
         val playedFormat = runBlocking(Dispatchers.IO) { Database.format(mediaId).first() }
         val playbackData = runBlocking(Dispatchers.IO) {
+//            SelectSimplePlayerType(
+//                mediaId,
+//                playedFormat,
+//                audioQualityFormat
+//            )
+            // Use default streaming player to preCache
             SimplePlayer.playerResponseForPlayback(
                 mediaId,
                 playedFormat = playedFormat,
-                audioQuality = MyDownloadHelper.audioQualityFormat,
-                //connectivityManager = connectivityManager,
+                audioQuality = audioQualityFormat,
             )
         }.getOrThrow()
         val format = playbackData.format
@@ -212,12 +222,16 @@ internal fun PlayerService.createSimpleDataSourceFactory(): DataSource.Factory {
 
         val playedFormat = runBlocking(Dispatchers.IO) { Database.format(mediaId).first() }
         val playbackData = runBlocking(Dispatchers.IO) {
-            SimplePlayer.playerResponseForPlayback(
+            SelectSimplePlayerType(
                 mediaId,
-                playedFormat = playedFormat,
-                audioQuality = MyDownloadHelper.audioQualityFormat,
-                //connectivityManager = connectivityManager,
+                playedFormat,
+                audioQualityFormat
             )
+//            SimplePlayer.playerResponseForPlayback(
+//                mediaId,
+//                playedFormat = playedFormat,
+//                audioQuality = audioQualityFormat,
+//            )
         }.getOrThrow()
         val format = playbackData.format
 

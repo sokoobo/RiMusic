@@ -375,7 +375,7 @@ fun GeneralSettings(
     var proxyPort by rememberPreference(proxyPortKey, 1080)
     var proxyMode by rememberPreference(proxyModeKey, Proxy.Type.HTTP)
     var customDnsOverHttpsServer by rememberPreference(customDnsOverHttpsServerKey, "")
-    var streamingPlayerType by rememberPreference(streamingPlayerTypeKey, StreamingPlayerType.Default)
+    var streamingPlayerType by rememberPreference(streamingPlayerTypeKey, StreamingPlayerType.Advanced)
 
     Column(
         modifier = Modifier

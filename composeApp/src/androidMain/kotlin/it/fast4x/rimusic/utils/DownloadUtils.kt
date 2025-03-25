@@ -130,7 +130,7 @@ fun manageDownload(
 
 @UnstableApi
 fun preCacheMedia(
-    context: android.content.Context,
+    context: Context,
     mediaItem: MediaItem
 ) {
     if (mediaItem.isLocal || !isNetworkConnected(appContext())) return
