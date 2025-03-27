@@ -1,6 +1,6 @@
 <div align="center">
   <img src="./assets/design/latest/app_logo.svg" width="300" height="100" />    
-  <p><b>RiMusic</b> is a <b>multilingual</b> and <b>multiplatform</b> music player with many customizations.</p>
+  <p><b>RiMusic</b> is a <b>multilingual</b> and <b>multiplatform</b> extensible offline player.</p>
 <p><b>RiMusic does not collect any data.</b></p>
 
   <a href="https://github.com/fast4x/RiMusic/releases"><img src="https://img.shields.io/github/downloads/fast4x/RiMusic/total?label=Total%20Downloads"></a>
@@ -9,7 +9,7 @@
 </div>
 
 ## ❗ IMPORTANT
-<div align="center"><b><H1>RiMusic turns into an offline player with extensions.</H1></b></div>  
+<div align="center"><b><H1>RiMusic turns into an extensible offline player.</H1></b></div>  
 
 ## ❗ Disclaimer
 The developer of this project is not liable for any misuse or legal issues arising from its use and is not affiliated with any content providers. 
@@ -17,6 +17,7 @@ The developer of this project is not liable for any misuse or legal issues arisi
 <br>This project does not condone piracy. 
 <br>This project is created strictly for educational purposes.
 
+<!--
 ## ✨ Features
 - **Multilingual:** English, Italian, German, Russian, French, Spanish, Czech, Turkish, Romanian and more. Contributions for other languages are welcome
 - UI Mode, swtich from RiMusic to classic ViMusic style, viceversa
@@ -106,6 +107,8 @@ The developer of this project is not liable for any misuse or legal issues arisi
 ## ❗ CUSTOM VERSION
 WARNING, the custom version is **not** an official release, download only if invited by the developer!
 [Go to custom version](https://github.com/fast4x/RiMusic/tree/master/customVersion)
+
+-->
 
 ## ❓ FAQs
 - [Wiki page FAQs](https://github.com/fast4x/RiMusic/wiki/FAQs)
