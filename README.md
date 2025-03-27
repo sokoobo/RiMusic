@@ -14,9 +14,9 @@
   <br>The code is being updated to remove all related features.</H1></b></div>  
 
 ## ❗ Disclaimer
-The developer of this application is not liable for any misuse or legal issues arising from its use and is not affiliated with any content providers. 
-<br>This application hosts zero content.
-<br>This application does not condone piracy. 
+The developer of this project is not liable for any misuse or legal issues arising from its use and is not affiliated with any content providers. 
+<br>This project hosts zero content.
+<br>This project does not condone piracy. 
 <br>This project is created strictly for educational purposes.
 
 ## ✨ Features
