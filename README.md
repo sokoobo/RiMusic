@@ -10,7 +10,7 @@
   <a href="https://github.com/fast4x/RiMusic/releases/latest"><img src="https://img.shields.io/github/v/release/fast4x/RiMusic?label=Release"></a>
 </div>
 
-## ✨ IMPORTANT
+## ❗ IMPORTANT
 <b>RiMusic has abandoned streaming from YT Music.
 It turns into a player that will support other streaming platforms. </b>
 
