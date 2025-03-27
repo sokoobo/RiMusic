@@ -1,8 +1,6 @@
 <div align="center">
   <img src="./assets/design/latest/app_logo.svg" width="300" height="100" />    
-  <p><b>RiMusic</b> is a <b>multilingual</b> Android music player.</p>
-  <p>It began as an <b>extension</b> of <b>ViMusic</b>, then acquired its own identity.</p>
-<p><b>It allows the user to customize it at will.</b></p>
+  <p><b>RiMusic</b> is a <b>multilingual</b> and <b>multiplatform</b> music player with many customizations.</p>
 <p><b>RiMusic does not collect any data.</b></p>
 
   <a href="https://github.com/fast4x/RiMusic/releases"><img src="https://img.shields.io/github/downloads/fast4x/RiMusic/total?label=Total%20Downloads"></a>
@@ -11,11 +9,11 @@
 </div>
 
 ## ❗ IMPORTANT
-<b>RiMusic has abandoned streaming from YT Music.
-It turns into a player that will support other streaming platforms. </b>
+<div align="center"><b><H1>RiMusic has abandoned streaming from YT Music. 
+  <br>It turns into a player that will support other streaming platforms.
+  <br>The code is being updated to remove all related features.</H1></b></div>  
 
 ## ❗ Disclaimer
-
 The developer of this application is not liable for any misuse or legal issues arising from its use and is not affiliated with any content providers. This application hosts zero content.
 Echo is intended for offline use only by default; the user manages any external sources. Echo does not condone piracy.
 This project is created strictly for educational purposes.
@@ -23,7 +21,7 @@ This project is created strictly for educational purposes.
 ## ✨ Features
 - **Multilingual:** English, Italian, German, Russian, French, Spanish, Czech, Turkish, Romanian and more. Contributions for other languages are welcome
 - UI Mode, swtich from RiMusic to classic ViMusic style, viceversa
-- Auto cache songs for offline playback with a custom cache size
+- Auto cache songs for offline playback with a custom cache size, ONLY IF THE SPECIFIC PLATFORM ALLOWS
 - Download songs or entire playlists for offline playback (not cache) 
 - Background playback
 - Listening statistics
