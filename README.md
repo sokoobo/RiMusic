@@ -1,6 +1,6 @@
 <div align="center">
   <img src="./assets/design/latest/app_logo.svg" width="300" height="100" />    
-  <p><b>RiMusic</b> is a <b>multilingual</b> Android application for streaming music.</p>
+  <p><b>RiMusic</b> is a <b>multilingual</b> Android music player.</p>
   <p>It began as an <b>extension</b> of <b>ViMusic</b>, then acquired its own identity.</p>
 <p><b>It allows the user to customize it at will.</b></p>
 <p><b>RiMusic does not collect any data.</b></p>
@@ -9,6 +9,16 @@
   <a href="https://github.com/fast4x/RiMusic/releases/latest"><img src="https://img.shields.io/github/downloads/fast4x/RiMusic/latest/total?label=Downloads%20of%20latest%20Release"></a>
   <a href="https://github.com/fast4x/RiMusic/releases/latest"><img src="https://img.shields.io/github/v/release/fast4x/RiMusic?label=Release"></a>
 </div>
+
+## ✨ IMPORTANT
+<b>RiMusic has abandoned streaming from YT Music.
+It turns into a player that will support other streaming platforms. </b>
+
+## ❗ Disclaimer
+
+The developer of this application is not liable for any misuse or legal issues arising from its use and is not affiliated with any content providers. This application hosts zero content.
+Echo is intended for offline use only by default; the user manages any external sources. Echo does not condone piracy.
+This project is created strictly for educational purposes.
 
 ## ✨ Features
 - **Multilingual:** English, Italian, German, Russian, French, Spanish, Czech, Turkish, Romanian and more. Contributions for other languages are welcome
@@ -479,7 +489,6 @@ WARNING, the custom version is **not** an official release, download only if inv
 - **RiMusic previous Logo, many current icons from** [@ikanakova](https://github.com/ikanakova)
 - **RiMusic Website, other features from** [JZITNIK-github](https://github.com/JZITNIK-github), [martkol](https://github.com/martkol)
 - **RiMusic New player, lyrics layouts from** [aneesh1122](https://github.com/aneesh1122)
-- [**YouTube-Internal-Clients**](https://github.com/zerodytrash/YouTube-Internal-Clients): A python script that discovers hidden YouTube API clients. Just a research project.
 - [**Ionicons**](https://github.com/ionic-team/ionicons): Premium hand-crafted icons built by Ionic, for Ionic apps, web apps everywhere.
 - [**FlatIcon.com**](https://www.flaticon.com/): Download Free Icons, Stickers for your projects. Resources made by, for designers.
 - [**Translator**](https://github.com/therealbush/translator): A simple, free Google Translate library for Kotlin/JVM, Java.
@@ -488,7 +497,4 @@ WARNING, the custom version is **not** an official release, download only if inv
 - [**HypnoticCanvas**](https://mikepenz.github.io/HypnoticCanvas/): A shader modifier for Compose Multiplatform / Jetpack Compose
 
 
-## ❗ Disclaimer
-This project, its contents are not affiliated with, funded, authorized, endorsed by, or in any way associated with YouTube, Google LLC or any of its affiliates, subsidiaries.
 
-Any trademark, service mark, trade name, or other intellectual property rights used in this project are owned by the respective owners.
