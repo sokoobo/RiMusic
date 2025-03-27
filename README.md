@@ -9,9 +9,7 @@
 </div>
 
 ## ❗ IMPORTANT
-<div align="center"><b><H1>RiMusic has abandoned streaming from YT Music. 
-  <br>It turns into a player that will support other streaming platforms.
-  <br>The code is being updated to remove all related features.</H1></b></div>  
+<div align="center"><b><H1>RiMusic turns into an offline player with extensions.</H1></b></div>  
 
 ## ❗ Disclaimer
 The developer of this project is not liable for any misuse or legal issues arising from its use and is not affiliated with any content providers. 
