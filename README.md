@@ -10,7 +10,7 @@
 </div>
 
 ## ❗ IMPORTANT
-<div align="center"><b><H1>RiMusic turns into an extensible offline player.</H1></b></div>  
+<div align="center"><b><H1>RiMusic turns into an extensible offline player. Project is closed, absndondd. Don't get fooled!!</H1></b></div>  
 
 ## ❗ Disclaimer
 The developer of this project is not liable for any misuse or legal issues arising from its use and is not affiliated with any content providers. 
