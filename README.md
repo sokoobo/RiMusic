@@ -2,6 +2,7 @@
   <img src="./assets/design/latest/app_logo.svg" width="300" height="100" />    
   <p><b>RiMusic</b> is a <b>multilingual</b> and <b>multiplatform</b> extensible offline player.</p>
 <p><b>RiMusic does not collect any data.</b></p>
+<p>Project is inactive, closed, abandoned. Don't get fooled!!</p>
 
   <a href="https://github.com/fast4x/RiMusic/releases"><img src="https://img.shields.io/github/downloads/fast4x/RiMusic/total?label=Total%20Downloads"></a>
   <a href="https://github.com/fast4x/RiMusic/releases/latest"><img src="https://img.shields.io/github/downloads/fast4x/RiMusic/latest/total?label=Downloads%20of%20latest%20Release"></a>
